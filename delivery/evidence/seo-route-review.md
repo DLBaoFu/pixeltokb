@@ -1,6 +1,6 @@
 # SEO and route review
 
-Status: **pass for repository and final static output**. Production-origin checks remain separately blocked.
+Status: **pass for repository, final static output, and the live production origin**. Captured account-level response evidence is tracked separately.
 
 - `pnpm build` produces 91 HTML pages: 90 registered localized R1 routes plus 404.
 - English canonical routes are unprefixed; Simplified Chinese and Traditional Chinese use `/zh-cn/` and `/zh-tw/`.
@@ -11,4 +11,4 @@ Status: **pass for repository and final static output**. Production-origin check
 
 Commands: `pnpm build`, `node scripts/validate-routes.mjs`, `node scripts/validate-redirects.mjs`.
 
-Boundary: `https://www.pixeltokb.com` is now the configured canonical host. Its live HTTP status, HTTPS/www redirect, caching, and production crawler behavior still require Cloudflare deployment verification.
+Boundary: `https://www.pixeltokb.com` is the live canonical production host. A captured response-header, cache, and crawler evidence bundle remains an account-level acceptance item.

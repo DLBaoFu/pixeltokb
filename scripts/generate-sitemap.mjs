@@ -45,4 +45,4 @@ const urlset = urls.map((url) => `  <url><loc>${url}</loc></url>`).join('\n');
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlset}\n</urlset>\n`;
 await writeFile(join(dist, 'sitemap.xml'), xml);
 await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`);
-console.log(`Generated sitemap.xml (${urls.length} indexable URLs) using ${origin}${configuredOrigin ? '' : ' (configured default; live deployment still requires verification)'}`);
+console.log(`Generated sitemap.xml (${urls.length} indexable URLs) using ${origin}${configuredOrigin ? '' : ' (production default)'}`);

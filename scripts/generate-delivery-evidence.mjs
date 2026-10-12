@@ -80,7 +80,8 @@ const budgetReport = {
   checkedAt,
   quotaSourceUrls,
   budgetChecks,
-  productionPending: ['live verification of https://www.pixeltokb.com', 'Cloudflare account plan and shared usage', 'deployed build duration', 'live response headers and redirects'],
+  productionSite: 'https://www.pixeltokb.com',
+  productionPending: ['Cloudflare account plan and shared usage', 'captured deployed build duration', 'captured live response headers and redirects'],
 };
 
 await mkdir(artifactDir, { recursive: true });
@@ -110,7 +111,8 @@ const manifest = {
   releaseEvidence,
   files: manifestFiles,
   excludedFromDelivery: ['node_modules/', 'dist/', '.astro/', '.env*', '.dev.vars', 'user images', 'production secrets'],
-  unresolvedExternalItems: ['live verification of the configured production origin', 'verified mailbox delivery', 'Safari/Edge/iOS Safari/Android Chrome sign-off', 'Cloudflare/GitHub deployment and rollback evidence', 'named external native-language review'],
+  productionSite: 'https://www.pixeltokb.com',
+  unresolvedExternalItems: ['verified mailbox delivery', 'Safari/Edge/iOS Safari/Android Chrome sign-off', 'Cloudflare deployment metadata and rollback evidence', 'named external native-language review'],
 };
 await writeFile(join(deliveryDir, 'delivery-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 

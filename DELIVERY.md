@@ -1,6 +1,6 @@
 # pixeltokb delivery
 
-Delivery status: the implemented local R1 application, public copy, route set, and available acceptance evidence are packaged, with every open acceptance item explicitly recorded. Production publication is deliberately blocked until the remaining local and external items in `SETUP_REQUIRED.md` and `delivery/acceptance-report.md` are verified. A local pass is not represented as an online deployment pass.
+Delivery status: R1 is published at `https://www.pixeltokb.com`. The application, public copy, route set, and available acceptance evidence are packaged, with every remaining acceptance item explicitly recorded in `SETUP_REQUIRED.md` and `delivery/acceptance-report.md`.
 
 ## Included
 
@@ -22,7 +22,7 @@ pnpm build
 pnpm check:release
 ```
 
-`pnpm build` generates the static site in `dist/`, validates routes and redirects, checks the local Cloudflare limits, writes `artifacts/cloudflare-budget-report.json`, and refreshes `delivery/delivery-manifest.json`. `pnpm check:release` is expected to fail until the real origin, mailbox delivery, remaining device/browser evidence, and production deployment evidence are supplied.
+`pnpm build` generates the static site in `dist/`, validates routes and redirects, checks the local Cloudflare limits, writes `artifacts/cloudflare-budget-report.json`, and refreshes `delivery/delivery-manifest.json`. `pnpm check:release` remains stricter than publication status and continues to report any outstanding mailbox, device/browser, editorial, or account-level evidence.
 
 ## Delivery map
 
@@ -33,7 +33,7 @@ pnpm check:release
 | `delivery/evidence/` | Repository-resident evidence summaries used by the release gate. |
 | `artifacts/cloudflare-budget-report.json` | Machine-readable local static-output budget report. |
 | `LICENSES.md` | Public/test asset provenance and dependency-license review. |
-| `SETUP_REQUIRED.md` | Exact production actions that cannot be completed locally. |
+| `SETUP_REQUIRED.md` | External acceptance and optional advertising actions that remain after publication. |
 
 ## Explicit exclusions
 

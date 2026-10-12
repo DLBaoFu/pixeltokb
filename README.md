@@ -53,7 +53,7 @@ pnpm build
 pnpm preview
 ```
 
-`pnpm build` creates the static site in `dist/`, generates one sitemap, validates every registered route and legacy redirect, and enforces the local Cloudflare output budget. The production origin is configured as `https://www.pixeltokb.com`; it can be supplied explicitly when needed:
+`pnpm build` creates the static site in `dist/`, generates one sitemap, validates every registered route and legacy redirect, and enforces the local Cloudflare output budget. The production site is live at [https://www.pixeltokb.com](https://www.pixeltokb.com); its origin can be supplied explicitly for reproducible builds:
 
 ```sh
 SITE_ORIGIN=https://www.pixeltokb.com pnpm build

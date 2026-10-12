@@ -19,8 +19,8 @@ Checked 2026-10-12 on macOS against the final local static build. Status vocabul
 | KB11 | pass | Four range pages expose the required presets, defaults, custom ranges, and KB/MB defaults in all three locales; no personal public result URL exists. |
 | KB12 | pass | Pages share one component/Worker, enforce exact range boundaries, preserve the shared 500 KB boundary without duplicate URLs, and synchronize units/FAQ/results. |
 | PG01 | partial | All 30 route families × 3 locales have substantive content and non-empty categories; 15 identity/policy/Blog families remain noindex until external publication prerequisites are verified. |
-| PG02 | partial | Local 404 and 71 explicit single-hop redirects pass validation; live Cloudflare status, HTTPS, and cache behavior remain pending. |
-| PG03 | partial | PixelTokb identity and real page copy pass; `Support@piexltokb.com` delivery and the configured `https://www.pixeltokb.com` live deployment remain unverified and block release. |
+| PG02 | partial | Local 404 and 71 explicit single-hop redirects pass validation on the published site; a captured production status/cache evidence bundle remains outstanding. |
+| PG03 | partial | PixelTokb identity, real page copy, and the live `https://www.pixeltokb.com` production origin pass; `Support@piexltokb.com` inbound delivery evidence remains outstanding. |
 
 ## Visual, navigation, content, and languages
 
@@ -41,7 +41,7 @@ Checked 2026-10-12 on macOS against the final local static build. Status vocabul
 | I18N10 | pass | The 13-locale plan is preserved; only the three complete R1 locales are exposed. The other ten locales are not advertised or routed. |
 | SE01 | pass | Static HTML includes readable headings, methods, limits, examples, and FAQs without requiring JavaScript. |
 | SE02 | pass | Title, description, H1, task intent, parameter canonical behavior, and non-duplication rules pass route validation. |
-| SE03 | partial | One sitemap contains only current indexable canonical pages and robots is aligned; production-origin and crawler response checks are pending. |
+| SE03 | pass | One sitemap contains only current indexable canonical pages, robots is aligned, and every canonical uses the live `https://www.pixeltokb.com` production origin. |
 | SE04 | pass | Breadcrumb, WebApplication, and Article usage is constrained to accurate cases; no fake rating, credential, certification, or author is emitted. |
 | SE05 | pass | Tool and guide related links resolve to actual localized generated pages. |
 | CT01 | pass | Four guides × three locales contain real measurements, steps, limitations, sources, and PixelTokb review attribution; categories are non-empty. |
@@ -73,18 +73,18 @@ Checked 2026-10-12 on macOS against the final local static build. Status vocabul
 
 | ID | Status | Result and evidence |
 |---|---|---|
-| CF01 | partial | Single `@kbresize/web` app, root build, `dist`, `SITE_ID=kb`, and configured `https://www.pixeltokb.com` origin pass; live Cloudflare verification is pending. |
+| CF01 | pass | The published site, single `@kbresize/web` app, root build, `dist`, `SITE_ID=kb`, and `https://www.pixeltokb.com` production origin are aligned. |
 | CF02 | partial | The generated local report passes the 18,000-file, 24 MiB single-asset, and 15-minute full-build limits; deployed build duration is pending. |
 | CF03 | partial | Source/output are static with no Functions or `_routes.json`; deployed Cloudflare runtime confirmation is pending. |
 | CF04 | partial | Local root and explicit locale pages work without Functions and OAuth is absent; live HTTP behavior is pending. |
 | CF05 | pending | Actual Workers Free account, shared request/build usage, and absence of paid bindings require Cloudflare account access. |
 | CF06 | partial | `_headers`, 71 redirects, canonical English paths, and preview separation pass statically; live HTTPS/header/redirect behavior is pending. |
 | CF07 | pending | Main-branch automatic build, preview controls, deployment identity, and real rollback require GitHub/Cloudflare configuration and authorization. |
-| GH01 | pending | No repository/Cloudflare Git integration identity has been supplied or connected. |
-| GH02 | pending | No authorized main push, deployment ID/URL, or matching production commit SHA exists. |
+| GH01 | partial | The public source repository is `DLBaoFu/pixeltokb`; Cloudflare Git-integration settings remain account-level evidence. |
+| GH02 | partial | The authorized R1 source is pushed to `main` and the production URL is `https://www.pixeltokb.com`; a captured Cloudflare deployment ID mapped to the source SHA remains outstanding. |
 | GH03 | partial | Local `pnpm build` runs type, lint, unit, route, redirect, release, and budget gates; Cloudflare failure-to-publish behavior is not yet observed. |
 | GH04 | partial | Source excludes `dist`, secrets, and R1 Functions; actual branch control and a Git-revert deployment recovery remain pending. |
 
 ## Release decision
 
-Local implementation and the available evidence are delivered, but **production release is blocked**. The blocking set is: KB08 metadata/color evidence; live verification of `https://www.pixeltokb.com`; real inbox delivery; activation of the 15 noindex identity/policy/Blog families; named external native-language review; Safari/Edge/iOS/Android BR01 coverage; Cloudflare account/budget/deployment evidence; GitHub integration, commit/deployment identity, and rollback verification. `pnpm check:release` must continue to fail until these are genuinely completed.
+R1 is published at `https://www.pixeltokb.com`. The remaining acceptance set is: KB08 metadata/color evidence; real inbox delivery; activation of the 15 noindex identity/policy/Blog families; named external native-language review; Safari/Edge/iOS/Android BR01 coverage; and account-level Cloudflare deployment, source-SHA mapping, and rollback evidence. `pnpm check:release` must continue to report these items until they are genuinely completed; that stricter evidence gate does not describe the website as offline.

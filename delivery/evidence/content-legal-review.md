@@ -11,4 +11,4 @@ Status: **pass for repository content**. It is not a jurisdiction-specific legal
 
 Review date: 2026-10-12. Reviewer recorded in the public content: PixelTokb.
 
-Boundary: mailbox delivery, live verification of the configured production origin, jurisdiction-specific counsel where needed, and the advertising platform's actual review remain external checks. Those items are not converted into a pass by this content review.
+Boundary: mailbox delivery, jurisdiction-specific counsel where needed, and the advertising platform's actual review remain external checks. The production site itself is live at `https://www.pixeltokb.com`; that fact does not convert the separate legal or advertising checks into a pass.
