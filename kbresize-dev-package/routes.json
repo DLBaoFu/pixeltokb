@@ -1,0 +1,1675 @@
+{
+  "version": "1.3",
+  "date": "2026-10-04",
+  "contentDefault": "draft",
+  "localePrefixRequired": false,
+  "rootBehavior": "English is unprefixed on every page, including /, /tools/, /blog/ and /compress-image/. Other published locales use prefixes. No automatic language redirect; legacy /en/* redirects to the unprefixed path.",
+  "locales": [
+    {
+      "path": "en",
+      "hreflang": "en"
+    },
+    {
+      "path": "zh-cn",
+      "hreflang": "zh-Hans"
+    },
+    {
+      "path": "zh-tw",
+      "hreflang": "zh-Hant"
+    },
+    {
+      "path": "es",
+      "hreflang": "es"
+    },
+    {
+      "path": "pt-br",
+      "hreflang": "pt-BR"
+    },
+    {
+      "path": "fr",
+      "hreflang": "fr"
+    },
+    {
+      "path": "de",
+      "hreflang": "de"
+    },
+    {
+      "path": "ja",
+      "hreflang": "ja"
+    },
+    {
+      "path": "ko",
+      "hreflang": "ko"
+    },
+    {
+      "path": "ru",
+      "hreflang": "ru"
+    },
+    {
+      "path": "ar",
+      "hreflang": "ar"
+    },
+    {
+      "path": "hi",
+      "hreflang": "hi"
+    },
+    {
+      "path": "id",
+      "hreflang": "id"
+    }
+  ],
+  "localeReleaseRule": "Only complete reviewed translations may publish",
+  "sites": [
+    {
+      "id": "kb",
+      "brand": "pixeltokb",
+      "candidateDomain": "KBResize.com",
+      "defaultLocale": "en",
+      "initialPublishedLocales": ["en", "zh-cn", "zh-tw"],
+      "routes": [
+        {
+          "path": "/",
+          "name": "首页",
+          "kind": "home",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize",
+          "secondaryKeywords": [],
+          "engine": "home",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "目标KB压缩主工具、本站介绍、6个重点工具、3篇教程、真实限制摘要",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/tools",
+          "name": "工具目录",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize tools",
+          "secondaryKeywords": [],
+          "engine": "tools",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "按已发布分类展示实际工具；无空卡片",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog",
+          "name": "博客列表",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize blog",
+          "secondaryKeywords": [],
+          "engine": "blog",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "已发布文章列表、分类和真实分页；无文章时不开放",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/about",
+          "name": "关于本站",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "about KBResize",
+          "secondaryKeywords": [],
+          "engine": "about",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "真实运营者、本站用途、支持边界",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/contact",
+          "name": "联系与反馈",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "contact KBResize",
+          "secondaryKeywords": [],
+          "engine": "contact",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "真实邮箱、复制地址、mailto；没有联系表单",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/privacy",
+          "name": "隐私政策",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize privacy policy",
+          "secondaryKeywords": [],
+          "engine": "privacy",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "本地文件、平台元数据、邮件、广告和CMP实际数据处理、保留和选择",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/terms",
+          "name": "使用条款",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize terms of use",
+          "secondaryKeywords": [],
+          "engine": "terms",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "允许用途、限制、版权和责任",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/cookies",
+          "name": "Cookie 与同意管理",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize cookie policy",
+          "secondaryKeywords": [],
+          "engine": "cookies",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "site_locale与广告Cookie用途期限、CMP管理和撤回入口",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/editorial-policy",
+          "name": "编辑政策",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize editorial policy",
+          "secondaryKeywords": [],
+          "engine": "editorial",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "作者、技术实测、来源、审核、更新与纠错流程",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/how-it-works",
+          "name": "处理方式和限制",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "how KBResize works",
+          "secondaryKeywords": [],
+          "engine": "methodology",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "浏览器图片处理、格式与文件限制、真实联网服务边界",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/faq",
+          "name": "常见问题",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize FAQ",
+          "secondaryKeywords": [],
+          "engine": "faq",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "本站使用与限制问题，不复制所有工具FAQ",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/changelog",
+          "name": "更新记录",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize changelog",
+          "secondaryKeywords": [],
+          "engine": "changelog",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "真实版本、日期、实际功能变更",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/authors/editor",
+          "name": "真实编辑者资料",
+          "kind": "foundation",
+          "firstRelease": "R1",
+          "primaryKeyword": "KBResize editorial team",
+          "secondaryKeywords": [],
+          "engine": "author",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "真实作者或明确团队、实际职责和文章关联，不造履历",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/category/tutorials",
+          "name": "使用教程分类",
+          "kind": "blog-category",
+          "firstRelease": "R1",
+          "primaryKeyword": "image resizing tutorials",
+          "secondaryKeywords": [],
+          "engine": "blog-category",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "已发布教程摘要与工具关联，分类必须非空",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/category/troubleshooting",
+          "name": "问题排查分类",
+          "kind": "blog-category",
+          "firstRelease": "R1",
+          "primaryKeyword": "image compression troubleshooting",
+          "secondaryKeywords": [],
+          "engine": "blog-category",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "已发布错误排查文章摘要，分类必须非空",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/tools/compress",
+          "name": "体积压缩",
+          "kind": "category",
+          "firstRelease": "R1",
+          "primaryKeyword": "image compression tools",
+          "secondaryKeywords": [],
+          "engine": "category",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "已发布体积压缩与KB预设分类、用途介绍与差异摘要",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/tools/resize",
+          "name": "像素缩放",
+          "kind": "category",
+          "firstRelease": "R1",
+          "primaryKeyword": "image resizing tools",
+          "secondaryKeywords": [],
+          "engine": "category",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "已发布像素缩放、裁剪及尺寸预设分类与差异摘要",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/tools/forms",
+          "name": "签名与表单图片",
+          "kind": "category",
+          "firstRelease": "R2",
+          "primaryKeyword": "signature resizing tools",
+          "secondaryKeywords": [],
+          "engine": "category",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "R2才开放的签名与表单图片工具，非政府官方标准",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/tools/inspect",
+          "name": "图片信息检查",
+          "kind": "category",
+          "firstRelease": "R1",
+          "primaryKeyword": "image information tools",
+          "secondaryKeywords": [],
+          "engine": "category",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": false,
+          "contentRequirements": [
+            "已发布字节、像素、DPI及相关检查工具分类",
+            "真实完整内容",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image",
+          "name": "10–100 KB 图片压缩",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "compress image to target size",
+          "secondaryKeywords": [],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetKB": 50,
+            "unit": "KB",
+            "output": "auto",
+            "resizeMode": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-200kb-to-500kb",
+          "name": "200–500 KB 图片压缩",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "compress image 200 to 500 KB",
+          "secondaryKeywords": [],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetKB": 300,
+            "unit": "KB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-png",
+          "name": "PNG 量化或无损压缩",
+          "kind": "tool",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress png to target size",
+          "secondaryKeywords": [],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetKB": 100,
+            "output": "png",
+            "preserveAlpha": true
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/resize-image",
+          "name": "按像素或百分比缩放",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "image resizer",
+          "secondaryKeywords": [],
+          "engine": "resize",
+          "defaults": {
+            "lockAspect": true,
+            "mode": "fit"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/crop-image",
+          "name": "裁剪图片并预览",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "crop image online",
+          "secondaryKeywords": [],
+          "engine": "crop",
+          "defaults": {
+            "ratio": "free"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/signature-resizer",
+          "name": "签名裁剪与缩放",
+          "kind": "tool",
+          "firstRelease": "R2",
+          "primaryKeyword": "signature resizer",
+          "secondaryKeywords": [],
+          "engine": "signature-resize",
+          "defaults": {
+            "output": "jpeg",
+            "background": "white"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/signature-compressor",
+          "name": "按签名上传体积要求压缩",
+          "kind": "tool",
+          "firstRelease": "R2",
+          "primaryKeyword": "signature compressor",
+          "secondaryKeywords": [],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetKB": 50,
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/signature-background-remover",
+          "name": "阈值去除单色签名背景",
+          "kind": "tool",
+          "firstRelease": "R3",
+          "primaryKeyword": "remove signature background",
+          "secondaryKeywords": [],
+          "engine": "color-threshold",
+          "defaults": {
+            "output": "png"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/photo-signature-merger",
+          "name": "照片与签名横向或纵向合并",
+          "kind": "tool",
+          "firstRelease": "R3",
+          "primaryKeyword": "photo and signature merger",
+          "secondaryKeywords": [],
+          "engine": "merge",
+          "defaults": {
+            "layout": "vertical",
+            "background": "white"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/photo-resizer",
+          "name": "毫米 英寸 DPI 转换并缩放",
+          "kind": "tool",
+          "firstRelease": "R2",
+          "primaryKeyword": "photo size in mm",
+          "secondaryKeywords": [],
+          "engine": "physical-resize",
+          "defaults": {
+            "dpi": 300,
+            "unit": "mm"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/print-photo-sheet",
+          "name": "A4 或 Letter 照片打印 PDF",
+          "kind": "tool",
+          "firstRelease": "R3",
+          "primaryKeyword": "print photo sheet",
+          "secondaryKeywords": [],
+          "engine": "print-sheet",
+          "defaults": {
+            "paper": "A4",
+            "output": "pdf"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/image-size-checker",
+          "name": "大小 像素 格式与透明检查",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "image size checker",
+          "secondaryKeywords": [],
+          "engine": "inspect",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/image-dpi-checker",
+          "name": "真实 DPI 元数据检查",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "image dpi checker",
+          "secondaryKeywords": [],
+          "engine": "metadata",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/aspect-ratio-calculator",
+          "name": "比例约分与边长计算",
+          "kind": "tool",
+          "firstRelease": "R2",
+          "primaryKeyword": "aspect ratio calculator",
+          "secondaryKeywords": [],
+          "engine": "aspect-ratio",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/ppi-calculator",
+          "name": "像素与打印尺寸计算 PPI",
+          "kind": "tool",
+          "firstRelease": "R2",
+          "primaryKeyword": "ppi calculator",
+          "secondaryKeywords": [],
+          "engine": "ppi",
+          "defaults": {},
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/increase-image-size",
+          "name": "提高编码质量或合法填充模式",
+          "kind": "tool",
+          "firstRelease": "R3",
+          "primaryKeyword": "increase image size in kb",
+          "secondaryKeywords": [],
+          "engine": "increase-size",
+          "defaults": {
+            "paddingMode": false
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-to-20kb",
+          "name": "IMAGE 不超过 20kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress image to 20kb",
+          "secondaryKeywords": [
+            "resize image to 20kb",
+            "reduce image size to 20kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 20000,
+            "unit": "KB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-to-30kb",
+          "name": "IMAGE 不超过 30kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress image to 30kb",
+          "secondaryKeywords": [
+            "resize image to 30kb",
+            "reduce image size to 30kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 30000,
+            "unit": "KB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-500kb-to-1mb",
+          "name": "500 KB–1 MB 图片压缩",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "compress image 500 KB to 1 MB",
+          "secondaryKeywords": [],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 750000,
+            "unit": "KB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-2mb-to-5mb",
+          "name": "2–5 MB 图片压缩",
+          "kind": "tool",
+          "firstRelease": "R1",
+          "primaryKeyword": "compress image 2 to 5 MB",
+          "secondaryKeywords": [],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 2000000,
+            "unit": "MB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-to-200kb",
+          "name": "IMAGE 不超过 200kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress image to 200kb",
+          "secondaryKeywords": [
+            "resize image to 200kb",
+            "reduce image size to 200kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 200000,
+            "unit": "KB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-to-300kb",
+          "name": "IMAGE 不超过 300kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress image to 300kb",
+          "secondaryKeywords": [
+            "resize image to 300kb",
+            "reduce image size to 300kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 300000,
+            "unit": "KB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-to-500kb",
+          "name": "IMAGE 不超过 500kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress image to 500kb",
+          "secondaryKeywords": [
+            "resize image to 500kb",
+            "reduce image size to 500kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 500000,
+            "unit": "KB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-to-1mb",
+          "name": "IMAGE 不超过 1mb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress image to 1mb",
+          "secondaryKeywords": [
+            "resize image to 1mb",
+            "reduce image size to 1mb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 1000000,
+            "unit": "MB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-image-to-2mb",
+          "name": "IMAGE 不超过 2mb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress image to 2mb",
+          "secondaryKeywords": [
+            "resize image to 2mb",
+            "reduce image size to 2mb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 2000000,
+            "unit": "MB",
+            "output": "auto"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-20kb",
+          "name": "JPG 不超过 20kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 20kb",
+          "secondaryKeywords": [
+            "compress jpeg to 20kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 20000,
+            "unit": "KB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-30kb",
+          "name": "JPG 不超过 30kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 30kb",
+          "secondaryKeywords": [
+            "compress jpeg to 30kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 30000,
+            "unit": "KB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-50kb",
+          "name": "JPG 不超过 50kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 50kb",
+          "secondaryKeywords": [
+            "compress jpeg to 50kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 50000,
+            "unit": "KB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-100kb",
+          "name": "JPG 不超过 100kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 100kb",
+          "secondaryKeywords": [
+            "compress jpeg to 100kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 100000,
+            "unit": "KB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-200kb",
+          "name": "JPG 不超过 200kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 200kb",
+          "secondaryKeywords": [
+            "compress jpeg to 200kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 200000,
+            "unit": "KB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-300kb",
+          "name": "JPG 不超过 300kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 300kb",
+          "secondaryKeywords": [
+            "compress jpeg to 300kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 300000,
+            "unit": "KB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-500kb",
+          "name": "JPG 不超过 500kb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 500kb",
+          "secondaryKeywords": [
+            "compress jpeg to 500kb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 500000,
+            "unit": "KB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-1mb",
+          "name": "JPG 不超过 1mb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 1mb",
+          "secondaryKeywords": [
+            "compress jpeg to 1mb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 1000000,
+            "unit": "MB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/compress-jpg-to-2mb",
+          "name": "JPG 不超过 2mb",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress jpg to 2mb",
+          "secondaryKeywords": [
+            "compress jpeg to 2mb"
+          ],
+          "engine": "kb-compress",
+          "defaults": {
+            "targetBytes": 2000000,
+            "unit": "MB",
+            "output": "jpeg"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/resize-image-to-1080x1080",
+          "name": "1080×1080 像素适配",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "resize image to 1080x1080",
+          "secondaryKeywords": [],
+          "engine": "resize",
+          "defaults": {
+            "width": 1080,
+            "height": 1080,
+            "mode": "fit"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/resize-image-to-1920x1080",
+          "name": "1920×1080 像素适配",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "resize image to 1920x1080",
+          "secondaryKeywords": [],
+          "engine": "resize",
+          "defaults": {
+            "width": 1920,
+            "height": 1080,
+            "mode": "fit"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/resize-image-to-1280x720",
+          "name": "1280×720 像素适配",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "resize image to 1280x720",
+          "secondaryKeywords": [],
+          "engine": "resize",
+          "defaults": {
+            "width": 1280,
+            "height": 720,
+            "mode": "fit"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/resize-image-to-1200x630",
+          "name": "1200×630 像素适配",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "resize image to 1200x630",
+          "secondaryKeywords": [],
+          "engine": "resize",
+          "defaults": {
+            "width": 1200,
+            "height": 630,
+            "mode": "fit"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/resize-image-to-1080x1920",
+          "name": "1080×1920 像素适配",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "resize image to 1080x1920",
+          "secondaryKeywords": [],
+          "engine": "resize",
+          "defaults": {
+            "width": 1080,
+            "height": 1920,
+            "mode": "fit"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/resize-image-to-600x600",
+          "name": "600×600 像素适配",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "resize image to 600x600",
+          "secondaryKeywords": [],
+          "engine": "resize",
+          "defaults": {
+            "width": 600,
+            "height": 600,
+            "mode": "fit"
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/photo-2x2-inch",
+          "name": "2×2in 物理照片尺寸",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "2x2 in photo resizer",
+          "secondaryKeywords": [],
+          "engine": "physical-resize",
+          "defaults": {
+            "width": 2,
+            "height": 2,
+            "unit": "in",
+            "dpi": 300
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/photo-35x45-mm",
+          "name": "35×45mm 物理照片尺寸",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "35x45 mm photo resizer",
+          "secondaryKeywords": [],
+          "engine": "physical-resize",
+          "defaults": {
+            "width": 35,
+            "height": 45,
+            "unit": "mm",
+            "dpi": 300
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/photo-30x40-mm",
+          "name": "30×40mm 物理照片尺寸",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "30x40 mm photo resizer",
+          "secondaryKeywords": [],
+          "engine": "physical-resize",
+          "defaults": {
+            "width": 30,
+            "height": 40,
+            "unit": "mm",
+            "dpi": 300
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/photo-50x50-mm",
+          "name": "50×50mm 物理照片尺寸",
+          "kind": "preset",
+          "firstRelease": "R2",
+          "primaryKeyword": "50x50 mm photo resizer",
+          "secondaryKeywords": [],
+          "engine": "physical-resize",
+          "defaults": {
+            "width": 50,
+            "height": 50,
+            "unit": "mm",
+            "dpi": 300
+          },
+          "category": null,
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/compress-without-changing-dimensions",
+          "name": "保留像素尺寸压缩的限制",
+          "kind": "article",
+          "firstRelease": "R1",
+          "primaryKeyword": "compress image without changing dimensions",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "tutorials",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/why-image-wont-fit-50kb",
+          "name": "为什么图片不能降到 50KB",
+          "kind": "article",
+          "firstRelease": "R1",
+          "primaryKeyword": "image still larger than 50kb",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "troubleshooting",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/kb-vs-kib",
+          "name": "KB 与 KiB 以及平台上传限制",
+          "kind": "article",
+          "firstRelease": "R1",
+          "primaryKeyword": "KB vs KiB image size",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "tutorials",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/check-image-size-and-dpi",
+          "name": "核验图片体积像素和 DPI",
+          "kind": "article",
+          "firstRelease": "R1",
+          "primaryKeyword": "how to check image dpi",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "troubleshooting",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/signature-upload-requirements",
+          "name": "签名上传前的尺寸与体积处理",
+          "kind": "article",
+          "firstRelease": "R2",
+          "primaryKeyword": "resize signature for upload",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "tutorials",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/mm-to-pixels",
+          "name": "毫米 DPI 与像素的计算",
+          "kind": "article",
+          "firstRelease": "R2",
+          "primaryKeyword": "photo mm to pixels",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "troubleshooting",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/resize-fit-vs-fill",
+          "name": "适配裁切和拉伸的差异",
+          "kind": "article",
+          "firstRelease": "R2",
+          "primaryKeyword": "fit vs fill image resize",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "tutorials",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
+          "path": "/blog/why-png-compression-is-hard",
+          "name": "PNG 透明与压缩限制",
+          "kind": "article",
+          "firstRelease": "R2",
+          "primaryKeyword": "compress png preserve transparency",
+          "secondaryKeywords": [],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "troubleshooting",
+          "initialStatus": "draft",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        }
+      ],
+      "pageCounts": {
+        "base": 19,
+        "tools": 44,
+        "articles": 8,
+        "R1": 30,
+        "R2": 67,
+        "R3": 71
+      },
+      "packageName": "@kbresize/web"
+    }
+  ],
+  "aliases": {
+    "kb": {
+      "/compress-jpg": "/compress-image",
+      "/compress-jpeg": "/compress-image",
+      "/compress-image-to-10kb": "/compress-image?target=10",
+      "/compress-image-to-20kb": "/compress-image?target=20",
+      "/compress-image-to-30kb": "/compress-image?target=30",
+      "/compress-image-to-50kb": "/compress-image?target=50",
+      "/compress-image-to-100kb": "/compress-image?target=100",
+      "/resize-image-to-50kb": "/compress-image?target=50",
+      "/resize-image-to-100kb": "/compress-image?target=100",
+      "/compress-jpg-to-20kb": "/compress-image?target=20",
+      "/compress-jpg-to-30kb": "/compress-image?target=30",
+      "/compress-jpg-to-50kb": "/compress-image?target=50",
+      "/compress-jpg-to-100kb": "/compress-image?target=100",
+      "/compress-jpg-to-200kb": "/compress-image-200kb-to-500kb?target=200",
+      "/compress-jpg-to-300kb": "/compress-image-200kb-to-500kb?target=300",
+      "/compress-jpg-to-500kb": "/compress-image-200kb-to-500kb?target=500",
+      "/compress-jpg-to-1mb": "/compress-image-500kb-to-1mb?target=1&unit=MB",
+      "/compress-jpg-to-2mb": "/compress-image-2mb-to-5mb?target=2&unit=MB",
+      "/compress-jpeg-to-20kb": "/compress-image?target=20",
+      "/compress-jpeg-to-30kb": "/compress-image?target=30",
+      "/compress-jpeg-to-50kb": "/compress-image?target=50",
+      "/compress-jpeg-to-100kb": "/compress-image?target=100",
+      "/compress-jpeg-to-200kb": "/compress-image-200kb-to-500kb?target=200",
+      "/compress-jpeg-to-300kb": "/compress-image-200kb-to-500kb?target=300",
+      "/compress-jpeg-to-500kb": "/compress-image-200kb-to-500kb?target=500",
+      "/compress-jpeg-to-1mb": "/compress-image-500kb-to-1mb?target=1&unit=MB",
+      "/compress-jpeg-to-2mb": "/compress-image-2mb-to-5mb?target=2&unit=MB"
+    }
+  },
+  "nonIndexRoutes": [
+    "/{locale}/search",
+    "/admin",
+    "/api/cms-auth",
+    "/api/cms-auth/callback"
+  ],
+  "rootAssets": [
+    "/robots.txt",
+    "/sitemap-index.xml",
+    "/ads.txt"
+  ],
+  "unknownRoutes": "404",
+  "unpublishedAliasTarget": "404 until target publishes",
+  "deploymentProfile": "cloudflare-free-plan.json",
+  "unprefixedAliasBehavior": "Static 301 to published English target; no language negotiation Function",
+  "disabledRoutes": {
+    "/api/contact": "404",
+    "/preview/{id}": "404 on production and public preview"
+  },
+  "sourceRequirementsVersion": "1.1",
+  "repositoryMode": "single-site"
+}

@@ -20,7 +20,8 @@ delivery/delivery-manifest.json
 delivery/evidence/performance/*.json
 PROGRESS.md
 AGENTS.md
-kbresize-dev-package/
+kbresize-dev-package/*
+!kbresize-dev-package/routes.json
 
 # Isolated post-R1 experiment; not part of the R1 repository delivery.
 src/lib/png/lossless.ts

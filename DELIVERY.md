@@ -34,7 +34,6 @@ pnpm check:release
 | `artifacts/cloudflare-budget-report.json` | Machine-readable local static-output budget report. |
 | `LICENSES.md` | Public/test asset provenance and dependency-license review. |
 | `SETUP_REQUIRED.md` | Exact production actions that cannot be completed locally. |
-| `PROGRESS.md` | Chronological implementation and verification record. |
 
 ## Explicit exclusions
 
