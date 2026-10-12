@@ -2,6 +2,7 @@
 import { htmlLang, layoutCopy, publishedLocales, type Locale } from '../lib/locales';
 import { compressionGroupOrder, compressionGroups } from '../lib/compression-groups';
 import { isPendingReview } from '../lib/publication.mjs';
+import { seoKeywords } from '../lib/seo';
 interface Props { title: string; description?: string; locale?: Locale; noindex?: boolean; application?: boolean; }
 const { title, description, locale = 'en', noindex: requestedNoindex = false, application = false } = Astro.props;
 const noindex = requestedNoindex || isPendingReview(Astro.url.pathname);
@@ -21,6 +22,9 @@ const skipLabel = locale === 'en' ? 'Skip to main content' : locale === 'zh-cn' 
 const canonical = new URL(localizedPath(locale), origin);
 const alternates = publishedLocales.map((targetLocale) => ({ locale: htmlLang[targetLocale], href: new URL(localizedPath(targetLocale), origin) }));
 const englishAlternate = alternates.find((item) => item.locale === 'en')!.href;
+const keywords = seoKeywords(Astro.url.pathname, locale, title);
+const socialLocale = locale === 'zh-cn' ? 'zh_CN' : locale === 'zh-tw' ? 'zh_TW' : 'en_US';
+const alternateSocialLocales = publishedLocales.filter((item) => item !== locale).map((item) => item === 'zh-cn' ? 'zh_CN' : item === 'zh-tw' ? 'zh_TW' : 'en_US');
 // Tool schema is emitted only for canonical, indexable routes. It deliberately omits
 // unsupported claims such as ratings, reviews, operating company, or feature lists.
 const applicationSchema = application && !noindex ? JSON.stringify({
@@ -42,9 +46,24 @@ const applicationSchema = application && !noindex ? JSON.stringify({
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{title} | pixeltokb</title>
     <meta name="description" content={pageDescription} />
-    {noindex ? <meta name="robots" content="noindex,follow" /> : <link rel="canonical" href={canonical} />}
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="PixelTokb" />
+    {noindex ? <meta name="robots" content="noindex,follow" /> : <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />}
+    {!noindex && <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />}
+    {!noindex && <meta name="bingbot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
     {!noindex && alternates.map((alternate) => <link rel="alternate" hreflang={alternate.locale} href={alternate.href} />)}
     {!noindex && <link rel="alternate" hreflang="x-default" href={englishAlternate} />}
+    {!noindex && <meta property="og:type" content="website" />}
+    {!noindex && <meta property="og:site_name" content="PixelTokb" />}
+    {!noindex && <meta property="og:title" content={`${title} | pixeltokb`} />}
+    {!noindex && <meta property="og:description" content={pageDescription} />}
+    {!noindex && <meta property="og:url" content={canonical} />}
+    {!noindex && <meta property="og:locale" content={socialLocale} />}
+    {!noindex && alternateSocialLocales.map((item) => <meta property="og:locale:alternate" content={item} />)}
+    {!noindex && <meta name="twitter:card" content="summary" />}
+    {!noindex && <meta name="twitter:title" content={`${title} | pixeltokb`} />}
+    {!noindex && <meta name="twitter:description" content={pageDescription} />}
     {applicationSchema && <script type="application/ld+json" set:html={applicationSchema} />}
     <script is:inline>
       (() => { try { const saved = localStorage.getItem('pixeltokb-theme') || 'light'; const dark = saved === 'dark' || (saved === 'system' && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; document.documentElement.dataset.themePreference = saved; } catch {} })();

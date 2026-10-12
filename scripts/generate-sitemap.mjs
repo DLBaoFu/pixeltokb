@@ -9,6 +9,17 @@ if (configuredOrigin && (!/^https:\/\/[^/]+$/.test(origin) || origin.includes('.
   throw new Error('SITE_ORIGIN must be a real HTTPS origin without a path.');
 }
 
+/** @type {{sites: Array<{id: string, routes: Array<{path: string, kind: string, firstRelease: string}>}>}} */
+const registry = JSON.parse(await readFile(join(process.cwd(), 'kbresize-dev-package/routes.json'), 'utf8'));
+const site = registry.sites.find((candidate) => candidate.id === 'kb');
+if (!site) throw new Error('KB route registry is missing');
+/** @type {Record<string, string>} */
+const priorityByKind = { home: '1.0', tool: '0.9', category: '0.8', article: '0.8', 'blog-category': '0.7', foundation: '0.7' };
+const routePriority = new Map(site.routes.filter((route) => route.firstRelease === 'R1').map((route) => {
+  const path = route.path === '/' ? '/' : `${route.path}/`;
+  return [path, priorityByKind[route.kind] || '0.6'];
+}));
+
 /** @param {string} directory @returns {Promise<string[]>} */
 async function htmlFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -39,10 +50,15 @@ for (const file of (await htmlFiles(dist)).sort()) {
   const canonical = html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/i)?.[1];
   const expected = publicPath(file);
   if (canonical !== expected) throw new Error(`${file}: canonical must be ${expected}; found ${canonical ?? 'none'}`);
-  urls.push(expected);
+  const pathname = new URL(expected).pathname.replace(/^\/(zh-cn|zh-tw)(?=\/)/, '') || '/';
+  const priority = routePriority.get(pathname);
+  if (!priority) throw new Error(`${file}: no sitemap priority registered for ${pathname}`);
+  urls.push({ loc: expected, priority });
 }
-const urlset = urls.map((url) => `  <url><loc>${url}</loc></url>`).join('\n');
+const urlset = urls.map(({ loc, priority }) => `  <url>\n    <loc>${loc}</loc>\n    <priority>${priority}</priority>\n  </url>`).join('\n');
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlset}\n</urlset>\n`;
 await writeFile(join(dist, 'sitemap.xml'), xml);
-await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`);
+const allowedCrawlers = ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User'];
+const robotGroups = ['User-agent: *\nAllow: /', ...allowedCrawlers.map((crawler) => `User-agent: ${crawler}\nAllow: /`)];
+await writeFile(join(dist, 'robots.txt'), `${robotGroups.join('\n\n')}\n\nSitemap: ${origin}/sitemap.xml\n`);
 console.log(`Generated sitemap.xml (${urls.length} indexable URLs) using ${origin}${configuredOrigin ? '' : ' (production default)'}`);

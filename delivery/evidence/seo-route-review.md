@@ -4,11 +4,13 @@ Status: **pass for repository, final static output, and the live production orig
 
 - `pnpm build` produces 91 HTML pages: 90 registered localized R1 routes plus 404.
 - English canonical routes are unprefixed; Simplified Chinese and Traditional Chinese use `/zh-cn/` and `/zh-tw/`.
-- The generated route validator checks title, description, one H1, canonical, reciprocal hreflang, robots directives, internal destinations, localized route parity, and visible release-copy rules.
-- `dist/sitemap.xml` is the only sitemap and contains 45 currently indexable canonical URLs. Pages held for production identity/editorial activation remain `noindex` and outside the sitemap.
+- The generated route validator checks unique indexable title/description values per locale, focused route keywords, PixelTokb authorship, one H1, canonical, reciprocal hreflang, complete robots directives, Open Graph/Twitter metadata, internal destinations, localized route parity, and visible release-copy rules.
+- `dist/sitemap.xml` is the only sitemap and contains 45 currently indexable canonical URLs. Every entry has a registered relative priority: home `1.0`, tools `0.9`, categories `0.8`, and indexable information pages `0.7`. Pages held for production identity/editorial activation remain `noindex` and outside the sitemap.
+- `robots.txt` permits general crawlers and explicitly allows Googlebot, Bingbot, OAI-SearchBot, GPTBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, and Claude-User. Sitemap discovery uses the absolute production URL.
+- The English resize, crop, size-checker, and DPI-checker routes have dedicated titles and descriptions rather than inherited compression metadata.
 - `public/_redirects` contains 71 explicit one-hop 301 rules. The redirect validator rejects duplicates, self-redirects, chains, missing targets, and alias mismatches.
 - Unknown routes use localized 404 content and `noindex`.
 
-Commands: `pnpm build`, `node scripts/validate-routes.mjs`, `node scripts/validate-redirects.mjs`.
+Commands: `pnpm build`, `node scripts/validate-routes.mjs`, `node scripts/validate-redirects.mjs`, `node scripts/validate-browser-matrix.mjs`.
 
-Boundary: `https://www.pixeltokb.com` is the live canonical production host. A captured response-header, cache, and crawler evidence bundle remains an account-level acceptance item.
+Boundary: `priority` and meta keywords are valid descriptive metadata, but Google documents that neither is a ranking factor. Sitemap inclusion and crawl permission improve discovery but cannot guarantee indexing or ranking; those decisions remain with each search engine.

@@ -54,6 +54,8 @@ for (const route of expectedRoutes) if (!generatedRoutes.has(route)) failures.pu
 for (const route of generatedRoutes) if (!expectedRoutes.has(route)) failures.push(`Unregistered route generated: ${route}`);
 
 const indexable = new Set();
+const titlesByLocale = new Map();
+const descriptionsByLocale = new Map();
 for (const file of generated) {
   const html = await readFile(file, 'utf8');
   const source = routeFor(file);
@@ -72,11 +74,26 @@ for (const file of generated) {
   const alternates = tagsWith(html, 'link', 'hreflang');
   const noindex = tagsWith(html, 'meta', 'name').some((tag) => value(tag, 'name') === 'robots' && /(?:^|,)\s*noindex(?:,|$)/i.test(value(tag, 'content') || ''));
   const url = `${origin}${source}`;
+  const title = html.match(/<title>([^<]+)<\/title>/i)?.[1]?.trim();
+  const description = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i)?.[1]?.trim();
+  const keywords = html.match(/<meta\s+name="keywords"\s+content="([^"]+)"/i)?.[1]?.trim();
+  const author = html.match(/<meta\s+name="author"\s+content="([^"]+)"/i)?.[1]?.trim();
+  if (!title || !description) failures.push(`${source}: missing title or description`);
+  if (!keywords || keywords.split(',').filter(Boolean).length < 4) failures.push(`${source}: missing focused meta keywords`);
+  if (author !== 'PixelTokb') failures.push(`${source}: missing PixelTokb author metadata`);
   if (noindex !== isPendingReview(source)) failures.push(`${source}: noindex disagrees with publication review status`);
   if (noindex) {
     if (canonical.length || alternates.length) failures.push(`${source}: pending-review page must not advertise canonical/hreflang`);
   } else {
     indexable.add(url);
+    const titleKey = `${locale}:${title}`;
+    const descriptionKey = `${locale}:${description}`;
+    if (titlesByLocale.has(titleKey)) failures.push(`${source}: duplicate indexable title also used by ${titlesByLocale.get(titleKey)}`);
+    else titlesByLocale.set(titleKey, source);
+    if (descriptionsByLocale.has(descriptionKey)) failures.push(`${source}: duplicate indexable description also used by ${descriptionsByLocale.get(descriptionKey)}`);
+    else descriptionsByLocale.set(descriptionKey, source);
+    const robotsContent = tagsWith(html, 'meta', 'name').find((tag) => value(tag, 'name') === 'robots');
+    if (!robotsContent || value(robotsContent, 'content') !== 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1') failures.push(`${source}: incomplete indexable robots directives`);
     if (canonical.length !== 1 || value(canonical[0], 'href') !== url) failures.push(`${source}: expected one self canonical ${url}`);
     const base = source.replace(/^\/(zh-cn|zh-tw)(?=\/)/, '') || '/';
     const expectedAlternates = new Map([
@@ -98,7 +115,10 @@ for (const file of generated) {
       else if (applicationSchema.url !== url || applicationSchema.name !== (html.match(/<title>([^<]+) \| pixeltokb<\/title>/i)?.[1])) failures.push(`${source}: WebApplication JSON-LD must match canonical title and URL`);
     }
   }
-  if (!/<title>[^<]+<\/title>/i.test(html) || !/<meta\s+name="description"\s+content="[^"]+"/i.test(html)) failures.push(`${source}: missing title or description`);
+  if (!noindex) {
+    for (const required of ['og:title', 'og:description', 'og:url', 'og:locale']) if (!html.includes(`property="${required}"`)) failures.push(`${source}: missing ${required}`);
+    for (const required of ['twitter:card', 'twitter:title', 'twitter:description']) if (!html.includes(`name="${required}"`)) failures.push(`${source}: missing ${required}`);
+  }
   if ((html.match(/<h1\b/gi) || []).length !== 1) failures.push(`${source}: expected one H1`);
   for (const match of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
     const href = match[1].replace(/&amp;/g, '&');
@@ -113,13 +133,19 @@ for (const file of generated) {
 
 const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8');
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+const sitemapEntries = [...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<priority>([01](?:\.\d)?)<\/priority>\s*<\/url>/g)].map((match) => ({ url: match[1], priority: Number(match[2]) }));
 if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap.xml: duplicate loc entries');
+if (sitemapEntries.length !== sitemapUrls.length) failures.push('sitemap.xml: every URL must have one valid priority');
+for (const entry of sitemapEntries) if (entry.priority < 0 || entry.priority > 1) failures.push(`sitemap.xml: invalid priority for ${entry.url}`);
 for (const url of indexable) if (!sitemapUrls.includes(url)) failures.push(`sitemap.xml: missing ${url}`);
 for (const url of sitemapUrls) if (!indexable.has(url)) failures.push(`sitemap.xml: non-indexable URL ${url}`);
 const sitemapFiles = (await readdir(dist)).filter((name) => /^sitemap.*\.xml$/i.test(name));
 if (sitemapFiles.length !== 1 || sitemapFiles[0] !== 'sitemap.xml') failures.push(`Expected only sitemap.xml; found ${sitemapFiles.join(', ')}`);
 const robots = await readFile(join(dist, 'robots.txt'), 'utf8');
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`)) failures.push('robots.txt: sitemap origin does not match build origin');
+for (const crawler of ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User']) {
+  if (!robots.includes(`User-agent: ${crawler}\nAllow: /`)) failures.push(`robots.txt: ${crawler} is not explicitly allowed`);
+}
 
 if (failures.length) {
   console.error(failures.join('\n'));
