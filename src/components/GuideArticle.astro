@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { guides, type PublishedLocale } from '../lib/guide-content';
+interface Props { locale: PublishedLocale; slug: string; }
+const { locale, slug } = Astro.props;
+const guide = guides[locale].find((item) => item.slug === slug)!;
+const prefix = locale === 'en' ? '' : `/${locale}`;
+const labels = {
+  en: { evidence: 'Evidence and sources', status: 'Editorial status', statusText: 'Reviewed by the PixelTokb editorial team on 11 October 2026. Technical claims, examples, limitations, and the three language versions were checked; this is not professional advice.', practice: 'Put it into practice', check: 'Check an image', compress: 'Open the compressor' },
+  'zh-cn': { evidence: '证据与来源', status: '编辑状态', statusText: '由 PixelTokb 编辑团队于 2026年10月11日审核。技术说法、实测样例、限制和三语版本已经核对；内容不构成专业建议。', practice: '开始检查图片', check: '检查图片信息', compress: '打开图片压缩工具' },
+  'zh-tw': { evidence: '證據與來源', status: '編輯狀態', statusText: '由 PixelTokb 編輯團隊於 2026年10月11日審核。技術說法、實測範例、限制及三語版本已查核；內容不構成專業建議。', practice: '開始檢查圖片', check: '檢查圖片資訊', compress: '開啟圖片壓縮工具' }
+}[locale];
+---
+<BaseLayout locale={locale} title={guide.title} description={guide.intro}>
+  <article class="guide-article">
+    <div class="hero"><p class="eyebrow">{guide.category} · PIXELTOKB</p><h1>{guide.title}</h1><p>{guide.intro}</p></div>
+    {guide.sections.map(([heading, text]) => <section><h2>{heading}</h2><p>{text}</p></section>)}
+    <section class="example-panel"><h2>{guide.example.heading}</h2><dl>{guide.example.rows.map(([term, detail]) => <div><dt>{term}</dt><dd>{detail}</dd></div>)}</dl><p>{guide.example.note}</p></section>
+    <section><h2>{labels.evidence}</h2><ul>{guide.sources.map(([source, detail]) => <li><strong>{source}:</strong> {detail}</li>)}</ul></section>
+    <aside class="review-status"><strong>{labels.status}</strong><p>{labels.statusText}</p></aside>
+    <section><h2>{labels.practice}</h2><p><a href={`${prefix}/image-size-checker/`}>{labels.check}</a> · <a href={`${prefix}/compress-image/`}>{labels.compress}</a></p></section>
+  </article>
+</BaseLayout>

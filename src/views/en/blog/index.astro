@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+const articles = [
+  { slug: 'compress-without-changing-dimensions', category: 'Compression basics', title: 'Compress an image without changing its dimensions', text: 'What quality settings can do, when pixel dimensions need to change, and how to verify the final file.', featured: true },
+  { slug: 'why-image-wont-fit-50kb', category: 'Troubleshooting', title: 'Why an image may not fit a 50 KB limit', text: 'Noise, detail, transparency, and pixel count all affect the smallest practical export.' },
+  { slug: 'kb-vs-kib', category: 'File size', title: 'KB vs KiB: what upload limits really mean', text: 'The difference between decimal kilobytes and binary kibibytes—and why exact bytes matter.' },
+  { slug: 'check-image-size-and-dpi', category: 'Image metadata', title: 'Check image size, pixels, and DPI', text: 'Understand file bytes, pixel dimensions, aspect ratio, and print metadata as separate measures.' }
+];
+---
+<BaseLayout title="Image guides and notes" description="Practical guides to image compression, upload limits, pixels, and DPI.">
+  <div class="directory-page">
+    <div class="hero"><p class="eyebrow">THE PIXELTOKB JOURNAL</p><h1>Clear answers for image uploads.</h1><p>Practical guides to file size, image quality, dimensions, and metadata—with clear limits and no mystery settings.</p></div>
+    <div class="category-nav"><a href="/blog/category/tutorials/">Tutorials</a><a href="/blog/category/troubleshooting/">Troubleshooting</a></div>
+    <section class="editorial-grid" aria-label="Image guides">{articles.map((article) => <a class:list={['article-card', article.featured && 'featured']} href={`/blog/${article.slug}/`}><span class="directory-icon" aria-hidden="true">{article.featured ? '↘' : '✳'}</span><span class="article-category">{article.category}</span><h2>{article.title}</h2><p>{article.text}</p><span class="card-action">Read guide <span aria-hidden="true">→</span></span></a>)}</section>
+    <section class="directory-section"><h2>Start with the image you have</h2><p>Use a local tool to check the file first, then choose the next step based on the actual limit you need to meet.</p><div class="preset-links"><a class="preset-link" href="/image-size-checker/"><strong>Check file size</strong><span>See bytes and dimensions →</span></a><a class="preset-link" href="/compress-image/"><strong>Compress image</strong><span>Choose an exact target →</span></a></div></section>
+  </div>
+</BaseLayout>

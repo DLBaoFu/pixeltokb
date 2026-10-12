@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Page not found" description="The requested pixeltokb page could not be found." noindex>
+  <div class="detail-page not-found">
+    <div class="hero">
+      <p class="eyebrow">404</p>
+      <h1>Page not found</h1>
+      <p>The page you requested does not exist. You can return to the image tools from here.</p>
+      <div class="foundation-next"><a href="/tools/">Browse image tools →</a><a href="/">Go to homepage</a></div>
+    </div>
+  </div>
+</BaseLayout>
+<script>
+  import { localize404 } from '../lib/localize-404';
+  localize404();
+</script>
+<style>
+  .not-found { min-height:min(34rem,60vh); display:grid; align-content:center; }
+  .not-found .hero { max-width:42rem; }
+  .not-found .hero h1 { margin-bottom:.75rem; }
+  @media (max-width:620px) { .not-found { min-height:24rem; } }
+</style>

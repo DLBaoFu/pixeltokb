@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+const categories = {
+  tutorials: { title: 'Image tutorials', intro: 'Step-by-step guidance for choosing a format, meeting an upload limit, and checking the result.', articles: [['Compress an image without changing its dimensions', 'Learn when to adjust encoding quality and when pixel dimensions must change.', 'compress-without-changing-dimensions'], ['KB vs KiB: what upload limits really mean', 'Understand decimal and binary file-size limits.', 'kb-vs-kib'], ['Check image size, pixels, and DPI', 'Read file size, dimensions, and print metadata as separate values.', 'check-image-size-and-dpi']] },
+  troubleshooting: { title: 'Image troubleshooting', intro: 'Understand why a file misses a target and what you can safely try next.', articles: [['Why an image may not fit a 50 KB limit', 'See how image detail, transparency, format, and dimensions affect output size.', 'why-image-wont-fit-50kb']] }
+};
+export function getStaticPaths() { return ['tutorials', 'troubleshooting'].map((category) => ({ params: { category }, props: { category } })); }
+const category = categories[Astro.props.category as keyof typeof categories];
+---
+<BaseLayout title={category.title} description={category.intro}><div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · JOURNAL</p><h1>{category.title}</h1><p>{category.intro}</p></div><div class="editorial-grid">{category.articles.map(([title, text, slug]) => <a class="article-card" href={`/blog/${slug}/`}><span class="directory-icon" aria-hidden="true">✳</span><h2>{title}</h2><p>{text}</p><span class="card-action">Read guide <span aria-hidden="true">→</span></span></a>)}</div><div class="directory-section"><p><a href="/blog/">← All guides</a></p></div></div></BaseLayout>

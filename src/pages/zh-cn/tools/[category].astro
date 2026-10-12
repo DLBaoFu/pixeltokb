@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+const sections = {
+  compress: { title: '图片压缩', intro: '选择目标大小区间，使用同一套工具进行预设或自定义压缩。', links: [['10–100 KB', '适合严格的表单和小图片限制。', '/zh-cn/compress-image/'], ['200–500 KB', '适合中等大小的照片和文档。', '/zh-cn/compress-image-200kb-to-500kb/'], ['500 KB–1 MB', '将较大图片控制在 1 MB 内。', '/zh-cn/compress-image-500kb-to-1mb/'], ['2–5 MB', '在较高容量上限下保留更多细节。', '/zh-cn/compress-image-2mb-to-5mb/']] },
+  resize: { title: '缩放和裁剪', intro: '调整图片像素尺寸，或只保留需要的画面区域。', links: [['缩放图片', '设置精确宽高，再选择适配、填充或拉伸。', '/zh-cn/resize-image/'], ['裁剪图片', '直接选取裁剪区域，或通过像素坐标微调。', '/zh-cn/crop-image/']] },
+  inspect: { title: '图片信息检查', intro: '上传或发送图片前，先查看文件本身和打印元数据。', links: [['图片大小检查', '查看字节、KB 与 KiB、像素尺寸、比例和透明度。', '/zh-cn/image-size-checker/'], ['DPI 检查', '读取图片文件中实际包含的打印分辨率元数据。', '/zh-cn/image-dpi-checker/']] }
+};
+export function getStaticPaths() { return ['compress', 'resize', 'inspect'].map((category) => ({ params: { category }, props: { category } })); }
+const section = sections[Astro.props.category as keyof typeof sections];
+---
+<BaseLayout locale="zh-cn" title={section.title} description={section.intro}><div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · 工具</p><h1>{section.title}</h1><p>{section.intro}</p></div><div class="tool-card-grid">{section.links.map(([title, text, href]) => <a class="tool-card" href={href}><span class="directory-icon" aria-hidden="true">✳</span><h2>{title}</h2><p>{text}</p><span class="card-action">打开工具 <span aria-hidden="true">→</span></span></a>)}</div><div class="directory-section"><p><a href="/zh-cn/tools/">← 全部图片工具</a></p></div></div></BaseLayout>

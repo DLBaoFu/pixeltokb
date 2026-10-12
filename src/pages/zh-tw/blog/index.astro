@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+const articles = [
+  { slug: 'compress-without-changing-dimensions', category: '壓縮基礎', title: '不改變像素尺寸，如何壓縮圖片？', text: '了解畫質設定的作用、何時需要縮小像素尺寸，以及如何核對最終檔案。', featured: true },
+  { slug: 'why-image-wont-fit-50kb', category: '問題排解', title: '為什麼圖片可能無法壓到 50 KB？', text: '雜訊、細節、透明度和像素數量，都會影響檔案能縮小到什麼程度。' },
+  { slug: 'kb-vs-kib', category: '檔案大小', title: 'KB 與 KiB 有什麼不同？', text: '十進位 KB 和二進位 KiB 的差異，以及精確位元組數為何重要。' },
+  { slug: 'check-image-size-and-dpi', category: '圖片中繼資料', title: '如何檢查圖片大小、像素與 DPI？', text: '分別理解檔案位元組數、像素尺寸、長寬比和列印中繼資料。' }
+];
+---
+<BaseLayout locale="zh-tw" title="圖片指南與知識" description="了解圖片壓縮、上傳限制、像素尺寸與 DPI 的實用指南。">
+  <div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · 圖片知識庫</p><h1>圖片上傳問題，說清楚就好。</h1><p>關於檔案大小、畫質、尺寸和中繼資料的實用指南。每篇內容都力求清楚、可驗證，不靠猜測。</p></div><div class="category-nav"><a href="/zh-tw/blog/category/tutorials/">圖片教學</a><a href="/zh-tw/blog/category/troubleshooting/">問題排解</a></div><section class="editorial-grid" aria-label="圖片指南">{articles.map((article) => <a class:list={['article-card', article.featured && 'featured']} href={`/zh-tw/blog/${article.slug}/`}><span class="directory-icon" aria-hidden="true">{article.featured ? '↘' : '✳'}</span><span class="article-category">{article.category}</span><h2>{article.title}</h2><p>{article.text}</p><span class="card-action">閱讀指南 <span aria-hidden="true">→</span></span></a>)}</section><section class="directory-section"><h2>從了解圖片開始</h2><p>先用本機工具查看檔案資訊，再依照實際上傳需求選擇下一步。</p><div class="preset-links"><a class="preset-link" href="/zh-tw/image-size-checker/"><strong>檢查檔案大小</strong><span>查看位元組數與尺寸 →</span></a><a class="preset-link" href="/zh-tw/compress-image/"><strong>壓縮圖片</strong><span>選擇精確目標 →</span></a></div></section></div>
+</BaseLayout>

@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+const sections = {
+  compress: { title: 'Image compression', intro: 'Choose a file-size range and use the shared compressor for presets or a custom target.', links: [['10–100 KB', 'Small uploads and strict form limits.', '/compress-image/'], ['200–500 KB', 'A practical middle range for photos and documents.', '/compress-image-200kb-to-500kb/'], ['500 KB–1 MB', 'Larger images that need a sub-megabyte target.', '/compress-image-500kb-to-1mb/'], ['2–5 MB', 'Keep more detail under a megabyte-scale limit.', '/compress-image-2mb-to-5mb/']] },
+  resize: { title: 'Resize and crop', intro: 'Change pixel dimensions or select only the part of an image you need.', links: [['Resize image', 'Set exact width and height, then choose fit, fill, or stretch.', '/resize-image/'], ['Crop image', 'Select a visual crop area or refine it using pixel coordinates.', '/crop-image/']] },
+  inspect: { title: 'Image inspection', intro: 'Check the actual file and print metadata before you upload or send an image.', links: [['Image size checker', 'Inspect bytes, KB and KiB, pixel dimensions, aspect ratio, and transparency.', '/image-size-checker/'], ['DPI checker', 'Read print-resolution metadata when the image contains it.', '/image-dpi-checker/']] }
+};
+export function getStaticPaths() { return ['compress', 'resize', 'inspect'].map((category) => ({ params: { category }, props: { category } })); }
+const section = sections[Astro.props.category as keyof typeof sections];
+---
+<BaseLayout title={section.title} description={section.intro}><div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · TOOLS</p><h1>{section.title}</h1><p>{section.intro}</p></div><div class="tool-card-grid">{section.links.map(([title, text, href]) => <a class="tool-card" href={href}><span class="directory-icon" aria-hidden="true">✳</span><h2>{title}</h2><p>{text}</p><span class="card-action">Open tool <span aria-hidden="true">→</span></span></a>)}</div><div class="directory-section"><p><a href="/tools/">← All image tools</a></p></div></div></BaseLayout>

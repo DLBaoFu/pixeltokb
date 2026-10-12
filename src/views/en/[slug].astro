@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompressionTool from '../../components/CompressionTool';
+import ResizeTool from '../../components/ResizeTool';
+import CropTool from '../../components/CropTool';
+import ImageInfoTool from '../../components/ImageInfoTool';
+import FoundationContent from '../../components/FoundationContent.astro';
+import ToolSupportingContent from '../../components/ToolSupportingContent.astro';
+import { compressionGroupForSlug, compressionGroups } from '../../lib/compression-groups';
+
+export function getStaticPaths() {
+  const slugs = ['about', 'contact', 'privacy', 'terms', 'cookies', 'editorial-policy', 'how-it-works', 'faq', 'changelog', 'compress-image', 'compress-image-200kb-to-500kb', 'compress-image-500kb-to-1mb', 'compress-image-2mb-to-5mb', 'resize-image', 'crop-image', 'image-size-checker', 'image-dpi-checker'];
+  return slugs.map((slug) => ({ params: { slug }, props: { slug } }));
+}
+
+const { slug } = Astro.props;
+const group = compressionGroupForSlug(slug);
+const isTool = Boolean(group);
+const isResizeTool = slug === 'resize-image';
+const isCropTool = slug === 'crop-image';
+const isSizeTool = slug === 'image-size-checker';
+const isDpiTool = slug === 'image-dpi-checker';
+const supportTool = isTool ? 'compress' : isResizeTool ? 'resize' : isCropTool ? 'crop' : isSizeTool ? 'size' : isDpiTool ? 'dpi' : null;
+const toolTitle = group ? `Compress image · ${compressionGroups[group].label}` : 'Compress image to a target size';
+const text: Record<string, { title: string; body: string }> = {
+  tools: { title: 'Image tools', body: 'Use pixeltokb tools to reduce image bytes, resize pixels, crop, and inspect image metadata.' },
+  blog: { title: 'pixeltokb blog', body: 'Practical guides about image bytes, pixels, DPI, and upload limits.' },
+  about: { title: 'About PixelTokb', body: 'PixelTokb provides browser-based image compression, resizing, cropping, and inspection tools. Image processing stays on your device.' },
+  contact: { title: 'Contact PixelTokb', body: 'Contact the PixelTokb team about corrections, privacy requests, or site feedback by email.' },
+  privacy: { title: 'Privacy policy', body: 'This policy explains local image processing, browser preferences, hosting data, email, and advertising data if advertising is enabled later.' },
+  terms: { title: 'Terms of use', body: 'These terms define permitted use of PixelTokb, user responsibilities, service limitations, and liability boundaries.' },
+  cookies: { title: 'Cookies and consent', body: 'PixelTokb currently stores only theme and language preferences locally. Advertising and non-essential tracking remain disabled.' },
+  'editorial-policy': { title: 'Editorial policy', body: 'PixelTokb publishes reviewed, reproducible image guidance with real examples, disclosed limitations, and a correction process.' },
+  'how-it-works': { title: 'How it works', body: 'A browser Web Worker decodes the image, tries verified encodings, and checks the resulting Blob size. Processing is local.' },
+  faq: { title: 'Frequently asked questions', body: 'KB means 1000 bytes and KiB means 1024 bytes. Targets are checked against exact output bytes, not rounded display values.' },
+  changelog: { title: 'Changelog', body: 'Important changes to PixelTokb tools, content, languages, privacy information, and editorial practices are recorded here.' },
+  'authors/editor': { title: 'Editor information', body: 'This page is reserved for the real editor information supplied during site setup.' }
+};
+const info = text[slug] ?? { title: toolTitle, body: 'Choose a target, add your image, and download a result that has been checked against the requested byte budget.' };
+---
+<BaseLayout title={info.title} description={info.body} application={Boolean(supportTool)}>
+  <div class="detail-page">{isTool ? <><div class="hero"><p class="eyebrow">Image compression</p><h1>{info.title}</h1><p>{info.body} The output is processed on this device.</p></div><CompressionTool client:load group={group} /><section class="cards"><h2>Supported formats and limits</h2><p>Static JPEG, PNG, and WebP files up to 20 MB are accepted. Animated PNG and WebP files are rejected; export a still frame first. The decoded pixel limit is 40 megapixels. Confirm the exported format and exact byte count before using the result.</p></section></> : isResizeTool ? <><div class="hero"><p class="eyebrow">Pixel resize</p><h1>Resize image by pixels</h1><p>Choose exact output dimensions. Fit preserves the complete image with transparent padding where supported, Fill crops to cover the target, and Stretch changes the aspect ratio.</p></div><ResizeTool client:load /><section class="cards"><h2>How browser resizing works</h2><p>The original image is decoded and drawn to a new canvas inside a Web Worker. The result is encoded locally and offered as a download; transparent PNG and WebP images retain their alpha channel.</p></section></> : isCropTool ? <><div class="hero"><p class="eyebrow">Image crop</p><h1>Crop image online</h1><p>Select a crop area with your pointer or enter exact pixel coordinates. Your image stays on this device.</p></div><CropTool client:load /><section class="cards"><h2>How cropping works</h2><p>Drag across the preview to set a crop region, then refine its left, top, width, and height with keyboard-accessible fields. Transparent backgrounds are preserved in PNG and WebP exports.</p></section></> : isSizeTool || isDpiTool ? <><div class="hero"><p class="eyebrow">Image inspection</p><h1>{isSizeTool ? 'Check image size and dimensions' : 'Check image DPI'}</h1><p>{isSizeTool ? 'Inspect exact bytes, KB and KiB, pixel dimensions, aspect ratio, and transparency.' : 'Read DPI metadata when available and see the image pixel dimensions.'} Files are read locally in your browser.</p></div><ImageInfoTool client:load mode={isSizeTool ? 'size' : 'dpi'} /><section class="cards"><h2>{isDpiTool ? 'Understanding DPI' : 'Supported image details'}</h2><p>{isDpiTool ? 'DPI is print metadata and does not change an image’s pixel dimensions. Some files do not include DPI metadata.' : 'JPEG, PNG, and WebP files up to 20 MB and 40 megapixels are supported.'}</p></section></> : <FoundationContent locale="en" slug={slug} title={info.title} intro={info.body} />}{supportTool && <ToolSupportingContent locale="en" tool={supportTool} />}</div>
+</BaseLayout>

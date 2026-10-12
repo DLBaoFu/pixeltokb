@@ -1,0 +1,6 @@
+---
+import EnglishPage from '../../views/en/blog/[slug].astro';
+export function getStaticPaths() { return ['compress-without-changing-dimensions', 'why-image-wont-fit-50kb', 'kb-vs-kib', 'check-image-size-and-dpi'].map((slug) => ({ params: { slug }, props: { slug } })); }
+const { slug } = Astro.props;
+---
+<EnglishPage slug={slug} />

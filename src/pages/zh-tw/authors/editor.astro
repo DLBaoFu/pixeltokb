@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import siteConfig from '../../../../config/site.json';
+---
+<BaseLayout locale="zh-tw" title="PixelTokb 編輯團隊">
+  <div class="detail-page page-content">
+    <div class="hero"><p class="eyebrow">PIXELTOKB · 作者</p><h1>PixelTokb 編輯團隊</h1><p>PixelTokb 是本站指南、工具說明與政策頁面的具名發布方及審核方。</p></div>
+    <aside class="review-status"><strong>編輯責任</strong><p>PixelTokb 已於 2026年10月11日審核目前指南。此身分代表網站營運與編輯團隊，不表示具有受監管的專業資格。</p></aside>
+    <div class="foundation-grid">
+      <section class="foundation-card"><h2>審核職責</h2><p>團隊查核技術說法、可重現範例、限制、來源說明、連結，以及英文、簡體中文與繁體中文之間的意義一致性。</p></section>
+      <section class="foundation-card"><h2>證據與更正</h2><p>圖片輸出相關說法會在文中註明儲存檔案檢查依據。讀者可透過 <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a> 回報重大錯誤。</p></section>
+      <section class="foundation-card"><h2>輔助創作</h2><p>起草、翻譯或檢查可能使用軟體或 AI 輔助。PixelTokb 仍對發布結果承擔審核責任，不把輔助工具描述為獨立專家。</p></section>
+      <section class="foundation-card"><h2>獨立性與界線</h2><p>日後的廣告不能購買正面報導或改變工具結果。本站內容只提供一般技術資訊，不構成法律、醫療、金融、移民、身分或列印建議。</p></section>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import siteConfig from '../../../../config/site.json';
+---
+<BaseLayout title="PixelTokb editorial team">
+  <div class="detail-page page-content">
+    <div class="hero"><p class="eyebrow">PIXELTOKB · AUTHOR</p><h1>PixelTokb editorial team</h1><p>PixelTokb is the named publisher and reviewer of this site’s guides, tool explanations, and policy pages.</p></div>
+    <aside class="review-status"><strong>Editorial accountability</strong><p>PixelTokb reviewed the current guides on 11 October 2026. This identity describes the site operator and editorial team; it does not claim a regulated professional qualification.</p></aside>
+    <div class="foundation-grid">
+      <section class="foundation-card"><h2>Review responsibilities</h2><p>The team checks technical claims, reproducible examples, limitations, source descriptions, links, and equivalent meaning across English, Simplified Chinese, and Traditional Chinese.</p></section>
+      <section class="foundation-card"><h2>Evidence and corrections</h2><p>Claims about image output are tied to saved-file checks where stated. Readers can report a material error at <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.</p></section>
+      <section class="foundation-card"><h2>Assisted drafting</h2><p>Software or AI may assist drafting, translation, or checking. PixelTokb remains responsible for reviewing the published result; assistance is not presented as independent expertise.</p></section>
+      <section class="foundation-card"><h2>Independence and boundaries</h2><p>Future advertising cannot buy favorable coverage or alter tool results. Site content is general technical information, not legal, medical, financial, immigration, identity, or printing advice.</p></section>
+    </div>
+  </div>
+</BaseLayout>

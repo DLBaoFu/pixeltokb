@@ -1,0 +1,72 @@
+export type PublishedLocale = 'en' | 'zh-cn' | 'zh-tw';
+
+export type Guide = {
+  slug: string;
+  category: string;
+  title: string;
+  intro: string;
+  sections: Array<[string, string]>;
+  example: { heading: string; rows: Array<[string, string]>; note: string };
+  sources: Array<[string, string]>;
+};
+
+export const guides: Record<PublishedLocale, Guide[]> = {
+  en: [
+    {
+      slug: 'compress-without-changing-dimensions', category: 'COMPRESSION BASICS', title: 'Compress an image without changing its dimensions',
+      intro: 'When a form sets a file-size limit, you can often reduce encoded bytes before changing the pixel dimensions.',
+      sections: [
+        ['What can change while dimensions stay fixed?', 'JPEG and WebP can trade fine detail for fewer bytes while retaining width and height. PNG is lossless, so a very small target may be unreachable unless you reduce pixels or choose another accepted format.'],
+        ['A repeatable workflow', 'Check the source dimensions and exact bytes. Keep the original dimensions enabled, choose a format accepted by the destination, set the byte target, and process the file. Download only after the result reports a size at or below the budget, then inspect the saved file again.'],
+        ['Limits to understand', 'A successful byte target does not guarantee acceptable visual quality or approval by the receiving service. Animated PNG and WebP are rejected, and static JPEG, PNG, or WebP input is limited to 20 MB and 40 megapixels.']
+      ],
+      example: { heading: 'Verified example', rows: [['Source', 'JPEG, 320 × 240 pixels'], ['Target', '20 KB (20,000 bytes)'], ['Saved result', 'JPEG, 6,364 bytes, 320 × 240 pixels'], ['Dimension check', 'Width and height unchanged']], note: 'The saved file was decoded again after download; its JPEG signature, MIME type, dimensions, and exact byte count were checked.' },
+      sources: [['Example method', 'A 320 × 240 JPEG was processed to a 20,000-byte target and the saved file was opened again to confirm its format, dimensions, and 6,364-byte size.'], ['Technical basis', 'The result is accepted only from the generated Blob size; rounded display values are not used as the pass condition.']]
+    },
+    {
+      slug: 'why-image-wont-fit-50kb', category: 'TROUBLESHOOTING', title: 'Why an image may not fit a 50 KB limit',
+      intro: 'A 50 KB target is a byte ceiling, not a promise that every source can fit without changing format, dimensions, or visible detail.',
+      sections: [
+        ['Image content changes the result', 'Smooth areas encode efficiently. Hair, leaves, text edges, grain, and camera noise require more data. Two images with the same pixel dimensions can therefore produce very different file sizes.'],
+        ['Format and transparency matter', 'JPEG and WebP can discard some detail. PNG preserves pixels losslessly and may remain large for photographs. If transparency must remain, choose PNG or WebP; exporting to JPEG requires a deliberate background color.'],
+        ['What to try next', 'Confirm which formats the destination accepts. Try WebP when allowed, otherwise permit smaller dimensions or a larger byte budget. If the tool reports the target as unreachable, do not use a rounded label as evidence of success.']
+      ],
+      example: { heading: 'Verified examples', rows: [['JPEG source', '320 × 240 → 6,364-byte JPEG under 50 KB'], ['WebP source', '320 × 240 → 23,906-byte WebP under 50 KB'], ['Hard-alpha PNG at 10 KB', 'Unreachable with dimensions preserved; no download offered']], note: 'The third case demonstrates the same boundary condition: some format, alpha, dimension, and byte-budget combinations have no valid result.' },
+      sources: [['Example method', 'Static JPEG, WebP, and transparent PNG files were used to compare reachable and unreachable byte targets while keeping the dimensions fixed.'], ['Decision rule', 'Success requires an actual output Blob at or below the selected byte count; otherwise the tool returns a clear failure.']]
+    },
+    {
+      slug: 'kb-vs-kib', category: 'FILE SIZE', title: 'KB vs KiB: what upload limits really mean',
+      intro: 'KB and KiB represent different byte counts. The difference matters when an upload limit is enforced exactly.',
+      sections: [
+        ['Decimal and binary units', '1 KB is 1,000 bytes and 1 KiB is 1,024 bytes. Likewise, 1 MB is 1,000,000 bytes and 1 MiB is 1,048,576 bytes.'],
+        ['Use the destination’s unit', 'Choose KB when the receiving service specifies KB, and KiB when it specifies KiB. If the service is ambiguous, leave a safety margin instead of aiming at the displayed boundary.'],
+        ['Why exact bytes matter', 'A rounded label may conceal a small overage. Compare the actual file byte count with the exact ceiling, especially for application forms and automated upload checks.']
+      ],
+      example: { heading: 'Verified conversion', rows: [['Starting target', '75 KB'], ['Exact bytes', '75,000'], ['Equivalent KiB', '73.2421875 KiB'], ['Equivalent MB / MiB', '0.075 MB / 0.0715255737 MiB']], note: 'Switching the unit and returning to KB preserved the same 75,000-byte target.' },
+      sources: [['Unit definitions', 'Decimal units use powers of 1,000; binary IEC units use powers of 1,024.'], ['Example method', 'A 75 KB target was converted across KB, KiB, MB, and MiB and returned to the same 75,000-byte value.']]
+    },
+    {
+      slug: 'check-image-size-and-dpi', category: 'IMAGE METADATA', title: 'Check image size, pixels, and DPI',
+      intro: 'File bytes, pixel dimensions, transparency, and DPI describe different properties and should be checked separately.',
+      sections: [
+        ['File size and pixel dimensions', 'File size is the stored byte count. Pixel dimensions are width and height. Compression changes encoded bytes; resizing changes the pixel grid. Neither value can be inferred reliably from the other.'],
+        ['What DPI tells you', 'DPI is print-density metadata. It does not add detail to an image. Some files do not embed a density value, which should be reported as unavailable instead of being invented as 72 DPI.'],
+        ['A quick inspection workflow', 'Select the saved file in the size checker and record bytes, KB, KiB, width, height, aspect ratio, and alpha. Then use the DPI checker. Verify the receiving service’s own format and dimension rules separately.']
+      ],
+      example: { heading: 'Verified inspection', rows: [['JPEG', '320 × 240; no embedded DPI reported as “Not embedded”'], ['Opaque WebP', '320 × 240; no alpha channel indicated'], ['Alpha WebP', '320 × 240; alpha channel reported present'], ['Cropped PNG', '160 × 120; saved pixels matched the selected source region']], note: 'The checker reads actual file bytes and parsed image metadata locally; it does not infer DPI from pixel dimensions.' },
+      sources: [['Example method', 'Saved JPEG, opaque WebP, transparent WebP, and cropped PNG files were opened again to compare bytes, dimensions, alpha, and available density metadata.'], ['Privacy boundary', 'Selected files are read by the image tools in the browser and are not uploaded to PixelTokb.']]
+    }
+  ],
+  'zh-cn': [
+    { slug:'compress-without-changing-dimensions', category:'压缩基础', title:'不改变像素尺寸，如何压缩图片？', intro:'遇到文件体积限制时，可以先减少编码后的字节数，不必立即改变像素宽高。', sections:[['保持尺寸时可以改变什么？','JPEG 和 WebP 可以用部分细节换取更少字节，同时保持宽高不变。PNG 是无损格式；如果目标很小，除非减少像素或改用接收平台支持的其他格式，否则可能无法达到。'],['可复现的操作步骤','先检查原图尺寸和精确字节数，保持原始尺寸，选择接收平台支持的格式，设置字节目标并处理。只有结果不超过预算时才下载，再用检查工具重新读取保存文件。'],['需要了解的限制','达到字节目标不代表画质一定合格，也不保证接收平台通过。工具拒绝动态 PNG 和 WebP；静态 JPEG、PNG、WebP 输入上限为 20 MB 和 4000 万像素。']], example:{heading:'已验证样例',rows:[['原图','JPEG，320 × 240 像素'],['目标','20 KB（20,000 字节）'],['保存结果','JPEG，6,364 字节，320 × 240 像素'],['尺寸检查','宽高均未改变']],note:'下载后重新解码保存文件，并核对了 JPEG 签名、MIME、尺寸和精确字节数。'},sources:[['样例方法','将 320 × 240 JPEG 处理到 20,000 字节目标，再次打开保存文件，确认格式、尺寸与 6,364 字节的实际大小。'],['技术依据','是否达标只看生成 Blob 的实际字节数，不用四舍五入显示值代替。']]},
+    { slug:'why-image-wont-fit-50kb', category:'问题排查', title:'为什么图片可能无法压到 50 KB？', intro:'50 KB 是字节上限，并不保证每张原图都能在格式、尺寸和可见细节不变的情况下达到。', sections:[['图片内容会改变结果','平滑区域容易编码；头发、树叶、文字边缘、颗粒和相机噪点需要更多数据，因此同样像素尺寸的图片也可能产生完全不同的文件体积。'],['格式和透明度同样重要','JPEG 和 WebP 可以舍弃部分细节；PNG 无损保留像素，照片往往较大。需要透明背景时应选 PNG 或 WebP；导出 JPEG 必须明确选择背景色。'],['接下来可以怎么做','先确认接收平台允许哪些格式。支持 WebP 时可以尝试 WebP，否则允许缩小尺寸或提高字节预算。工具提示无法达到目标时，不要把四舍五入后的标签当作成功证据。']],example:{heading:'已验证样例',rows:[['JPEG 原图','320 × 240 → 6,364 字节 JPEG，低于 50 KB'],['WebP 原图','320 × 240 → 23,906 字节 WebP，低于 50 KB'],['高透明度 PNG，目标 10 KB','保持尺寸时无法达到；不提供下载']],note:'第三个案例验证了相同边界：某些格式、透明度、尺寸和字节预算组合不存在有效结果。'},sources:[['样例方法','使用静态 JPEG、WebP 和透明 PNG，在保持尺寸时比较可以达到和无法达到的字节目标。'],['判定规则','只有实际输出 Blob 不超过所选字节数才算成功，否则明确返回失败。']]},
+    { slug:'kb-vs-kib', category:'文件大小', title:'KB 与 KiB 有什么区别？上传限制该看哪个？', intro:'KB 与 KiB 代表不同的字节数；上传上限按精确数值执行时，这个差异很重要。',sections:[['十进制与二进制单位','1 KB 是 1,000 字节，1 KiB 是 1,024 字节；1 MB 是 1,000,000 字节，1 MiB 是 1,048,576 字节。'],['使用接收平台的单位','平台写 KB 就选择 KB，写 KiB 就选择 KiB。标注不明确时，不要卡着显示边界，应留出安全余量。'],['为什么要看精确字节数','四舍五入后的标签可能遮住少量超限。申请表和自动上传检查有严格上限时，应直接比较实际文件字节数。']],example:{heading:'已验证换算',rows:[['起始目标','75 KB'],['精确字节数','75,000'],['等值 KiB','73.2421875 KiB'],['等值 MB / MiB','0.075 MB / 0.0715255737 MiB']],note:'切换单位后再回到 KB，仍保持同一个 75,000 字节目标。'},sources:[['单位定义','十进制单位使用 1,000 的幂，IEC 二进制单位使用 1,024 的幂。'],['样例方法','将 75 KB 目标在 KB、KiB、MB 与 MiB 之间换算，再回到同一个 75,000 字节值。']]},
+    { slug:'check-image-size-and-dpi',category:'图片元数据',title:'如何检查图片大小、像素与 DPI？',intro:'文件字节数、像素尺寸、透明度和 DPI 是不同属性，需要分别检查。',sections:[['文件大小与像素尺寸','文件大小是存储的字节数，像素尺寸是宽和高。压缩改变编码字节，缩放改变像素网格，两者不能互相可靠推断。'],['DPI 能说明什么','DPI 是打印密度元数据，不会增加图片细节。有些文件不包含密度值，应显示为不可用，不能虚构为 72 DPI。'],['快速检查流程','在大小检查工具中选择保存文件，记录字节、KB、KiB、宽高、比例和透明度，再使用 DPI 检查工具。接收平台的格式与尺寸规则仍需另行核对。']],example:{heading:'已验证检查结果',rows:[['JPEG','320 × 240；未嵌入 DPI 时显示“未嵌入”'],['不透明 WebP','320 × 240；显示无透明通道'],['透明 WebP','320 × 240；显示存在透明通道'],['裁剪 PNG','160 × 120；保存像素与所选原图区域一致']],note:'检查器在本地读取实际文件字节和解析后的图片元数据，不根据像素尺寸猜测 DPI。'},sources:[['样例方法','再次打开保存的 JPEG、不透明 WebP、透明 WebP 与裁剪 PNG，对比字节、尺寸、透明度及可用密度元数据。'],['隐私边界','图片工具只在浏览器中读取所选文件，不会上传到 PixelTokb。']]}
+  ],
+  'zh-tw': [
+    { slug:'compress-without-changing-dimensions',category:'壓縮基礎',title:'不改變像素尺寸，如何壓縮圖片？',intro:'遇到檔案容量限制時，可以先減少編碼後的位元組數，不必立即改變像素寬高。',sections:[['維持尺寸時可以改變什麼？','JPEG 與 WebP 可以犧牲部分細節來減少位元組，同時維持寬高。PNG 是無損格式；若目標很小，除非減少像素或改用接收平台支援的其他格式，否則可能無法達標。'],['可重現的操作步驟','先檢查原圖尺寸與實際位元組數，維持原始尺寸，選擇接收平台支援的格式，設定目標並處理。只有結果不超過預算時才下載，再用檢查工具重新讀取儲存檔案。'],['需要了解的限制','達到位元組目標不代表畫質一定合格，也不保證接收平台通過。工具拒絕動態 PNG 與 WebP；靜態 JPEG、PNG、WebP 輸入上限為 20 MB 與 4,000 萬像素。']],example:{heading:'已驗證範例',rows:[['原圖','JPEG，320 × 240 像素'],['目標','20 KB（20,000 位元組）'],['儲存結果','JPEG，6,364 位元組，320 × 240 像素'],['尺寸檢查','寬高均未改變']],note:'下載後重新解碼儲存檔案，並核對 JPEG 簽章、MIME、尺寸與實際位元組數。'},sources:[['範例方法','將 320 × 240 JPEG 處理到 20,000 位元組目標，再次開啟儲存檔案，確認格式、尺寸與 6,364 位元組的實際大小。'],['技術依據','是否達標只看產生 Blob 的實際位元組數，不以四捨五入顯示值取代。']]},
+    { slug:'why-image-wont-fit-50kb',category:'問題排解',title:'為什麼圖片可能無法壓到 50 KB？',intro:'50 KB 是位元組上限，並不保證每張原圖都能在格式、尺寸與可見細節不變的情況下達標。',sections:[['圖片內容會改變結果','平滑區域容易編碼；頭髮、樹葉、文字邊緣、顆粒與相機雜訊需要更多資料，因此相同像素尺寸的圖片也可能產生完全不同的檔案大小。'],['格式與透明度同樣重要','JPEG 與 WebP 可以捨棄部分細節；PNG 無損保留像素，照片通常較大。需要透明背景時應選 PNG 或 WebP；匯出 JPEG 必須明確選擇背景色。'],['接下來可以怎麼做','先確認接收平台允許哪些格式。支援 WebP 時可以嘗試 WebP，否則允許縮小尺寸或提高位元組預算。工具提示無法達標時，不要把四捨五入後的標示當作成功證據。']],example:{heading:'已驗證範例',rows:[['JPEG 原圖','320 × 240 → 6,364 位元組 JPEG，低於 50 KB'],['WebP 原圖','320 × 240 → 23,906 位元組 WebP，低於 50 KB'],['高透明度 PNG，目標 10 KB','維持尺寸時無法達標；不提供下載']],note:'第三個案例驗證了相同界線：某些格式、透明度、尺寸與位元組預算組合不存在有效結果。'},sources:[['範例方法','使用靜態 JPEG、WebP 與透明 PNG，在維持尺寸時比較可以達到及無法達到的位元組目標。'],['判定規則','只有實際輸出 Blob 不超過所選位元組數才算成功，否則明確回報失敗。']]},
+    {slug:'kb-vs-kib',category:'檔案大小',title:'KB 與 KiB 有什麼不同？上傳限制該看哪個？',intro:'KB 與 KiB 代表不同的位元組數；上傳上限依實際數值執行時，這項差異很重要。',sections:[['十進位與二進位單位','1 KB 是 1,000 位元組，1 KiB 是 1,024 位元組；1 MB 是 1,000,000 位元組，1 MiB 是 1,048,576 位元組。'],['使用接收平台的單位','平台寫 KB 就選擇 KB，寫 KiB 就選擇 KiB。標示不明確時，不要卡著顯示界線，應保留安全餘量。'],['為什麼要看實際位元組數','四捨五入後的標示可能掩蓋少量超限。申請表與自動上傳檢查有嚴格上限時，應直接比較實際檔案位元組數。']],example:{heading:'已驗證換算',rows:[['起始目標','75 KB'],['實際位元組數','75,000'],['等值 KiB','73.2421875 KiB'],['等值 MB / MiB','0.075 MB / 0.0715255737 MiB']],note:'切換單位後再回到 KB，仍維持同一個 75,000 位元組目標。'},sources:[['單位定義','十進位單位使用 1,000 的次方，IEC 二進位單位使用 1,024 的次方。'],['範例方法','將 75 KB 目標在 KB、KiB、MB 與 MiB 之間換算，再回到同一個 75,000 位元組值。']]},
+    {slug:'check-image-size-and-dpi',category:'圖片中繼資料',title:'如何檢查圖片大小、像素與 DPI？',intro:'檔案位元組數、像素尺寸、透明度與 DPI 是不同屬性，需要分別檢查。',sections:[['檔案大小與像素尺寸','檔案大小是儲存的位元組數，像素尺寸是寬與高。壓縮改變編碼位元組，縮放改變像素網格，兩者不能互相可靠推斷。'],['DPI 能說明什麼','DPI 是列印密度中繼資料，不會增加圖片細節。有些檔案不含密度值，應顯示為無法取得，不能虛構為 72 DPI。'],['快速檢查流程','在大小檢查工具中選擇儲存檔案，記錄位元組、KB、KiB、寬高、長寬比與透明度，再使用 DPI 檢查工具。接收平台的格式與尺寸規定仍須另行核對。']],example:{heading:'已驗證檢查結果',rows:[['JPEG','320 × 240；未嵌入 DPI 時顯示「未嵌入」'],['不透明 WebP','320 × 240；顯示沒有透明色版'],['透明 WebP','320 × 240；顯示存在透明色版'],['裁切 PNG','160 × 120；儲存像素與所選原圖區域一致']],note:'檢查器在本機讀取實際檔案位元組與解析後的圖片中繼資料，不會根據像素尺寸猜測 DPI。'},sources:[['範例方法','再次開啟儲存的 JPEG、不透明 WebP、透明 WebP 與裁切 PNG，比較位元組、尺寸、透明度及可用密度中繼資料。'],['隱私界線','圖片工具只在瀏覽器中讀取所選檔案，不會上傳到 PixelTokb。']]}
+  ]
+};

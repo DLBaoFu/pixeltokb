@@ -1,0 +1,9 @@
+{
+  "seoAndRouteReview": { "status": "pass", "evidence": "delivery/evidence/seo-route-review.md" },
+  "contentAndLegalReview": { "status": "pass", "evidence": "delivery/evidence/content-legal-review.md" },
+  "realGuideExamples": { "status": "pass", "evidence": "delivery/evidence/real-guide-examples.md" },
+  "imageFixtureE2E": { "status": "pending", "evidence": "delivery/evidence/image-fixture-e2e.md" },
+  "crossBrowserDownloadAndAlpha": { "status": "pending", "evidence": "delivery/evidence/cross-browser-download-alpha.md" },
+  "wholeSiteVisualAndAccessibility": { "status": "pass", "evidence": "delivery/evidence/visual-accessibility.md" },
+  "cloudflareBudget": { "status": "pass", "evidence": "delivery/evidence/cloudflare-budget.md" }
+}

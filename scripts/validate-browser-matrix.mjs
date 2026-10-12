@@ -1,0 +1,139 @@
+import { spawn } from 'node:child_process';
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const origin = process.env.PREVIEW_ORIGIN || 'http://127.0.0.1:4321';
+const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const screenshotDirectory = process.argv[2];
+const profile = await mkdtemp(join(tmpdir(), 'pixeltokb-browser-matrix-'));
+const port = 9339;
+const processHandle = spawn(chrome, ['--headless=new', '--hide-scrollbars', '--disable-gpu', '--no-first-run', '--no-default-browser-check', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
+
+/** @param {number} ms */
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+/** @type {WebSocket | undefined} */
+let pageSocket;
+try {
+  let target;
+  for (let attempt = 0; attempt < 60; attempt++) {
+    try { target = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, { method: 'PUT' })).json(); break; }
+    catch { await delay(100); }
+  }
+  if (!target?.webSocketDebuggerUrl) throw new Error('Chrome debugging target did not become ready');
+  const socket = new WebSocket(target.webSocketDebuggerUrl);
+  pageSocket = socket;
+  await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
+  let commandId = 0;
+  /** @type {Map<number, {resolve: (value: any) => void, reject: (reason?: any) => void}>} */
+  const pending = new Map();
+  socket.addEventListener('message', (event) => {
+    const message = JSON.parse(event.data);
+    if (!message.id) return;
+    const request = pending.get(message.id);
+    if (!request) return;
+    pending.delete(message.id);
+    if (message.error) request.reject(new Error(message.error.message)); else request.resolve(message.result);
+  });
+  /** @param {string} method @param {Record<string, unknown>} [params] */
+  const send = (method, params = {}) => new Promise((resolve, reject) => {
+    const id = ++commandId;
+    pending.set(id, { resolve, reject });
+    socket.send(JSON.stringify({ id, method, params }));
+  });
+  /** @param {string} expression */
+  const evaluate = async (expression) => (await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })).result.value;
+  await send('Page.enable');
+  await send('Runtime.enable');
+
+  const paths = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/why-image-wont-fit-50kb/', '/blog/kb-vs-kib/', '/blog/check-image-size-and-dpi/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/how-it-works/', '/faq/', '/changelog/', '/authors/editor/', '/compress-image/', '/compress-image-200kb-to-500kb/', '/compress-image-500kb-to-1mb/', '/compress-image-2mb-to-5mb/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/'];
+  const localePrefixes = ['', '/zh-cn', '/zh-tw'];
+  const widths = [360, 390, 768, 1366];
+  const failures = [];
+  let checks = 0;
+
+  /** @param {string} url @param {number} width */
+  async function navigate(url, width) {
+    await send('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: width <= 620 });
+    await send('Page.navigate', { url });
+    const expectedPath = JSON.stringify(new URL(url).pathname);
+    for (let attempt = 0; attempt < 100; attempt++) {
+      if (await evaluate(`location.pathname === ${expectedPath} && document.readyState === "complete" && Boolean(document.querySelector('main')) && !document.querySelector('astro-island[ssr]')`)) return;
+      await delay(20);
+    }
+    throw new Error(`Timed out loading ${url}`);
+  }
+
+  for (const prefix of localePrefixes) for (const path of paths) for (const width of widths) {
+    const pathname = `${prefix}${path}`;
+    await navigate(`${origin}${pathname}`, width);
+    for (const theme of ['light', 'dark']) {
+      await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
+      await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
+      const result = await evaluate(`(() => {
+        const root=document.documentElement, body=document.body;
+        const bad=[];
+        if(!document.querySelector('header.site-header')) bad.push('header');
+        if(!document.querySelector('main')) bad.push('main');
+        if(!document.querySelector('footer.site-footer')) bad.push('footer');
+        if(document.querySelectorAll('h1').length!==1) bad.push('h1');
+        if(document.querySelectorAll('.language-menu a[aria-current="page"]').length!==1) bad.push('language-current');
+        if(Math.max(root.scrollWidth,body.scrollWidth)>innerWidth+1) bad.push('overflow:'+Math.max(root.scrollWidth,body.scrollWidth));
+        if(!document.querySelector('main')?.textContent?.trim()) bad.push('empty-main');
+        const isGuide=location.pathname.includes('/blog/')&&!location.pathname.includes('/category/')&&!location.pathname.endsWith('/blog/');
+        if(isGuide&&document.querySelectorAll('.example-panel dl div').length<3) bad.push('guide-example');
+        if(isGuide&&document.querySelectorAll('.review-status').length!==1) bad.push('guide-status');
+        return {bad,lang:root.lang,theme:root.dataset.theme};
+      })()`);
+      const expectedLang = prefix === '' ? 'en' : prefix === '/zh-cn' ? 'zh-CN' : 'zh-TW';
+      if (result.lang !== expectedLang) result.bad.push(`lang:${result.lang}`);
+      if (result.theme !== theme) result.bad.push(`theme:${result.theme}`);
+      checks++;
+      if (result.bad.length) failures.push({ pathname, width, theme, bad: result.bad });
+    }
+  }
+
+  for (const [prefix, expectedLang] of [['', 'en'], ['/zh-cn', 'zh-CN'], ['/zh-tw', 'zh-TW']]) for (const width of widths) {
+    const pathname = `${prefix}/not-a-real-route/`;
+    await navigate(`${origin}${pathname}`, width);
+    for (const theme of ['light', 'dark']) {
+      await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
+      const result = await evaluate(`({lang:document.documentElement.lang,h1:document.querySelectorAll('h1').length,noindex:Boolean(document.querySelector('meta[name="robots"][content*="noindex"]')),overflow:Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1})`);
+      checks++;
+      const bad = [];
+      if (result.lang !== expectedLang) bad.push(`lang:${result.lang}`);
+      if (result.h1 !== 1) bad.push('h1');
+      if (!result.noindex) bad.push('noindex');
+      if (result.overflow) bad.push('overflow');
+      if (bad.length) failures.push({ pathname, width, theme, bad });
+    }
+  }
+
+  if (screenshotDirectory) {
+    await mkdir(screenshotDirectory, { recursive: true });
+    const families = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/compress-image/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/changelog/', '/authors/editor/', '/not-a-real-route/'];
+    let index = 0;
+    for (const prefix of localePrefixes) for (const path of families) {
+      const width = widths[index % widths.length];
+      const theme = index % 2 ? 'dark' : 'light';
+      await navigate(`${origin}${prefix}${path}`, width);
+      await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
+      await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
+      const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, fromSurface: true });
+      const locale = prefix ? prefix.slice(1) : 'en';
+      const family = path === '/' ? 'home' : path.replace(/^\//, '').replace(/\/$/, '').replaceAll('/', '-');
+      await writeFile(join(screenshotDirectory, `${String(index + 1).padStart(2, '0')}-${locale}-${family}-${width}-${theme}.png`), Buffer.from(data, 'base64'));
+      index++;
+    }
+  }
+  console.log(JSON.stringify({ checks, failures, screenshots: screenshotDirectory ? 69 : 0 }));
+  if (failures.length) process.exitCode = 1;
+} finally {
+  pageSocket?.close();
+  processHandle.kill('SIGTERM');
+  await Promise.race([
+    new Promise((resolve) => processHandle.once('exit', resolve)),
+    delay(2000)
+  ]);
+  await rm(profile, { recursive: true, force: true });
+}

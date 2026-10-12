@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+const categories = {
+  tutorials: { title: '图片使用教程', intro: '从选择格式、达到上传要求，到核对处理结果的实用步骤。', articles: [['不改变像素尺寸，如何压缩图片？', '了解何时调整编码画质，何时必须改变像素尺寸。', 'compress-without-changing-dimensions'], ['KB 与 KiB 有什么区别？', '理解十进制与二进制文件大小上限。', 'kb-vs-kib'], ['如何检查图片大小、像素与 DPI？', '分别查看文件大小、尺寸和打印元数据。', 'check-image-size-and-dpi']] },
+  troubleshooting: { title: '图片问题排查', intro: '了解图片为什么未达到目标大小，以及下一步可以安全尝试什么。', articles: [['为什么图片可能无法压到 50 KB？', '了解图片细节、透明度、格式和像素尺寸如何影响输出体积。', 'why-image-wont-fit-50kb']] }
+};
+export function getStaticPaths() { return ['tutorials', 'troubleshooting'].map((category) => ({ params: { category }, props: { category } })); }
+const category = categories[Astro.props.category as keyof typeof categories];
+---
+<BaseLayout locale="zh-cn" title={category.title} description={category.intro}><div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · 指南</p><h1>{category.title}</h1><p>{category.intro}</p></div><div class="editorial-grid">{category.articles.map(([title, text, slug]) => <a class="article-card" href={`/zh-cn/blog/${slug}/`}><span class="directory-icon" aria-hidden="true">✳</span><h2>{title}</h2><p>{text}</p><span class="card-action">阅读指南 <span aria-hidden="true">→</span></span></a>)}</div><div class="directory-section"><p><a href="/zh-cn/blog/">← 所有指南</a></p></div></div></BaseLayout>

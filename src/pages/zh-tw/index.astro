@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompressionTool from '../../components/CompressionTool';
+---
+<BaseLayout locale="zh-tw" title="依目標大小壓縮圖片" description="在瀏覽器本機選擇 10 KB 至 5 MB 的壓縮區間、常用預設或自訂目標大小。">
+  <div class="home-shell"><div class="hero"><h1>讓每個像素<span>恰到好處。</span></h1><p>在瀏覽器本機壓縮、縮放與檢查圖片。</p></div><CompressionTool client:load locale="zh-tw" /></div>
+</BaseLayout>

@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+const tools = [
+  { icon: '↘', title: '压缩图片', text: '按目标体积压缩，并在下载前精确检查实际字节数。', href: '/zh-cn/compress-image/', action: '打开压缩工具' },
+  { icon: '↔', title: '缩放图片', text: '设置精确像素宽高，并选择适合的适配方式。', href: '/zh-cn/resize-image/', action: '调整图片尺寸' },
+  { icon: '⌗', title: '裁剪图片', text: '直接在预览图上选择区域，或输入像素坐标。', href: '/zh-cn/crop-image/', action: '打开裁剪工具' },
+  { icon: '▤', title: '图片大小检查', text: '查看精确字节数、KB 与 KiB、像素尺寸和透明度。', href: '/zh-cn/image-size-checker/', action: '检查图片信息' },
+  { icon: '◉', title: 'DPI 检查', text: '读取文件中实际存在的打印分辨率元数据。', href: '/zh-cn/image-dpi-checker/', action: '查看 DPI' }
+];
+const ranges = [['10–100 KB', '/zh-cn/compress-image/'], ['200–500 KB', '/zh-cn/compress-image-200kb-to-500kb/'], ['500 KB–1 MB', '/zh-cn/compress-image-500kb-to-1mb/'], ['2–5 MB', '/zh-cn/compress-image-2mb-to-5mb/']];
+---
+<BaseLayout locale="zh-cn" title="图片工具" description="在浏览器本地压缩、缩放、裁剪和检查图片。">
+  <div class="directory-page">
+    <div class="hero"><p class="eyebrow">PIXELTOKB · 图片工作台</p><h1>关注每个细节的图片工具。</h1><p>缩小文件体积、设定精确像素尺寸，或检查图片元数据——全部在浏览器本地完成，图片不会离开你的设备。</p></div>
+    <div class="directory-note"><span aria-hidden="true">✳</span><div><strong>隐私，从设计开始</strong>文件只在浏览器中处理，不会上传到 pixeltokb 服务器。</div></div>
+    <div class="tool-card-grid">{tools.map((tool) => <a class="tool-card" href={tool.href}><span class="directory-icon" aria-hidden="true">{tool.icon}</span><h2>{tool.title}</h2><p>{tool.text}</p><span class="card-action">{tool.action}<span aria-hidden="true">→</span></span></a>)}</div>
+    <section class="directory-section"><h2>按任务浏览</h2><div class="category-nav"><a href="/zh-cn/tools/compress/">图片压缩</a><a href="/zh-cn/tools/resize/">缩放和裁剪</a><a href="/zh-cn/tools/inspect/">图片信息检查</a></div></section>
+    <section class="directory-section"><h2>选择压缩规格</h2><p>四个规格页共用同一套压缩工具，各自提供合适的预设与自定义目标。下载前会核对实际字节数。</p><div class="preset-links">{ranges.map(([label, href]) => <a class="preset-link" href={href}><strong>{label}</strong><span>打开压缩工具 →</span></a>)}</div></section>
+  </div>
+</BaseLayout>

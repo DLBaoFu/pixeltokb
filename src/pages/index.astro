@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CompressionTool from '../components/CompressionTool';
+---
+<BaseLayout title="Compress images to a target size" description="Compress images locally with target ranges from 10 KB to 5 MB, presets, and a custom byte target in your browser.">
+  <div class="home-shell"><div class="hero"><h1>Make every pixel <span>fit.</span></h1><p>Compress, resize, and inspect images locally in your browser.</p></div><CompressionTool client:load /></div>
+</BaseLayout>

@@ -1,0 +1,10 @@
+{
+  "siteId": "kb",
+  "origin": "https://www.pixeltokb.com",
+  "operator": "PixelTokb",
+  "contactEmail": "Support@piexltokb.com",
+  "contactEmailVerified": false,
+  "adsMode": "off",
+  "cmsEnabled": false,
+  "defaultLocale": "en"
+}
