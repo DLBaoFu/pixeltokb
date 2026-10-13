@@ -59,6 +59,8 @@ try {
     const nodeId = (await send('DOM.querySelector', { nodeId: root.nodeId, selector })).nodeId;
     if (!nodeId) throw new Error(`Missing ${selector}`);
     await send('DOM.setFileInputFiles', { files: [fixture], nodeId });
+    await evaluate(`document.querySelector(${JSON.stringify(selector)})?.dispatchEvent(new Event('change', { bubbles: true }))`);
+    await delay(250);
   };
   /** @param {string} theme */
   const applyTheme = async (theme) => evaluate(`(() => {
@@ -78,6 +80,9 @@ try {
 
   const locales = ['', '/zh-cn', '/zh-tw'];
   const workflows = [
+    { name: 'compress-20kb', path: '/compress-image/?target=20&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
+    { name: 'compress-50kb', path: '/compress-image/?target=50&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
+    { name: 'compress-75kb', path: '/compress-image/?target=75&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
     { name: 'compress-100kb', path: '/compress-image/?target=100&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
     { name: 'resize', path: '/resize-image/', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".tool-shell > button:not(.cancel-action)")?.click()' },
     { name: 'crop', path: '/crop-image/', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
@@ -89,7 +94,7 @@ try {
     await waitFor('document.readyState === "complete" && Boolean(document.querySelector("main")) && Boolean(document.querySelector("input[type=file]"))');
     await applyTheme('light');
     await upload('input[type=file]');
-    await waitFor('Boolean(document.querySelector("[data-image-selected=\\"true\\"]")) || Boolean(document.querySelector(".info-grid"))');
+    await waitFor('Boolean(document.querySelector("[data-image-selected=\\"true\\"]")) || Boolean(document.querySelector(".info-grid")) || Boolean(document.querySelector("input[type=file]")?.files?.length)');
     if (workflow.action) await evaluate(workflow.action);
     await waitFor(workflow.ready);
     await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
