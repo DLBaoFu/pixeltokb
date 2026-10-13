@@ -4,7 +4,7 @@ import test from 'node:test';
 import { layoutCopy, publishedLocales } from '../../src/lib/locales.ts';
 import { toTraditional } from '../../src/lib/traditionalize-text.ts';
 
-const simplifiedOnly = /[图过标万仅静态当设无达浏览编码处时请尝试读确认损坏备进压缩绪选择须间输节检载败传为后点击实数会画质还吗决于细调许体积减应该广网么难采并适来将这预义单动结离开终获从项场邮带见问题张宽显铺满内区侧顶发现据说变]/u;
+const simplifiedOnly = /[图过标万仅静态当设无达浏览编码处时请尝试读确认损坏备进压缩绪选择须间输节检载败传为后点击实数会画质还吗决于细调许体积减应该广网么难采并适来将这预义单动结离开终获从项场邮带见问题张宽显铺满内区侧顶发现据说变种优类与兼]/u;
 
 test('published language names follow the current interface language', () => {
   assert.deepEqual(publishedLocales, ['en', 'zh-cn', 'zh-tw']);
@@ -18,6 +18,9 @@ test('Traditional Chinese conversion covers active UI and preserves user filenam
   const result = toTraditional(`选择静态图片。铺满并居中裁切。文件：${filename}`, [filename]);
   assert.equal(result, `選擇靜態圖片。填滿並置中裁切。檔案：${filename}`);
   assert.equal(toTraditional('截图、标志和图片'), '螢幕截圖、標誌和圖片');
+  assert.equal(toTraditional('应该选择哪种图片格式？照片和通用兼容性优先。'), '應該選擇哪種圖片格式？照片和通用相容性優先。');
+  assert.equal(toTraditional('图片文件类型与格式指南'), '圖片檔案類型與格式指南');
+  assert.equal(toTraditional('图片格式比较表'), '圖片格式比較表');
 });
 
 test('authored Chinese tool labels and status messages have no known simplified-only glyphs after conversion', async () => {
