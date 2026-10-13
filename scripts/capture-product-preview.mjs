@@ -6,8 +6,11 @@ const origin = process.env.PREVIEW_ORIGIN || 'http://127.0.0.1:4321';
 const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const output = resolve(process.argv[2] || 'docs/product-preview/crop-image-light.png');
 const theme = process.argv[3] || 'light';
+const pathname = process.argv[4] || '/crop-image/';
+const expectedTitle = process.argv[5] || 'Crop image online';
 
 if (!['light', 'dark'].includes(theme)) throw new Error('Theme must be light or dark.');
+if (!pathname.startsWith('/') || !pathname.endsWith('/')) throw new Error('Pathname must be an absolute directory-style route.');
 
 const profile = await (async () => {
   const { mkdtemp } = await import('node:fs/promises');
@@ -55,11 +58,11 @@ try {
   await send('Page.enable');
   await send('Runtime.enable');
   await send('Emulation.setDeviceMetricsOverride', { width: 1366, height: 900, deviceScaleFactor: 1, mobile: false });
-  await send('Page.navigate', { url: `${origin}/crop-image/` });
+  await send('Page.navigate', { url: `${origin}${pathname}` });
   for (let attempt = 0; attempt < 100; attempt++) {
     if (await evaluate('document.readyState === "complete" && Boolean(document.querySelector("main"))')) break;
     await delay(30);
-    if (attempt === 99) throw new Error('Timed out loading the crop page');
+    if (attempt === 99) throw new Error(`Timed out loading ${pathname}`);
   }
 
   const state = await evaluate(`(() => {
@@ -80,12 +83,12 @@ try {
       title: document.querySelector('h1')?.textContent?.trim()
     };
   })()`);
-  if (state.theme !== theme || state.preference !== theme || state.active !== theme || state.title !== 'Crop image online') throw new Error(`Preview state did not settle: ${JSON.stringify(state)}`);
+  if (state.theme !== theme || state.preference !== theme || state.active !== theme || state.title !== expectedTitle) throw new Error(`Preview state did not settle: ${JSON.stringify(state)}`);
   await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
   const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, fromSurface: true });
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, Buffer.from(data, 'base64'));
-  console.log(JSON.stringify({ output, pathname: '/crop-image/', ...state }));
+  console.log(JSON.stringify({ output, pathname, ...state }));
 } finally {
   socket?.close();
   browser.kill('SIGTERM');
