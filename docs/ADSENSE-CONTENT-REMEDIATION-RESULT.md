@@ -22,7 +22,7 @@
 
 已在 `public/_redirects` 增加三种语言的旧规格路径一跳 301 规则。目标直接进入相应语言的 `/compress-image/` 并带 `preset`，不经过第二个旧页面。其他已有 `compress-jpg`、`compress-jpeg` 和 `target` 别名也改为直接指向统一工具。
 
-本地构建后的规则由 `scripts/validate-redirects.mjs` 校验；生产域名在本次本地改动尚未部署前仍是旧基线，当前三个旧英文规格地址返回 200，不能写成线上已跳转。
+本地构建后的规则由 `scripts/validate-redirects.mjs` 校验。提交 `c30b520` 已推送 `main`，Cloudflare 已生成版本 `e6277530`；生产复核确认九个三语旧规格地址均为一跳 HTTP 301，分别指向对应语言的统一工具并保留 `preset`。
 
 ### 3. 博客真实案例
 
@@ -43,6 +43,6 @@
 
 ## 仍待人工或生产环境确认
 
-- 本次未推送、未部署；生产旧规格 URL 的 301 结果仍待 Cloudflare 自动部署完成后复测。
+- 生产域名的旧规格 301、主工具 200、sitemap/robots/ads.txt 可读和繁体文案已完成线上复核；Cloudflare 构建详情显示 `c30b520` 的构建与部署阶段完成。
 - Safari、Edge、真实 iOS/Android 设备的视觉与下载矩阵不由本地 Chrome 证据替代。
 - AdSense 审批结果、CMP 账户配置和 Search Console 报告不由源码或本地构建推断。

@@ -20,14 +20,6 @@
 
 `public/_redirects` 已包含以上 9 条一跳 301 规则；目标路径在构建产物中只对应统一的 `/compress-image/` 页面。`scripts/validate-redirects.mjs` 会检查状态码为 301、目标文件存在、无自身跳转和无已知跳转链。查询参数不会生成新的静态页面，客户端压缩器会读取 `preset` 并选中对应推荐目标。
 
-## 生产基线（本次改动部署前）
+## 生产线上核验
 
-在 2026-10-13 本次本地修改完成前，以下三个英文旧地址由 `curl -I https://www.pixeltokb.com/<path>/` 读取为 HTTP 200，未返回 Location。这是部署前基线，不是本次整改后的线上结果：
-
-| 地址 | 当前生产基线 |
-|---|---|
-| `/compress-image-200kb-to-500kb/` | 200，无 Location |
-| `/compress-image-500kb-to-1mb/` | 200，无 Location |
-| `/compress-image-2mb-to-5mb/` | 200，无 Location |
-
-部署后必须重新执行各语言、普通 UA、Googlebot UA 的 `curl -I`，确认 301、Location、最终主工具 200，以及参数页面的 canonical 无查询参数。
+提交 `c30b520`（Cloudflare 版本 `e6277530`）部署后，普通 UA 线上核验确认上表九个地址均返回一跳 HTTP 301，`Location` 分别为对应语言的 `/compress-image/?preset=...`；主工具返回 200，查询参数页面的 canonical 不带查询参数。`Googlebot` UA 访问 `/compress-image/` 返回 200。旧规格 slug 不在生产 `sitemap.xml`。

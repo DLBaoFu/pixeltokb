@@ -1,17 +1,17 @@
 # SEO / AdSense 技术审计
 
 日期：2026-10-13
-用途：供人工复核的事实记录。本文件不对本轮尚未部署的配置作猜测性结论。
+用途：供人工复核的事实记录。线上事实仅记录本轮实际响应和浏览器证据，不把 AdSense 后台状态推断为已批准。
 
 ## 当前生产只读事实
 
 | 项目 | 实测结果 |
 |---|---|
 | `https://www.pixeltokb.com/robots.txt` | HTTP 200，`text/plain`；包含 `Sitemap: https://www.pixeltokb.com/sitemap.xml` |
-| `https://www.pixeltokb.com/sitemap.xml` | HTTP 200，`application/xml`；当前线上响应含 69 个 `<loc>` |
+| `https://www.pixeltokb.com/sitemap.xml` | HTTP 200，`application/xml`；当前线上响应含 60 个 `<loc>`，不含旧规格 slug |
 | `https://www.pixeltokb.com/ads.txt` | HTTP 200，`text/plain`；内容为 `google.com, pub-9264530196706730, DIRECT, f08c47fec0942fa0` |
 | `/blog/`、`/zh-cn/`、`/zh-tw/` | 当前线上页面可读取 self-canonical、`en`、`zh-CN`、`zh-TW` 和 `x-default` alternate |
-| 三个旧英文规格地址 | 本次整改部署前为 HTTP 200、无 Location；整改后的 301 尚未在线上验证 |
+| 三语言九个旧规格地址 | HTTP 301；`Location` 指向对应语言 `/compress-image/?preset=...`，一跳完成 |
 | AdSense JavaScript | 当前生产页面没有 `adsbygoogle` / `pagead.googlesyndication` loader；`adsMode` 仍为 off |
 
 ## 本地源码与构建事实
@@ -23,6 +23,7 @@
 - `scripts/generate-sitemap.mjs` 只从 `routes.json` 的 R1 生成页面和 canonical 计算 Sitemap；迁移的三个旧规格条目改为 R2，不会进入 indexable URL 集合。
 - 页面元信息由 `BaseLayout.astro` 输出：title、description、author、robots、canonical、hreflang、Open Graph、Twitter 和 JSON-LD。最终本地构建已成功：85 个页面、84 个 R1 路由、60 个可索引 Sitemap URL；查询参数不新增 Sitemap URL。
 - Cloudflare/GitHub 仍沿用现有架构；本轮未改 `wrangler.jsonc`、Worker 绑定、GitHub 远端或部署凭据。
+- 本轮最终提交为 `c30b520`，Cloudflare 构建版本为 `e6277530`；构建详情中的初始化、克隆、安装、构建和部署阶段均已完成，生产页面已返回修正后的繁体词组。
 
 ## AdSense 边界
 
@@ -30,6 +31,6 @@
 
 ## 待人工复核
 
-- Cloudflare 新版本部署完成后的旧 URL 301、Location、最终 200、Googlebot 抓取和参数 canonical。
+- AdSense 专用爬虫（`Mediapartners-Google` / `Google-Display-Ads-Bot`）是否被账户和 Cloudflare 安全规则允许；普通 Googlebot 200 不能替代该后台证据。
 - GSC URL Inspection、索引状态和性能数据（账号配置由运营者确认正常，但本文件不保存凭据）。
 - 邮箱收发、AdSense 站点审核、CMP 账户配置和真实设备/跨浏览器下载矩阵。
