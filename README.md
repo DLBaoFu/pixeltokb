@@ -14,7 +14,7 @@
 
 ### Image cropping
 
-![PixelToKB image cropping in dark mode](docs/product-preview/crop-image-dark.png)
+![PixelToKB image cropping in light mode](docs/product-preview/crop-image-light.png)
 
 ## Image tools
 

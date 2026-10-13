@@ -15,6 +15,7 @@
     "check:a11y": "node scripts/validate-accessibility.mjs",
     "check:release": "node scripts/check-release.mjs",
     "build": "node scripts/build.mjs",
+    "capture:product-preview": "node scripts/capture-product-preview.mjs",
     "evidence:delivery": "node scripts/generate-delivery-evidence.mjs",
     "preview": "astro preview"
   },

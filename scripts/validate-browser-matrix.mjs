@@ -43,6 +43,18 @@ try {
   });
   /** @param {string} expression */
   const evaluate = async (expression) => (await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })).result.value;
+  /** @param {string} theme */
+  const applyTheme = async (theme) => evaluate(`(() => {
+    const root = document.documentElement;
+    localStorage.setItem('pixeltokb-theme', ${JSON.stringify(theme)});
+    root.dataset.theme = ${JSON.stringify(theme)};
+    root.dataset.themePreference = ${JSON.stringify(theme)};
+    document.querySelectorAll('[data-theme-choice]').forEach((button) => {
+      const active = button.getAttribute('data-theme-choice') === ${JSON.stringify(theme)};
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  })()`);
   await send('Page.enable');
   await send('Runtime.enable');
 
@@ -68,7 +80,7 @@ try {
     const pathname = `${prefix}${path}`;
     await navigate(`${origin}${pathname}`, width);
     for (const theme of ['light', 'dark']) {
-      await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
+      await applyTheme(theme);
       await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
       const result = await evaluate(`(() => {
         const root=document.documentElement, body=document.body;
@@ -97,7 +109,7 @@ try {
     const pathname = `${prefix}/not-a-real-route/`;
     await navigate(`${origin}${pathname}`, width);
     for (const theme of ['light', 'dark']) {
-      await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
+      await applyTheme(theme);
       const result = await evaluate(`({lang:document.documentElement.lang,h1:document.querySelectorAll('h1').length,noindex:Boolean(document.querySelector('meta[name="robots"][content*="noindex"]')),overflow:Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1})`);
       checks++;
       const bad = [];
@@ -117,7 +129,7 @@ try {
       const width = widths[index % widths.length];
       const theme = index % 2 ? 'dark' : 'light';
       await navigate(`${origin}${prefix}${path}`, width);
-      await evaluate(`document.documentElement.dataset.theme=${JSON.stringify(theme)}`);
+      await applyTheme(theme);
       await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
       const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, fromSurface: true });
       const locale = prefix ? prefix.slice(1) : 'en';
