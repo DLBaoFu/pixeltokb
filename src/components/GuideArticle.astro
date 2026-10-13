@@ -5,19 +5,58 @@ interface Props { locale: PublishedLocale; slug: string; }
 const { locale, slug } = Astro.props;
 const guide = guides[locale].find((item) => item.slug === slug)!;
 const prefix = locale === 'en' ? '' : `/${locale}`;
+const inspectionGuide = slug === 'check-image-size-and-dpi';
+
+const workflow = {
+  en: inspectionGuide ? {
+    situation: 'Open this before you edit anything. It gives you the numbers a portal is likely to ask for, without mixing file size, pixels, and print metadata together.',
+    steps: [['Choose the file once', 'Pick the image from your device; the checker reads it in the browser.'], ['Read each field on its own', 'Bytes, pixel dimensions, ratio, transparency, and DPI answer different questions.'], ['Take the next action that fits the problem', 'Compress for bytes, resize for pixels, and crop when only part of the image should remain.']],
+    image: 'inspect', caption: 'Actual browser inspection of a local 320 × 240 JPEG: 2,930 bytes, 2.93 KB, 2.86 KiB, format, ratio, and transparency are shown separately.',
+    links: [['Check image size', '/image-size-checker/'], ['Check DPI metadata', '/image-dpi-checker/']]
+  } : {
+    situation: 'Start with the requirement from the place you are uploading to. The useful question is not “how small can this get?” but “what exact file will that place accept?”',
+    steps: [['Check the whole requirement', 'Confirm the byte limit, accepted formats, and any pixel or transparency rule first.'], ['Set the same target in the compressor', 'Use KB, KiB, MB, or MiB exactly as the destination writes it; keep dimensions on unless smaller pixels are allowed.'], ['Use the result card as your last check', 'It shows the generated file’s actual format, pixels, and bytes before you download it.']],
+    image: 'compress-100kb', caption: 'A complete browser run with a 320 × 240 JPEG and a decimal 100 KB target. The generated JPEG is 6,364 bytes and becomes downloadable only after that check.',
+    links: [['Open the compressor', '/compress-image/'], ['Check the downloaded file', '/image-size-checker/']]
+  },
+  'zh-cn': inspectionGuide ? {
+    situation: '修改图片前先看一眼。它会把上传页面常问到的数据拆开显示，不会把文件体积、像素和打印信息混为一谈。',
+    steps: [['一次选择文件', '从设备选择图片，检查工具会在浏览器本地读取。'], ['每个数值单独看', '字节数、像素尺寸、比例、透明度和 DPI 回答的是不同问题。'], ['按问题选择下一步', '文件太大用压缩，像素不合规用缩放，只保留局部时用裁剪。']],
+    image: 'inspect', caption: '浏览器真实读取本地 320 × 240 JPEG：2,930 字节、2.93 KB、2.86 KiB、格式、比例和透明度分别显示。',
+    links: [['检查图片大小', '/image-size-checker/'], ['检查 DPI 信息', '/image-dpi-checker/']]
+  } : {
+    situation: '先看上传页面的完整要求。真正有用的问题不是“能压到多小”，而是“这个平台到底接收什么样的文件”。',
+    steps: [['确认完整规则', '先看字节上限、支持的格式、像素要求以及是否必须保留透明背景。'], ['在压缩器里设成同一个目标', '平台写 KB、KiB、MB 或 MiB，就选同一单位；除非允许改变像素，否则保持原始尺寸。'], ['把结果卡当成最后一步', '下载前它会显示生成文件的实际格式、像素和字节数。']],
+    image: 'compress-100kb', caption: '完整的浏览器操作：320 × 240 JPEG，十进制 100 KB 目标；生成的 JPEG 为 6,364 字节，通过检查后才可下载。',
+    links: [['打开压缩工具', '/compress-image/'], ['检查下载文件', '/image-size-checker/']]
+  },
+  'zh-tw': inspectionGuide ? {
+    situation: '修改圖片前先看一眼。它會把上傳頁面常問的資料拆開顯示，不會把檔案容量、像素和列印資訊混為一談。',
+    steps: [['一次選擇檔案', '從裝置選擇圖片，檢查工具會在瀏覽器本機讀取。'], ['每個數值單獨看', '位元組數、像素尺寸、比例、透明度和 DPI 回答的是不同問題。'], ['依問題選擇下一步', '檔案太大用壓縮，像素不合規用縮放，只保留局部時用裁切。']],
+    image: 'inspect', caption: '瀏覽器真實讀取本機 320 × 240 JPEG：2,930 位元組、2.93 KB、2.86 KiB、格式、比例和透明度分別顯示。',
+    links: [['檢查圖片大小', '/image-size-checker/'], ['檢查 DPI 資訊', '/image-dpi-checker/']]
+  } : {
+    situation: '先看上傳頁面的完整要求。真正有用的問題不是「能壓到多小」，而是「這個平台到底接受什麼樣的檔案」。',
+    steps: [['確認完整規則', '先看位元組上限、支援格式、像素要求以及是否必須保留透明背景。'], ['在壓縮器中設定相同目標', '平台寫 KB、KiB、MB 或 MiB，就選同一單位；除非允許改變像素，否則維持原始尺寸。'], ['把結果卡當成最後一步', '下載前它會顯示產生檔案的實際格式、像素和位元組數。']],
+    image: 'compress-100kb', caption: '完整的瀏覽器操作：320 × 240 JPEG，十進位 100 KB 目標；產生的 JPEG 為 6,364 位元組，通過檢查後才可下載。',
+    links: [['開啟壓縮工具', '/compress-image/'], ['檢查下載檔案', '/image-size-checker/']]
+  }
+}[locale];
+
 const labels = {
-  en: { evidence: 'Evidence and sources', status: 'Editorial status', statusText: 'Reviewed by the PixelTokb editorial team on 11 October 2026. Technical claims, examples, limitations, and the three language versions were checked; this is not professional advice.', practice: 'Put it into practice', check: 'Check an image', compress: 'Open the compressor' },
-  'zh-cn': { evidence: '证据与来源', status: '编辑状态', statusText: '由 PixelTokb 编辑团队于 2026年10月11日审核。技术说法、实测样例、限制和三语版本已经核对；内容不构成专业建议。', practice: '开始检查图片', check: '检查图片信息', compress: '打开图片压缩工具' },
-  'zh-tw': { evidence: '證據與來源', status: '編輯狀態', statusText: '由 PixelTokb 編輯團隊於 2026年10月11日審核。技術說法、實測範例、限制及三語版本已查核；內容不構成專業建議。', practice: '開始檢查圖片', check: '檢查圖片資訊', compress: '開啟圖片壓縮工具' }
+  en: { use: 'Start with the real upload rule', steps: 'Do this in the browser', proof: 'What this browser run shows', details: 'A few things that change the outcome', next: 'Continue with the tool' },
+  'zh-cn': { use: '先从真实上传要求开始', steps: '在浏览器里这样做', proof: '这次浏览器操作显示了什么', details: '几个会影响结果的地方', next: '继续使用工具' },
+  'zh-tw': { use: '先從真實上傳要求開始', steps: '在瀏覽器裡這樣做', proof: '這次瀏覽器操作顯示了什麼', details: '幾個會影響結果的地方', next: '繼續使用工具' }
 }[locale];
 ---
 <BaseLayout locale={locale} title={guide.title} description={guide.intro}>
   <article class="guide-article">
     <div class="hero"><p class="eyebrow">{guide.category} · PIXELTOKB</p><h1>{guide.title}</h1><p>{guide.intro}</p></div>
-    {guide.sections.map(([heading, text]) => <section><h2>{heading}</h2><p>{text}</p></section>)}
-    <section class="example-panel"><h2>{guide.example.heading}</h2><dl>{guide.example.rows.map(([term, detail]) => <div><dt>{term}</dt><dd>{detail}</dd></div>)}</dl><p>{guide.example.note}</p></section>
-    <section><h2>{labels.evidence}</h2><ul>{guide.sources.map(([source, detail]) => <li><strong>{source}:</strong> {detail}</li>)}</ul></section>
-    <aside class="review-status"><strong>{labels.status}</strong><p>{labels.statusText}</p></aside>
-    <section><h2>{labels.practice}</h2><p><a href={`${prefix}/image-size-checker/`}>{labels.check}</a> · <a href={`${prefix}/compress-image/`}>{labels.compress}</a></p></section>
+    <section class="guide-situation"><h2>{labels.use}</h2><p>{workflow.situation}</p></section>
+    <section><h2>{labels.steps}</h2><ol class="guide-steps">{workflow.steps.map(([step, detail]) => <li><strong>{step}</strong><span>{detail}</span></li>)}</ol></section>
+    <figure class="guide-screenshot"><img src={`/blog-workflows/${locale}/${workflow.image}.png`} alt={workflow.caption} loading="lazy" /><figcaption>{workflow.caption}</figcaption></figure>
+    <section class="example-panel"><h2>{labels.proof}</h2><dl>{guide.example.rows.map(([term, detail]) => <div><dt>{term}</dt><dd>{detail}</dd></div>)}</dl><p>{guide.example.note}</p></section>
+    <section class="guide-details"><h2>{labels.details}</h2>{guide.sections.map(([heading, text]) => <div><h3>{heading}</h3><p>{text}</p></div>)}</section>
+    <section class="guide-next"><h2>{labels.next}</h2><div>{workflow.links.map(([label, href]) => <a href={`${prefix}${href}`}>{label} <span aria-hidden="true">→</span></a>)}</div></section>
   </article>
 </BaseLayout>

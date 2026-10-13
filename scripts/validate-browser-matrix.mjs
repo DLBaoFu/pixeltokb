@@ -6,6 +6,7 @@ import { join } from 'node:path';
 const origin = process.env.PREVIEW_ORIGIN || 'http://127.0.0.1:4321';
 const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const screenshotDirectory = process.argv[2];
+let screenshotCount = 0;
 const profile = await mkdtemp(join(tmpdir(), 'pixeltokb-browser-matrix-'));
 const port = 9339;
 const processHandle = spawn(chrome, ['--headless=new', '--hide-scrollbars', '--disable-gpu', '--no-first-run', '--no-default-browser-check', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
@@ -81,7 +82,6 @@ try {
     await navigate(`${origin}${pathname}`, width);
     for (const theme of ['light', 'dark']) {
       await applyTheme(theme);
-      await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
       const result = await evaluate(`(() => {
         const root=document.documentElement, body=document.body;
         const bad=[];
@@ -94,7 +94,12 @@ try {
         if(!document.querySelector('main')?.textContent?.trim()) bad.push('empty-main');
         const isGuide=location.pathname.includes('/blog/')&&!location.pathname.includes('/category/')&&!location.pathname.endsWith('/blog/');
         if(isGuide&&document.querySelectorAll('.example-panel dl div').length<3) bad.push('guide-example');
-        if(isGuide&&document.querySelectorAll('.review-status').length!==1) bad.push('guide-status');
+        if (isGuide && (
+          document.querySelectorAll('.guide-situation').length !== 1 ||
+          document.querySelectorAll('.guide-steps li').length < 3 ||
+          document.querySelectorAll('.guide-screenshot img').length !== 1 ||
+          document.querySelectorAll('.review-status').length !== 0
+        )) bad.push('guide-workflow');
         return {bad,lang:root.lang,theme:root.dataset.theme};
       })()`);
       const expectedLang = prefix === '' ? 'en' : prefix === '/zh-cn' ? 'zh-CN' : 'zh-TW';
@@ -130,15 +135,15 @@ try {
       const theme = index % 2 ? 'dark' : 'light';
       await navigate(`${origin}${prefix}${path}`, width);
       await applyTheme(theme);
-      await evaluate('new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
       const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, fromSurface: true });
       const locale = prefix ? prefix.slice(1) : 'en';
       const family = path === '/' ? 'home' : path.replace(/^\//, '').replace(/\/$/, '').replaceAll('/', '-');
       await writeFile(join(screenshotDirectory, `${String(index + 1).padStart(2, '0')}-${locale}-${family}-${width}-${theme}.png`), Buffer.from(data, 'base64'));
       index++;
     }
+    screenshotCount = index;
   }
-  console.log(JSON.stringify({ checks, failures, screenshots: screenshotDirectory ? 75 : 0 }));
+  console.log(JSON.stringify({ checks, failures, screenshots: screenshotCount }));
   if (failures.length) process.exitCode = 1;
 } finally {
   pageSocket?.close();

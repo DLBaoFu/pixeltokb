@@ -27,8 +27,10 @@ test('policy pages describe only current storage and conditional future advertis
   assert.doesNotMatch(foundation, /<form\b/i);
 });
 
-test('all locales identify PixelTokb as the reviewer without inventing credentials', () => {
-  assert.match(guideArticle, /Reviewed by the PixelTokb editorial team/);
+test('guide pages focus on practical browser use rather than editorial-status copy', () => {
+  assert.match(guideArticle, /Do this in the browser/);
+  assert.match(guideArticle, /blog-workflows/);
+  assert.doesNotMatch(guideArticle, /Editorial status|Reviewed by the PixelTokb editorial team|review-status/);
   for (const page of authorPages) {
     assert.match(page, /PixelTokb/);
     assert.match(page, /siteConfig\.contactEmail/);
