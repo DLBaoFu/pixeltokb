@@ -58,6 +58,7 @@ for (const file of (await htmlFiles(dist)).sort()) {
 const urlset = urls.map(({ loc, priority }) => `  <url>\n    <loc>${loc}</loc>\n    <priority>${priority}</priority>\n  </url>`).join('\n');
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlset}\n</urlset>\n`;
 await writeFile(join(dist, 'sitemap.xml'), xml);
+await writeFile(join(dist, '_sitemap-entries.json'), `${JSON.stringify(urls)}\n`);
 const allowedCrawlers = ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'Perplexity-User', 'meta-externalfetcher', 'MistralAI-User'];
 const robotGroups = ['User-agent: *\nAllow: /', ...allowedCrawlers.map((crawler) => `User-agent: ${crawler}\nAllow: /`)];
 await writeFile(join(dist, 'robots.txt'), `${robotGroups.join('\n\n')}\n\nSitemap: ${origin}/sitemap.xml\n`);

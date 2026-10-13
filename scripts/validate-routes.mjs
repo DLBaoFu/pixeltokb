@@ -140,6 +140,7 @@ for (const file of generated) {
 }
 
 const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8');
+const runtimeEntries = JSON.parse(await readFile(join(dist, '_sitemap-entries.json'), 'utf8'));
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 const sitemapEntries = [...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<priority>([01](?:\.\d)?)<\/priority>\s*<\/url>/g)].map((match) => ({ url: match[1], priority: Number(match[2]) }));
 if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap.xml: duplicate loc entries');
@@ -147,6 +148,12 @@ if (sitemapEntries.length !== sitemapUrls.length) failures.push('sitemap.xml: ev
 for (const entry of sitemapEntries) if (entry.priority < 0 || entry.priority > 1) failures.push(`sitemap.xml: invalid priority for ${entry.url}`);
 for (const url of indexable) if (!sitemapUrls.includes(url)) failures.push(`sitemap.xml: missing ${url}`);
 for (const url of sitemapUrls) if (!indexable.has(url)) failures.push(`sitemap.xml: non-indexable URL ${url}`);
+if (!Array.isArray(runtimeEntries) || runtimeEntries.length !== sitemapEntries.length) failures.push('runtime sitemap entries: must match sitemap.xml entry count');
+for (const entry of runtimeEntries) {
+  if (!entry || typeof entry.loc !== 'string' || !sitemapUrls.includes(entry.loc)) failures.push(`runtime sitemap entries: invalid URL ${entry?.loc ?? 'unknown'}`);
+  const staticEntry = sitemapEntries.find((candidate) => candidate.url === entry?.loc);
+  if (!staticEntry || Number(staticEntry.priority) !== Number(entry?.priority)) failures.push(`runtime sitemap entries: priority mismatch for ${entry?.loc ?? 'unknown'}`);
+}
 const sitemapFiles = (await readdir(dist)).filter((name) => /^sitemap.*\.xml$/i.test(name));
 if (sitemapFiles.length !== 1 || sitemapFiles[0] !== 'sitemap.xml') failures.push(`Expected only sitemap.xml; found ${sitemapFiles.join(', ')}`);
 const robots = await readFile(join(dist, 'robots.txt'), 'utf8');

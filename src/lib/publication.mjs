@@ -2,11 +2,7 @@
 // Remove an entry only after the matching editorial/identity acceptance evidence exists.
 export const pendingReviewPaths = new Set([
   '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/',
-  '/editorial-policy/', '/changelog/', '/authors/editor/',
-  '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/',
-  '/blog/compress-without-changing-dimensions/',
-  '/blog/why-image-wont-fit-50kb/', '/blog/kb-vs-kib/',
-  '/blog/check-image-size-and-dpi/'
+  '/editorial-policy/', '/changelog/', '/authors/editor/'
 ]);
 
 /** @param {string} pathname */

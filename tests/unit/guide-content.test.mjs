@@ -4,6 +4,7 @@ import { guides } from '../../src/lib/guide-content.ts';
 
 const expectedSlugs = [
   'check-image-size-and-dpi',
+  'compress-image-to-100kb',
   'compress-without-changing-dimensions',
   'kb-vs-kib',
   'why-image-wont-fit-50kb'

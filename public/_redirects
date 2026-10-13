@@ -29,6 +29,7 @@
 /en/blog/why-image-wont-fit-50kb/ /blog/why-image-wont-fit-50kb/ 301
 /en/blog/kb-vs-kib/ /blog/kb-vs-kib/ 301
 /en/blog/check-image-size-and-dpi/ /blog/check-image-size-and-dpi/ 301
+/en/blog/compress-image-to-100kb/ /blog/compress-image-to-100kb/ 301
 
 # English format and size aliases: every target is a real canonical page, never another alias.
 /compress-jpg /compress-image/ 301

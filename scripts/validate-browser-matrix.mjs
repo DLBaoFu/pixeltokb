@@ -46,7 +46,7 @@ try {
   await send('Page.enable');
   await send('Runtime.enable');
 
-  const paths = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/why-image-wont-fit-50kb/', '/blog/kb-vs-kib/', '/blog/check-image-size-and-dpi/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/how-it-works/', '/faq/', '/changelog/', '/authors/editor/', '/compress-image/', '/compress-image-200kb-to-500kb/', '/compress-image-500kb-to-1mb/', '/compress-image-2mb-to-5mb/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/'];
+  const paths = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/why-image-wont-fit-50kb/', '/blog/kb-vs-kib/', '/blog/check-image-size-and-dpi/', '/blog/compress-image-to-100kb/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/how-it-works/', '/faq/', '/changelog/', '/authors/editor/', '/compress-image/', '/compress-image-200kb-to-500kb/', '/compress-image-500kb-to-1mb/', '/compress-image-2mb-to-5mb/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/'];
   const localePrefixes = ['', '/zh-cn', '/zh-tw'];
   const widths = [360, 390, 768, 1366];
   const failures = [];
@@ -111,7 +111,7 @@ try {
 
   if (screenshotDirectory) {
     await mkdir(screenshotDirectory, { recursive: true });
-    const families = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/compress-image/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/changelog/', '/authors/editor/', '/not-a-real-route/'];
+    const families = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/compress-image/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/compress-image-to-100kb/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/changelog/', '/authors/editor/', '/not-a-real-route/'];
     let index = 0;
     for (const prefix of localePrefixes) for (const path of families) {
       const width = widths[index % widths.length];
@@ -126,7 +126,7 @@ try {
       index++;
     }
   }
-  console.log(JSON.stringify({ checks, failures, screenshots: screenshotDirectory ? 69 : 0 }));
+  console.log(JSON.stringify({ checks, failures, screenshots: screenshotDirectory ? 75 : 0 }));
   if (failures.length) process.exitCode = 1;
 } finally {
   pageSocket?.close();

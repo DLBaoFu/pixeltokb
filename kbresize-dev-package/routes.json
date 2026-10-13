@@ -1533,6 +1533,25 @@
           ]
         },
         {
+          "path": "/blog/compress-image-to-100kb",
+          "name": "100KB 图片上传案例",
+          "kind": "article",
+          "firstRelease": "R1",
+          "primaryKeyword": "compress image to 100KB",
+          "secondaryKeywords": ["image under 100KB", "100KB upload"],
+          "engine": "mdx-article",
+          "defaults": {},
+          "category": "tutorials",
+          "initialStatus": "published",
+          "indexAfterReview": true,
+          "adEligibleAfterApproval": true,
+          "contentRequirements": [
+            "真实用途与限制",
+            "可重复运行的样例",
+            "编辑审核记录"
+          ]
+        },
+        {
           "path": "/blog/signature-upload-requirements",
           "name": "签名上传前的尺寸与体积处理",
           "kind": "article",

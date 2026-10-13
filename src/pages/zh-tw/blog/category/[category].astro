@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 const categories = {
-  tutorials: { title: '圖片使用教學', intro: '從選擇格式、符合上傳要求，到核對處理結果的實用步驟。', articles: [['不改變像素尺寸，如何壓縮圖片？', '了解何時調整編碼畫質，何時必須改變像素尺寸。', 'compress-without-changing-dimensions'], ['KB 與 KiB 有什麼不同？', '理解十進位與二進位檔案大小上限。', 'kb-vs-kib'], ['如何檢查圖片大小、像素與 DPI？', '分別查看檔案大小、尺寸和列印中繼資料。', 'check-image-size-and-dpi']] },
+  tutorials: { title: '圖片使用教學', intro: '從選擇格式、符合上傳要求，到核對處理結果的實用步驟。', articles: [['不改變像素尺寸，如何壓縮圖片？', '了解何時調整編碼畫質，何時必須改變像素尺寸。', 'compress-without-changing-dimensions'], ['KB 與 KiB 有什麼不同？', '理解十進位與二進位檔案大小上限。', 'kb-vs-kib'], ['如何檢查圖片大小、像素與 DPI？', '分別查看檔案大小、尺寸和列印中繼資料。', 'check-image-size-and-dpi'], ['如何將圖片壓縮到 100 KB 用於上傳？', '依精確位元組目標處理並核對儲存檔案。', 'compress-image-to-100kb']] },
   troubleshooting: { title: '圖片問題排解', intro: '了解圖片為何未達到目標大小，以及下一步可以安全嘗試什麼。', articles: [['為什麼圖片可能無法壓到 50 KB？', '了解圖片細節、透明度、格式和像素尺寸如何影響輸出容量。', 'why-image-wont-fit-50kb']] }
 };
 export function getStaticPaths() { return ['tutorials', 'troubleshooting'].map((category) => ({ params: { category }, props: { category } })); }

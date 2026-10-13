@@ -1,6 +1,7 @@
 ---
 import GuideArticle from '../../../components/GuideArticle.astro';
-export function getStaticPaths() { return ['compress-without-changing-dimensions', 'why-image-wont-fit-50kb', 'kb-vs-kib', 'check-image-size-and-dpi'].map((slug) => ({ params: { slug }, props: { slug } })); }
+import { guides } from '../../../lib/guide-content';
+export function getStaticPaths() { return guides['zh-tw'].map(({ slug }) => ({ params: { slug }, props: { slug } })); }
 const { slug } = Astro.props;
 ---
 <GuideArticle locale="zh-tw" slug={slug} />
