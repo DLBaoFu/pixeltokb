@@ -20,7 +20,7 @@ Checked 2026-10-12 on macOS against the final local static build. Status vocabul
 | KB12 | pass | Pages share one component/Worker, enforce exact range boundaries, preserve the shared 500 KB boundary without duplicate URLs, and synchronize units/FAQ/results. |
 | PG01 | partial | All 30 route families × 3 locales have substantive content and non-empty categories; 15 identity/policy/Blog families remain noindex until external publication prerequisites are verified. |
 | PG02 | pass | Local 404 and 71 explicit single-hop redirects pass validation; production checks confirm HTTPS 200, `/en/` → `/` as 301, the custom 404 as 404, and the apex-domain 301 with path/query preservation. |
-| PG03 | partial | PixelTokb identity, real page copy, and the live `https://www.pixeltokb.com` production origin pass; `Support@piexltokb.com` inbound delivery evidence remains outstanding. |
+| PG03 | partial | PixelTokb identity, real page copy, and the live `https://www.pixeltokb.com` production origin pass; `support@pixeltokb.com` inbound delivery evidence remains outstanding. |
 
 ## Visual, navigation, content, and languages
 

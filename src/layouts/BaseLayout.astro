@@ -33,7 +33,7 @@ const imageId = `${origin}/#primaryimage`;
 const graphSchema = !noindex ? JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type': 'Organization', '@id': organizationId, name: 'PixelTokb', url: `${origin}/`, email: 'Support@piexltokb.com', logo: new URL('/favicon.svg', origin).href, sameAs: ['https://github.com/DLBaoFu/pixeltokb'] },
+    { '@type': 'Organization', '@id': organizationId, name: 'PixelTokb', url: `${origin}/`, email: 'support@pixeltokb.com', logo: new URL('/favicon.svg', origin).href, sameAs: ['https://github.com/DLBaoFu/pixeltokb'] },
     { '@type': 'WebSite', '@id': websiteId, name: 'PixelToKB', description: 'Privacy-first browser image compression, resizing, cropping, and inspection tools.', url: `${origin}/`, inLanguage: ['en', 'zh-CN', 'zh-TW'], publisher: { '@id': organizationId } },
     { '@type': 'ImageObject', '@id': imageId, url: socialImage, contentUrl: socialImage, width: 1200, height: 630, caption: socialImageAlt },
     { '@type': 'WebPage', '@id': `${canonical.href}#webpage`, name: title, description: pageDescription, url: canonical.href, inLanguage: htmlLang[locale], dateModified: '2026-10-13', isPartOf: { '@id': websiteId }, about: { '@id': organizationId }, author: { '@id': organizationId }, publisher: { '@id': organizationId }, primaryImageOfPage: { '@id': imageId } }

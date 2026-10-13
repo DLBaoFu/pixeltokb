@@ -38,4 +38,4 @@ Image processing takes place on the user's device. Selected images are not uploa
 
 ## Operator
 
-PixelToKB is operated and reviewed by PixelTokb. Contact: [Support@piexltokb.com](mailto:Support@piexltokb.com).
+PixelToKB is operated and reviewed by PixelTokb. Contact: [support@pixeltokb.com](mailto:support@pixeltokb.com).

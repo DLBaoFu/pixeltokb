@@ -27,4 +27,4 @@
 - [Editorial policy](https://www.pixeltokb.com/editorial-policy/)
 - [Sitemap](https://www.pixeltokb.com/sitemap.xml)
 - Operator and reviewer: PixelTokb
-- Contact: Support@piexltokb.com
+- Contact: support@pixeltokb.com
