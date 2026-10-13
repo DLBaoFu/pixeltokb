@@ -1,0 +1,24 @@
+---
+import { compressionPageContent } from '../lib/compression-page-content';
+import type { CompressionGroup } from '../lib/compression-groups';
+import type { PublishedLocale } from '../lib/guide-content';
+
+interface Props { locale: PublishedLocale; group: CompressionGroup; }
+const { locale, group } = Astro.props;
+const copy = compressionPageContent[locale][group];
+const labels = locale === 'en'
+  ? { eyebrow: 'Range-specific guidance', heading: 'What is different about this range?' }
+  : locale === 'zh-cn'
+    ? { eyebrow: '区间专属说明', heading: '这个区间有什么不同？' }
+    : { eyebrow: '區間專屬說明', heading: '這個區間有什麼不同？' };
+---
+
+<section class="range-context" aria-labelledby="range-context-heading">
+  <p class="eyebrow">{labels.eyebrow}</p>
+  <h2 id="range-context-heading">{copy.title}</h2>
+  <p class="range-context-intro">{copy.intro}</p>
+  <div class="range-context-grid">
+    {copy.points.map(([title, body]) => <article><h3>{title}</h3><p>{body}</p></article>)}
+  </div>
+  <div class="range-context-check"><h3>{copy.checkTitle}</h3><p>{copy.check}</p></div>
+</section>

@@ -42,7 +42,7 @@ test('every guide has its own browser evidence and practical links in every loca
       assert.ok(workflow, `${locale}/${guide.slug} workflow`);
       assert.ok(workflow.image.length > 0, `${locale}/${guide.slug} screenshot`);
       assert.equal(workflow.steps.length, 3, `${locale}/${guide.slug} steps`);
-      assert.ok(workflow.caption.includes('6,364') || workflow.caption.includes('2,930'), `${locale}/${guide.slug} measured caption`);
+      assert.match(workflow.caption, /6,364|23,906|4,000|4,016|2,930/, `${locale}/${guide.slug} measured caption`);
       assert.equal(workflow.links.length, 2, `${locale}/${guide.slug} links`);
     }
   }

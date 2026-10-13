@@ -54,11 +54,11 @@ try {
     throw new Error(`Timed out waiting for ${expression}`);
   };
   /** @param {string} selector */
-  const upload = async (selector) => {
+  const upload = async (selector, selectedFixture = fixture) => {
     const { root } = await send('DOM.getDocument', { depth: 2 });
     const nodeId = (await send('DOM.querySelector', { nodeId: root.nodeId, selector })).nodeId;
     if (!nodeId) throw new Error(`Missing ${selector}`);
-    await send('DOM.setFileInputFiles', { files: [fixture], nodeId });
+    await send('DOM.setFileInputFiles', { files: [selectedFixture], nodeId });
     await evaluate(`document.querySelector(${JSON.stringify(selector)})?.dispatchEvent(new Event('change', { bubbles: true }))`);
     await delay(250);
   };
@@ -80,10 +80,10 @@ try {
 
   const locales = ['', '/zh-cn', '/zh-tw'];
   const workflows = [
-    { name: 'compress-20kb', path: '/compress-image/?target=20&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
-    { name: 'compress-50kb', path: '/compress-image/?target=50&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
-    { name: 'compress-75kb', path: '/compress-image/?target=75&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
-    { name: 'compress-100kb', path: '/compress-image/?target=100&unit=KB', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
+    { name: 'compress-20kb', path: '/compress-image/?target=20&unit=KB', fixture: resolve('tests/fixtures/images/opaque-gradient.jpg'), ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
+    { name: 'compress-50kb', path: '/compress-image/?target=50&unit=KB', fixture: resolve('tests/fixtures/images/textured.webp'), ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
+    { name: 'compress-75kb', path: '/compress-image/?target=75&unit=KB', fixture: resolve('tests/fixtures/images/alpha-shapes.png'), ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
+    { name: 'compress-100kb', path: '/compress-image/?target=100&unit=KB', fixture: resolve('tests/fixtures/images/unoptimized-alpha.png'), ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
     { name: 'resize', path: '/resize-image/', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".tool-shell > button:not(.cancel-action)")?.click()' },
     { name: 'crop', path: '/crop-image/', ready: 'Boolean(document.querySelector(".result"))', action: 'document.querySelector(".primary-action")?.click()' },
     { name: 'inspect', path: '/image-size-checker/', ready: 'Boolean(document.querySelector(".info-grid"))', action: '' }
@@ -93,7 +93,7 @@ try {
     await send('Page.navigate', { url: `${origin}${prefix}${workflow.path}` });
     await waitFor('document.readyState === "complete" && Boolean(document.querySelector("main")) && Boolean(document.querySelector("input[type=file]"))');
     await applyTheme('light');
-    await upload('input[type=file]');
+    await upload('input[type=file]', workflow.fixture);
     await waitFor('Boolean(document.querySelector("[data-image-selected=\\"true\\"]")) || Boolean(document.querySelector(".info-grid")) || Boolean(document.querySelector("input[type=file]")?.files?.length)');
     if (workflow.action) await evaluate(workflow.action);
     await waitFor(workflow.ready);
