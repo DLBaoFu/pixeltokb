@@ -58,6 +58,7 @@ const applicationSchema = application && !noindex ? JSON.stringify({
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {Astro.url.pathname === '/' && <meta name="google-site-verification" content="A3PMbt7_E5khDLDQpv85P0c_Bmson8Da8y1DxGrOL_Y" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="application-name" content="PixelToKB" />
     <title>{title} | pixeltokb</title>
