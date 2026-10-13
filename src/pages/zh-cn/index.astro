@@ -2,6 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CompressionTool from '../../components/CompressionTool';
 ---
-<BaseLayout locale="zh-cn" title="在线压缩图片到精确目标大小" description="在浏览器本地压缩 JPEG、PNG 和 WebP 图片，选择 10 KB 至 5 MB 的区间、常用预设或自定义字节上限。">
-  <div class="home-shell"><div class="hero"><h1>让每个像素<span>恰到好处。</span></h1><p>在浏览器本地压缩、缩放和检查图片。</p></div><CompressionTool client:load locale="zh-cn" /></div>
+<BaseLayout locale="zh-cn" title="在线压缩图片到精确 KB 大小" description="使用浏览器本地图片压缩工具，将 JPEG、PNG 和 WebP 压缩到 10 KB 至 5 MB 的精确目标，也可缩放、裁剪和检查图片，全程无需上传。" application>
+  <div class="home-shell"><div class="hero"><h1>在线压缩图片到精确<span>大小。</span></h1><p>将 JPEG、PNG 和 WebP 压缩到指定 KB，或缩放像素、裁剪并检查图片信息，全程无需上传。</p></div><CompressionTool client:load locale="zh-cn" /></div>
 </BaseLayout>

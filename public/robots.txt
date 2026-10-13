@@ -25,4 +25,13 @@ Allow: /
 User-agent: Claude-User
 Allow: /
 
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: meta-externalfetcher
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
 Sitemap: https://www.pixeltokb.com/sitemap.xml

@@ -80,6 +80,7 @@ for (const file of generated) {
   const author = html.match(/<meta\s+name="author"\s+content="([^"]+)"/i)?.[1]?.trim();
   if (!title || !description) failures.push(`${source}: missing title or description`);
   if (!keywords || keywords.split(',').filter(Boolean).length < 4) failures.push(`${source}: missing focused meta keywords`);
+  if (keywords && keywords.length > 100) failures.push(`${source}: focused meta keywords exceed 100 characters`);
   if (author !== 'PixelTokb') failures.push(`${source}: missing PixelTokb author metadata`);
   if (noindex !== isPendingReview(source)) failures.push(`${source}: noindex disagrees with publication review status`);
   if (noindex) {
@@ -116,10 +117,17 @@ for (const file of generated) {
     }
   }
   if (!noindex) {
-    for (const required of ['og:title', 'og:description', 'og:url', 'og:locale']) if (!html.includes(`property="${required}"`)) failures.push(`${source}: missing ${required}`);
-    for (const required of ['twitter:card', 'twitter:title', 'twitter:description']) if (!html.includes(`name="${required}"`)) failures.push(`${source}: missing ${required}`);
+    for (const required of ['og:title', 'og:description', 'og:url', 'og:locale', 'og:image', 'og:image:alt']) if (!html.includes(`property="${required}"`)) failures.push(`${source}: missing ${required}`);
+    for (const required of ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:image:alt']) if (!html.includes(`name="${required}"`)) failures.push(`${source}: missing ${required}`);
+    const schemaBlocks = [...html.matchAll(/<script\s+type="application\/ld\+json">([\s\S]*?)<\/script>/gi)].map((match) => match[1]);
+    /** @type {{'@graph'?: Array<Record<string, unknown>>} | undefined} */
+    let graph;
+    try { graph = schemaBlocks.map((block) => JSON.parse(block)).find((schema) => Array.isArray(schema['@graph'])); }
+    catch { failures.push(`${source}: invalid JSON-LD graph`); }
+    for (const type of ['Organization', 'WebSite', 'WebPage']) if (!graph?.['@graph']?.some((item) => item['@type'] === type)) failures.push(`${source}: missing ${type} JSON-LD`);
   }
   if ((html.match(/<h1\b/gi) || []).length !== 1) failures.push(`${source}: expected one H1`);
+  for (const anchor of html.matchAll(/<a\b([^>]*)>[\s\S]*?<\/a>/gi)) if (!/\btitle="[^"]+"/i.test(anchor[1])) failures.push(`${source}: link missing a descriptive title attribute`);
   for (const match of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
     const href = match[1].replace(/&amp;/g, '&');
     if (!href.startsWith('/') || href.startsWith('//')) continue;
@@ -143,9 +151,16 @@ const sitemapFiles = (await readdir(dist)).filter((name) => /^sitemap.*\.xml$/i.
 if (sitemapFiles.length !== 1 || sitemapFiles[0] !== 'sitemap.xml') failures.push(`Expected only sitemap.xml; found ${sitemapFiles.join(', ')}`);
 const robots = await readFile(join(dist, 'robots.txt'), 'utf8');
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`)) failures.push('robots.txt: sitemap origin does not match build origin');
-for (const crawler of ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User']) {
+for (const crawler of ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'Perplexity-User', 'meta-externalfetcher', 'MistralAI-User']) {
   if (!robots.includes(`User-agent: ${crawler}\nAllow: /`)) failures.push(`robots.txt: ${crawler} is not explicitly allowed`);
 }
+
+const socialImage = await readFile(join(dist, 'og-image.png'));
+const pngSignature = '89504e470d0a1a0a';
+if (socialImage.subarray(0, 8).toString('hex') !== pngSignature || socialImage.readUInt32BE(16) !== 1200 || socialImage.readUInt32BE(20) !== 630) failures.push('og-image.png: expected a valid 1200×630 PNG');
+const llms = await readFile(join(dist, 'llms.txt'), 'utf8');
+for (const route of ['/compress-image/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/']) if (!llms.includes(`${origin}${route}`)) failures.push(`llms.txt: missing current tool ${route}`);
+if (/\b(?:AVIF|GIF|HEIC|TIFF|batch|OCR|AI image generator)\b/i.test(llms)) failures.push('llms.txt: contains an unsupported current feature');
 
 if (failures.length) {
   console.error(failures.join('\n'));

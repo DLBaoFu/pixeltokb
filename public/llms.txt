@@ -1,0 +1,30 @@
+# PixelToKB
+
+> PixelToKB provides free, privacy-first image tools that run locally in the browser. Images are not uploaded to a PixelToKB server.
+
+## Current image tools
+
+- [Exact-size image compressor](https://www.pixeltokb.com/compress-image/): Compress static JPEG, PNG, and WebP images to verified targets from 10 KB to 100 KB or a custom value.
+- [200 KB to 500 KB image compressor](https://www.pixeltokb.com/compress-image-200kb-to-500kb/): Compress images to targets from 200 KB to 500 KB.
+- [500 KB to 1 MB image compressor](https://www.pixeltokb.com/compress-image-500kb-to-1mb/): Compress images to targets from 500 KB to 1 MB.
+- [2 MB to 5 MB image compressor](https://www.pixeltokb.com/compress-image-2mb-to-5mb/): Compress images to targets from 2 MB to 5 MB.
+- [Image resizer](https://www.pixeltokb.com/resize-image/): Resize JPEG, PNG, and WebP images to exact pixel dimensions using Fit, Fill, or Stretch.
+- [Image cropper](https://www.pixeltokb.com/crop-image/): Crop images visually or with exact pixel coordinates.
+- [Image size checker](https://www.pixeltokb.com/image-size-checker/): Check bytes, KB, KiB, pixel dimensions, aspect ratio, format, and transparency.
+- [Image DPI checker](https://www.pixeltokb.com/image-dpi-checker/): Read embedded DPI metadata and pixel dimensions when available.
+
+## Languages
+
+- English: https://www.pixeltokb.com/
+- Simplified Chinese: https://www.pixeltokb.com/zh-cn/
+- Traditional Chinese: https://www.pixeltokb.com/zh-tw/
+
+## Site information
+
+- [About](https://www.pixeltokb.com/about/)
+- [Privacy](https://www.pixeltokb.com/privacy/)
+- [Terms](https://www.pixeltokb.com/terms/)
+- [Editorial policy](https://www.pixeltokb.com/editorial-policy/)
+- [Sitemap](https://www.pixeltokb.com/sitemap.xml)
+- Operator and reviewer: PixelTokb
+- Contact: Support@piexltokb.com

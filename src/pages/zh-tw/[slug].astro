@@ -38,7 +38,7 @@ const presets = {
   'image-size-checker': ['檢查圖片大小和尺寸', '查看精確位元組數、KB 與 KiB、像素尺寸、長寬比和透明度資訊。'],
   'image-dpi-checker': ['檢查圖片 DPI', '讀取可用的 DPI 中繼資料，並查看圖片像素尺寸。並非所有圖片都包含 DPI 資訊。']
 } as const;
-const [rawTitle, rawBody] = presets[slug as keyof typeof presets] ?? [group ? `圖片壓縮 · ${compressionGroups[group].label}` : 'pixeltokb 圖片工具', group ? `在瀏覽器本機將靜態 JPEG、PNG 或 WebP 圖片壓縮到已核對實際位元組數的 ${compressionGroups[group].label} 目標。` : '選擇目標大小、加入圖片，並下載已依實際位元組數檢查的結果。'];
+const [rawTitle, rawBody] = presets[slug as keyof typeof presets] ?? [group ? `壓縮圖片到 ${compressionGroups[group].label}` : 'pixeltokb 圖片工具', group ? `線上將靜態 JPEG、PNG 或 WebP 圖片壓縮到已核對實際位元組數的 ${compressionGroups[group].label} 目標。處理全程在瀏覽器本機完成，無需上傳。` : '選擇目標大小、加入圖片，並下載已依實際位元組數檢查的結果。'];
 const title = toTraditional(rawTitle);
 const body = toTraditional(rawBody);
 ---

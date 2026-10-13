@@ -15,6 +15,7 @@ run(pnpm, ['lint']);
 run(pnpm, ['test']);
 run(process.execPath, ['scripts/check-release.mjs', '--build']);
 run(pnpm, ['exec', 'astro', 'build']);
+run(process.execPath, ['scripts/enhance-static-seo.mjs']);
 run(process.execPath, ['scripts/generate-sitemap.mjs']);
 run(process.execPath, ['scripts/validate-routes.mjs']);
 run(process.execPath, ['scripts/validate-redirects.mjs']);
