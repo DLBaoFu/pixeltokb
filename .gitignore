@@ -4,6 +4,8 @@ dist/
 .pnpm-store/
 .wrangler/
 coverage/
+.nyc_output/
+*.tsbuildinfo
 playwright-report/
 test-results/
 screenshots/
