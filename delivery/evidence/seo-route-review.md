@@ -2,6 +2,8 @@
 
 Status: **pass for repository, final static output, and the live production origin**. Captured account-level response evidence is tracked separately.
 
+Current R1 publication update (2026-10-13): the operator confirmed the eight identity/policy/editorial page families and the contact inbox. The local build now treats those pages as indexable; after deployment, the production sitemap and Googlebot crawl must be rechecked for the resulting 84 indexable URLs. The previous production counts below describe the earlier deployment and are retained as historical evidence.
+
 - `pnpm build` produces 91 HTML pages: 90 registered localized R1 routes plus 404.
 - English canonical routes are unprefixed; Simplified Chinese and Traditional Chinese use `/zh-cn/` and `/zh-tw/`.
 - The generated route validator checks unique indexable title/description values per locale, focused route keywords, PixelTokb authorship, one H1, canonical, reciprocal hreflang, complete robots directives, Open Graph/Twitter metadata, internal destinations, localized route parity, and visible release-copy rules.

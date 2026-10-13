@@ -2,6 +2,8 @@
 
 Status: **pending for BR01**; completed and blocked environments are explicitly recorded.
 
+R1 disposition (2026-10-13): deferred to the next version. The unavailable browser/device environments are not treated as passed by assumption.
+
 Completed:
 
 - Chrome 154: full local visual/DOM matrix, accessibility audits, image-tool interaction, saved downloads, MIME/signature checks, alpha and JPEG background checks.

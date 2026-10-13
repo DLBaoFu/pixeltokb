@@ -14,7 +14,7 @@ const authorPages = await Promise.all([
 test('supplied operator and exact contact address remain explicit', () => {
   assert.equal(config.operator, 'PixelTokb');
   assert.equal(config.contactEmail, 'support@pixeltokb.com');
-  assert.equal(config.contactEmailVerified, false);
+  assert.equal(config.contactEmailVerified, true);
   assert.equal(config.adsMode, 'off');
   assert.equal(config.cmsEnabled, false);
 });

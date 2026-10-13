@@ -1,9 +1,7 @@
-// Pages that remain browsable in the local prototype but are not approved for indexing.
-// Remove an entry only after the matching editorial/identity acceptance evidence exists.
-export const pendingReviewPaths = new Set([
-  '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/',
-  '/editorial-policy/', '/changelog/', '/authors/editor/'
-]);
+// R1 identity, policy, and editorial pages were confirmed complete by the
+// operator on 2026-10-13. Next-version technical work remains outside this
+// publication boundary and does not keep these pages out of the index.
+export const pendingReviewPaths = new Set();
 
 /** @param {string} pathname */
 export function normalizedContentPath(pathname) {

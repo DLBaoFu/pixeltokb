@@ -3,7 +3,7 @@
   "origin": "https://www.pixeltokb.com",
   "operator": "PixelTokb",
   "contactEmail": "support@pixeltokb.com",
-  "contactEmailVerified": false,
+  "contactEmailVerified": true,
   "adsMode": "off",
   "cmsEnabled": false,
   "defaultLocale": "en"

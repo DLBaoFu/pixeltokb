@@ -1,6 +1,8 @@
 # R1 acceptance report
 
-Checked 2026-10-12 on macOS against the final local static build. Status vocabulary: **pass** means the stated local acceptance was actually exercised; **partial** means the local portion passed but a named external or production check remains; **pending** means required evidence is unavailable; **not applicable** means the capability is intentionally unpublished in R1. Evidence summaries are in `delivery/evidence/`; raw browser artifacts remain in the local `artifacts/` tree.
+Checked 2026-10-13 on macOS against the final local static build. Status vocabulary: **pass** means the stated local acceptance was actually exercised; **partial** means the local portion passed but a named external or production check remains; **pending** means required evidence is unavailable; **not applicable** means the capability is intentionally unpublished in R1. Evidence summaries are in `delivery/evidence/`; raw browser artifacts remain in the local `artifacts/` tree.
+
+Operator publication confirmation: the operator confirmed the contact inbox and the eight identity/policy/editorial page families for R1. Those pages are now eligible for indexing; the remaining image metadata and cross-browser evidence is explicitly deferred to the next version and is not marked as passed without evidence.
 
 ## Image tools and pages
 
@@ -18,9 +20,9 @@ Checked 2026-10-12 on macOS against the final local static build. Status vocabul
 | KB10 | pass | Repeated selection, setting changes, cancellation, invalid replacement, reset, output filename, MIME, signature, and stale-result invalidation passed. |
 | KB11 | pass | Four range pages expose the required presets, defaults, custom ranges, and KB/MB defaults in all three locales; no personal public result URL exists. |
 | KB12 | pass | Pages share one component/Worker, enforce exact range boundaries, preserve the shared 500 KB boundary without duplicate URLs, and synchronize units/FAQ/results. |
-| PG01 | partial | All 30 route families × 3 locales have substantive content and non-empty categories; 15 identity/policy/Blog families remain noindex until external publication prerequisites are verified. |
+| PG01 | pass | All 30 route families × 3 locales have substantive content and non-empty categories; the eight R1 identity/policy/editorial page families were confirmed complete by the operator and are now indexable. |
 | PG02 | pass | Local 404 and 71 explicit single-hop redirects pass validation; production checks confirm HTTPS 200, `/en/` → `/` as 301, the custom 404 as 404, and the apex-domain 301 with path/query preservation. |
-| PG03 | partial | PixelTokb identity, real page copy, and the live `https://www.pixeltokb.com` production origin pass; `support@pixeltokb.com` inbound delivery evidence remains outstanding. |
+| PG03 | pass | PixelTokb identity, real page copy, the live `https://www.pixeltokb.com` production origin, and the operator-confirmed `support@pixeltokb.com` inbox pass for R1 publication. |
 
 ## Visual, navigation, content, and languages
 
@@ -87,4 +89,4 @@ Checked 2026-10-12 on macOS against the final local static build. Status vocabul
 
 ## Release decision
 
-R1 is published at `https://www.pixeltokb.com`. The remaining acceptance set is: KB08 metadata/color evidence; real inbox delivery; activation of the 15 noindex identity/policy/Blog families; named external native-language review; Safari/Edge/iOS/Android BR01 coverage; Cloudflare shared-usage monitoring; and a real rollback exercise. `pnpm check:release` must continue to report these items until they are genuinely completed; that stricter evidence gate does not describe the website as offline.
+R1 is published at `https://www.pixeltokb.com`. The next-version evidence set is: KB08 metadata/color evidence; Safari/Edge/iOS/Android BR01 coverage; named external native-language review; Cloudflare shared-usage monitoring; and a real rollback exercise. The eight identity/policy/editorial page families and the contact inbox are no longer R1 blockers after operator confirmation. `pnpm check:release` still reports only evidence that has not actually been produced; deferred next-version items are not defaulted to pass.

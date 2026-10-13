@@ -1,6 +1,6 @@
 # Content, identity, policy, and legal-boundary review
 
-Status: **pass for repository content**. It is not a jurisdiction-specific legal opinion or an advertising approval.
+Status: **pass for repository content and R1 publication identity**. It is not a jurisdiction-specific legal opinion or an advertising approval.
 
 - Operator, publisher, and named reviewer: PixelTokb.
 - Published contact address: `support@pixeltokb.com`.
@@ -10,5 +10,7 @@ Status: **pass for repository content**. It is not a jurisdiction-specific legal
 - No nonexistent account, upload service, database, support desk, form backend, CMS, or production advertising feature is claimed.
 
 Review date: 2026-10-12. Reviewer recorded in the public content: PixelTokb.
+
+Publication confirmation: On 2026-10-13 the operator confirmed that the eight identity, contact, policy, changelog, editorial, and author page families are complete for R1 publication, and confirmed that `support@pixeltokb.com` can receive mail. The R1 publication boundary therefore no longer keeps these page families `noindex`; the next-version technical evidence items remain separate.
 
 Boundary: mailbox delivery, jurisdiction-specific counsel where needed, and the advertising platform's actual review remain external checks. The production site itself is live at `https://www.pixeltokb.com`; that fact does not convert the separate legal or advertising checks into a pass.
