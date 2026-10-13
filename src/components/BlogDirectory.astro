@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { guides, type PublishedLocale } from '../lib/guide-content';
+import { guideWorkflows } from '../lib/guide-workflows';
+import { articleMeta, blogLabels, localizedBlogPath } from '../lib/blog-system';
+
+interface Props { locale: PublishedLocale; }
+const { locale } = Astro.props;
+const copy = blogLabels[locale];
+const prefix = locale === 'en' ? '' : `/${locale}`;
+const articles = guides[locale];
+const featured = articles[0];
+const topics = [
+  ['tutorials', copy.tutorials],
+  ['troubleshooting', copy.troubleshooting]
+] as const;
+---
+
+<BaseLayout locale={locale} title={copy.practical} description={copy.directoryIntro}>
+  <div class="blog-directory">
+    <header class="blog-directory-header">
+      <div class="article-breadcrumb"><a href={localizedBlogPath(locale)}>{copy.journal}</a><span aria-hidden="true">/</span><span>{copy.practical}</span></div>
+      <p class="eyebrow">{copy.journal}</p>
+      <h1>{copy.practical}</h1>
+      <p class="blog-directory-dek">{copy.directoryIntro}</p>
+      <nav class="blog-topic-nav" aria-label={copy.topics}>
+        <a class="is-current" href={localizedBlogPath(locale)}>{copy.allArticles}</a>
+        {topics.map(([slug, label]) => <a href={`${prefix}/blog/category/${slug}/`}>{label}</a>)}
+      </nav>
+    </header>
+
+    <section class="blog-featured" aria-labelledby="featured-article">
+      <div class="blog-featured-copy">
+        <p class="article-kicker">{featured.category}</p>
+        <h2 id="featured-article"><a href={`${prefix}/blog/${featured.slug}/`}>{featured.title}</a></h2>
+        <p>{featured.intro}</p>
+        <div class="article-card-meta"><span>{copy.read}</span><span>{articleMeta(featured.slug).readMinutes} {copy.readMinutes}</span><span>{articleMeta(featured.slug).dateLabel[locale]}</span></div>
+        <a class="text-link" href={`${prefix}/blog/${featured.slug}/`}>{copy.read} <span aria-hidden="true">→</span></a>
+      </div>
+      <a class="blog-featured-image" href={`${prefix}/blog/${featured.slug}/`} aria-label={featured.title}>
+        <img src={`/blog-workflows/${locale}/${guideWorkflows[locale][featured.slug].image}.png`} alt={guideWorkflows[locale][featured.slug].caption} />
+      </a>
+    </section>
+
+    <section class="blog-list-section" aria-labelledby="latest-articles">
+      <div class="blog-section-heading"><div><p class="eyebrow">{copy.journal}</p><h2 id="latest-articles">{copy.latest}</h2></div><a class="text-link" href={`${prefix}/blog/category/tutorials/`}>{copy.topics} <span aria-hidden="true">→</span></a></div>
+      <div class="blog-card-grid">
+        {articles.slice(1).map((article) => {
+          const meta = articleMeta(article.slug);
+          const workflow = guideWorkflows[locale][article.slug];
+          return <article class="blog-card">
+            <a class="blog-card-image" href={`${prefix}/blog/${article.slug}/`} aria-label={article.title}><img src={`/blog-workflows/${locale}/${workflow.image}.png`} alt={workflow.caption} loading="lazy" /></a>
+            <div class="blog-card-body">
+              <p class="article-kicker">{article.category}</p>
+              <h3><a href={`${prefix}/blog/${article.slug}/`}>{article.title}</a></h3>
+              <p>{article.intro}</p>
+              <div class="article-card-meta"><span>{meta.dateLabel[locale]}</span><span>{meta.readMinutes} {copy.readMinutes}</span></div>
+              <a class="text-link" href={`${prefix}/blog/${article.slug}/`}>{copy.read} <span aria-hidden="true">→</span></a>
+            </div>
+          </article>;
+        })}
+      </div>
+    </section>
+
+    <section class="blog-tools-cta" aria-labelledby="blog-tools-heading">
+      <div><p class="eyebrow">{copy.journal}</p><h2 id="blog-tools-heading">{copy.toolHeading}</h2><p>{copy.toolIntro}</p></div>
+      <div class="blog-tool-links"><a href={`${prefix}/compress-image/`}>{locale === 'en' ? 'Compress image' : locale === 'zh-cn' ? '压缩图片' : '壓縮圖片'} <span aria-hidden="true">→</span></a><a href={`${prefix}/resize-image/`}>{locale === 'en' ? 'Resize image' : locale === 'zh-cn' ? '缩放图片' : '縮放圖片'} <span aria-hidden="true">→</span></a><a href={`${prefix}/image-size-checker/`}>{locale === 'en' ? 'Check image' : locale === 'zh-cn' ? '检查图片' : '檢查圖片'} <span aria-hidden="true">→</span></a></div>
+    </section>
+  </div>
+</BaseLayout>

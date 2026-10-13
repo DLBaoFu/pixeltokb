@@ -1,6 +1,6 @@
 ---
-import EnglishPage from '../../../views/en/blog/category/[category].astro';
+import BlogCategory from '../../../components/BlogCategory.astro';
 export function getStaticPaths() { return ['tutorials', 'troubleshooting'].map((category) => ({ params: { category }, props: { category } })); }
-const { category } = Astro.props;
+const category = Astro.props.category as 'tutorials' | 'troubleshooting';
 ---
-<EnglishPage category={category} />
+<BlogCategory locale="en" category={category} />

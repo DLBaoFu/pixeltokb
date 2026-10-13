@@ -1,13 +1,4 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-const articles = [
-  { slug: 'compress-without-changing-dimensions', category: '壓縮基礎', title: '不改變像素尺寸，如何壓縮圖片？', text: '保留原始像素，設定位元組上限，再檢查下載後的檔案；不要只看頁面上的估算值。', featured: true },
-  { slug: 'why-image-wont-fit-50kb', category: '問題排解', title: '為什麼圖片可能無法壓到 50 KB？', text: '50 KB 不達標時，判斷該調整格式、像素，還是重新確認上傳限制。' },
-  { slug: 'kb-vs-kib', category: '檔案大小', title: 'KB 與 KiB 有什麼不同？', text: '以實際儲存的位元組數，對照上傳表單裡的數字，避免單位理解錯位。' },
-  { slug: 'check-image-size-and-dpi', category: '圖片中繼資料', title: '如何檢查圖片大小、像素與 DPI？', text: '編輯前先看清檔案：位元組、像素、長寬比、透明度和列印中繼資料不是一回事。' },
-  { slug: 'compress-image-to-100kb', category: '上傳案例', title: '如何將圖片壓縮到 100 KB 用於上傳？', text: '跟著真實瀏覽器操作走一遍：選檔案、壓縮，再檢查產生的下載檔案。' }
-];
+import BlogDirectory from '../../../components/BlogDirectory.astro';
 ---
-<BaseLayout locale="zh-tw" title="圖片實用指南" description="圖片壓縮、縮放、裁切、上傳限制、像素尺寸與 DPI 的實用操作指南。">
-  <div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · 圖片使用指南</p><h1>先把圖片處理好，再安心上傳。</h1><p>遇到上傳限制時該點哪裡、該看什麼、什麼情況下需要換一種處理方式，文章都按實際使用過程來寫。</p></div><div class="category-nav"><a href="/zh-tw/blog/category/tutorials/">圖片教學</a><a href="/zh-tw/blog/category/troubleshooting/">問題排解</a></div><section class="editorial-grid" aria-label="圖片指南">{articles.map((article) => <a class:list={['article-card', article.featured && 'featured']} href={`/zh-tw/blog/${article.slug}/`}><span class="directory-icon" aria-hidden="true">{article.featured ? '↘' : '✳'}</span><span class="article-category">{article.category}</span><h2>{article.title}</h2><p>{article.text}</p><span class="card-action">閱讀指南 <span aria-hidden="true">→</span></span></a>)}</section><section class="directory-section"><h2>先用工具，再看對應文章</h2><p>現在就要處理圖片？依任務開啟工具；文章會說明哪些設定會改變你下載到的檔案。</p><div class="preset-links"><a class="preset-link" href="/zh-tw/compress-image/"><strong>壓縮圖片</strong><span>設定位元組目標 →</span></a><a class="preset-link" href="/zh-tw/resize-image/"><strong>縮放圖片</strong><span>設定輸出像素 →</span></a><a class="preset-link" href="/zh-tw/crop-image/"><strong>裁切圖片</strong><span>選擇像素區域 →</span></a><a class="preset-link" href="/zh-tw/image-size-checker/"><strong>檢查圖片</strong><span>查看位元組數與尺寸 →</span></a></div></section></div>
-</BaseLayout>
+<BlogDirectory locale="zh-tw" />

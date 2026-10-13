@@ -1,18 +1,4 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-const articles = [
-  { slug: 'compress-without-changing-dimensions', category: '压缩基础', title: '不改变像素尺寸，如何压缩图片？', text: '保留原始像素，设定字节上限，再检查下载后的文件；不要只看页面上的估算值。', featured: true },
-  { slug: 'why-image-wont-fit-50kb', category: '问题排查', title: '为什么图片可能无法压到 50 KB？', text: '50 KB 不达标时，判断该调整格式、像素，还是重新确认上传限制。' },
-  { slug: 'kb-vs-kib', category: '文件大小', title: 'KB 与 KiB 有什么区别？', text: '用实际保存的字节数，对照上传表单里的数字，避免单位理解错位。' },
-  { slug: 'check-image-size-and-dpi', category: '图片元数据', title: '如何检查图片大小、像素与 DPI？', text: '编辑前先看清文件：字节、像素、宽高比、透明度和打印元数据不是一回事。' },
-  { slug: 'compress-image-to-100kb', category: '上传案例', title: '如何将图片压缩到 100 KB 用于上传？', text: '跟着真实浏览器操作走一遍：选文件、压缩，再检查生成的下载文件。' }
-];
+import BlogDirectory from '../../../components/BlogDirectory.astro';
 ---
-<BaseLayout locale="zh-cn" title="图片实用指南" description="图片压缩、缩放、裁剪、上传限制、像素尺寸与 DPI 的实用操作指南。">
-  <div class="directory-page">
-    <div class="hero"><p class="eyebrow">PIXELTOKB · 图片使用指南</p><h1>先把图片处理好，再安心上传。</h1><p>遇到上传限制时该点哪里、该看什么、什么情况下需要换一种处理方式，文章都按实际使用过程来写。</p></div>
-    <div class="category-nav"><a href="/zh-cn/blog/category/tutorials/">图片教程</a><a href="/zh-cn/blog/category/troubleshooting/">问题排查</a></div>
-    <section class="editorial-grid" aria-label="图片指南">{articles.map((article) => <a class:list={['article-card', article.featured && 'featured']} href={`/zh-cn/blog/${article.slug}/`}><span class="directory-icon" aria-hidden="true">{article.featured ? '↘' : '✳'}</span><span class="article-category">{article.category}</span><h2>{article.title}</h2><p>{article.text}</p><span class="card-action">阅读全文 <span aria-hidden="true">→</span></span></a>)}</section>
-    <section class="directory-section"><h2>先用工具，再看对应文章</h2><p>现在就要处理图片？按任务打开工具；文章会说明哪些设置会改变你下载到的文件。</p><div class="preset-links"><a class="preset-link" href="/zh-cn/compress-image/"><strong>压缩图片</strong><span>设定字节目标 →</span></a><a class="preset-link" href="/zh-cn/resize-image/"><strong>缩放图片</strong><span>设定输出像素 →</span></a><a class="preset-link" href="/zh-cn/crop-image/"><strong>裁剪图片</strong><span>选择像素区域 →</span></a><a class="preset-link" href="/zh-cn/image-size-checker/"><strong>检查图片</strong><span>查看字节数与尺寸 →</span></a></div></section>
-  </div>
-</BaseLayout>
+<BlogDirectory locale="zh-cn" />

@@ -1,10 +1,6 @@
 ---
-import BaseLayout from '../../../../layouts/BaseLayout.astro';
-const categories = {
-  tutorials: { title: '图片使用教程', intro: '按浏览器里的真实使用过程来做：明确任务、一次只改一个设置，再检查下载文件。', articles: [['不改变像素尺寸，如何压缩图片？', '保留像素，设定字节目标，再核对保存的文件。', 'compress-without-changing-dimensions'], ['KB 与 KiB 有什么区别？', '用实际保存的字节数对照上传限制。', 'kb-vs-kib'], ['如何检查图片大小、像素与 DPI？', '编辑前先检查字节、像素和打印元数据。', 'check-image-size-and-dpi'], ['如何将图片压缩到 100 KB 用于上传？', '从选文件到下载，走一遍真实的 100 KB 操作。', 'compress-image-to-100kb']] },
-  troubleshooting: { title: '图片问题排查', intro: '文件仍然不达标时，先找出需要调整的限制，再重新导出。', articles: [['为什么图片可能无法压到 50 KB？', '按正确顺序排查格式、像素和目标大小。', 'why-image-wont-fit-50kb']] }
-};
+import BlogCategory from '../../../../components/BlogCategory.astro';
 export function getStaticPaths() { return ['tutorials', 'troubleshooting'].map((category) => ({ params: { category }, props: { category } })); }
-const category = categories[Astro.props.category as keyof typeof categories];
+const category = Astro.props.category as 'tutorials' | 'troubleshooting';
 ---
-<BaseLayout locale="zh-cn" title={category.title} description={category.intro}><div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · 指南</p><h1>{category.title}</h1><p>{category.intro}</p></div><div class="editorial-grid">{category.articles.map(([title, text, slug]) => <a class="article-card" href={`/zh-cn/blog/${slug}/`}><span class="directory-icon" aria-hidden="true">✳</span><h2>{title}</h2><p>{text}</p><span class="card-action">阅读指南 <span aria-hidden="true">→</span></span></a>)}</div><div class="directory-section"><p><a href="/zh-cn/blog/">← 所有指南</a></p></div></div></BaseLayout>
+<BlogCategory locale="zh-cn" category={category} />

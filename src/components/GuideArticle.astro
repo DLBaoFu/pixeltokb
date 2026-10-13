@@ -2,64 +2,107 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { guides, type PublishedLocale } from '../lib/guide-content';
 import { guideWorkflows } from '../lib/guide-workflows';
+import { articleMeta, blogLabels, localizedBlogPath } from '../lib/blog-system';
 
 interface Props { locale: PublishedLocale; slug: string; }
 const { locale, slug } = Astro.props;
 const guide = guides[locale].find((item) => item.slug === slug)!;
 const workflow = guideWorkflows[locale][slug];
+const meta = articleMeta(slug);
+const labels = blogLabels[locale];
 const prefix = locale === 'en' ? '' : `/${locale}`;
-
-const labels = {
-  en: { use: 'Start with the real upload rule', steps: 'Do this in the browser', proof: 'What this browser run shows', details: 'What changes the outcome', method: 'How this example was checked', next: 'Continue with the tool' },
-  'zh-cn': { use: '先从真实上传要求开始', steps: '在浏览器里这样做', proof: '这次浏览器操作显示了什么', details: '哪些地方会改变结果', method: '这个案例是怎样核对的', next: '继续使用工具' },
-  'zh-tw': { use: '先從真實上傳要求開始', steps: '在瀏覽器裡這樣做', proof: '這次瀏覽器操作顯示了什麼', details: '哪些地方會改變結果', method: '這個案例如何核對', next: '繼續使用工具' }
-}[locale];
+const articleIndex = guides[locale].findIndex((item) => item.slug === slug);
+const previous = articleIndex > 0 ? guides[locale][articleIndex - 1] : null;
+const next = articleIndex < guides[locale].length - 1 ? guides[locale][articleIndex + 1] : null;
+const related = guides[locale].filter((item) => item.slug !== slug).slice(0, 2);
+const articleImage = new URL(`/blog-workflows/${locale}/${workflow.image}.png`, 'https://www.pixeltokb.com').href;
+const articleSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: guide.title,
+  description: guide.intro,
+  image: articleImage,
+  datePublished: meta.publishedAt,
+  dateModified: meta.publishedAt,
+  author: { '@type': 'Organization', name: 'PixelTokb', url: 'https://www.pixeltokb.com/' },
+  publisher: { '@type': 'Organization', name: 'PixelTokb', url: 'https://www.pixeltokb.com/' },
+  mainEntityOfPage: `https://www.pixeltokb.com${prefix}/blog/${slug}/`
+}).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout locale={locale} title={guide.title} description={guide.intro}>
-  <article class="guide-article">
-    <div class="hero">
-      <p class="eyebrow">{guide.category} · PIXELTOKB</p>
+  <script slot="head" type="application/ld+json" set:html={articleSchema}></script>
+  <article class="article-page">
+    <header class="article-header">
+      <div class="article-breadcrumb"><a href={localizedBlogPath(locale)}>{labels.journal}</a><span aria-hidden="true">/</span><a href={`${prefix}/blog/category/${meta.categorySlug}/`}>{guide.category}</a></div>
+      <p class="article-kicker">{guide.category}</p>
       <h1>{guide.title}</h1>
-      <p>{guide.intro}</p>
+      <p class="article-dek">{guide.intro}</p>
+      <div class="article-byline">
+        <span class="article-avatar" aria-hidden="true">PT</span>
+        <div><strong>{labels.by} PixelTokb</strong><span>{labels.published} <time datetime={meta.publishedAt}>{meta.dateLabel[locale]}</time></span></div>
+        <span class="article-reading-time">{meta.readMinutes} {labels.readMinutes}</span>
+      </div>
+    </header>
+
+    <div class="article-layout">
+      <aside class="article-sidebar" aria-label={labels.contents}>
+        <div class="article-toc">
+          <p>{labels.contents}</p>
+          <ol>
+            <li><a href="#browser-run">{labels.browserRun}</a></li>
+            <li><a href="#verified-result">{labels.result}</a></li>
+            {guide.sections.map((section, index) => <li><a href={`#article-section-${index + 1}`}>{section[0]}</a></li>)}
+            <li><a href="#result-check">{labels.method}</a></li>
+          </ol>
+        </div>
+        <a class="article-sidebar-link" href={`${prefix}/compress-image/`}>{labels.openTool} <span aria-hidden="true">→</span></a>
+      </aside>
+
+      <div class="article-content">
+        <section class="article-lead-note guide-situation" id="browser-run">
+          <p class="article-note-label">{labels.fieldNote}</p>
+          <p>{workflow.situation}</p>
+        </section>
+
+        <section class="article-section article-steps-section guide-workflow" aria-labelledby="steps-heading">
+          <h2 id="steps-heading">{locale === 'en' ? 'Do this in the browser' : locale === 'zh-cn' ? '浏览器操作流程' : '瀏覽器操作流程'}</h2>
+          <ol class="article-steps guide-steps">
+            {workflow.steps.map(([step, detail], index) => <li><span class="article-step-number">{index + 1}</span><div><h3>{step}</h3><p>{detail}</p></div></li>)}
+          </ol>
+        </section>
+
+        <figure class="article-figure guide-screenshot">
+          <img src={`/blog-workflows/${locale}/${workflow.image}.png`} alt={workflow.caption} />
+          <figcaption>{workflow.caption}</figcaption>
+        </figure>
+
+        <section class="article-result example-panel guide-example" id="verified-result" aria-labelledby="result-heading">
+          <div class="article-result-heading"><p class="article-note-label">{labels.result}</p><h2 id="result-heading">{guide.example.heading}</h2></div>
+          <dl>{guide.example.rows.map(([term, detail]) => <div><dt>{term}</dt><dd>{detail}</dd></div>)}</dl>
+          <p class="article-result-note">{guide.example.note}</p>
+        </section>
+
+        {guide.sections.map(([heading, text], index) => <section class="article-section" id={`article-section-${index + 1}`}><h2>{heading}</h2><p>{text}</p></section>)}
+
+        <section class="article-check" id="result-check" aria-labelledby="check-heading">
+          <p class="article-note-label">{labels.method}</p>
+          <h2 id="check-heading">{labels.method}</h2>
+          {guide.sources.map(([heading, text]) => <div><h3>{heading}</h3><p>{text}</p></div>)}
+        </section>
+
+        <section class="article-tool-cta"><div><p class="article-note-label">{labels.openTool}</p><h2>{locale === 'en' ? 'Ready to try it?' : locale === 'zh-cn' ? '现在就试一下？' : '現在就試試看？'}</h2></div><a href={`${prefix}/compress-image/`}>{labels.openTool} <span aria-hidden="true">→</span></a></section>
+
+        <section class="article-related" aria-labelledby="related-heading">
+          <div class="blog-section-heading"><h2 id="related-heading">{labels.related}</h2><a class="text-link" href={localizedBlogPath(locale)}>{labels.allArticles} <span aria-hidden="true">→</span></a></div>
+          <div class="article-related-grid">{related.map((item) => <a href={`${prefix}/blog/${item.slug}/`}><span class="article-kicker">{item.category}</span><h3>{item.title}</h3><p>{item.intro}</p><span class="text-link">{labels.read} <span aria-hidden="true">→</span></span></a>)}</div>
+        </section>
+
+        <nav class="article-pagination" aria-label={labels.related}>
+          {previous ? <a href={`${prefix}/blog/${previous.slug}/`}><span>{labels.previous}</span><strong>← {previous.title}</strong></a> : <span></span>}
+          {next ? <a href={`${prefix}/blog/${next.slug}/`}><span>{labels.next}</span><strong>{next.title} →</strong></a> : <span></span>}
+        </nav>
+      </div>
     </div>
-
-    <section class="guide-situation">
-      <h2>{labels.use}</h2>
-      <p>{workflow.situation}</p>
-    </section>
-
-    <section>
-      <h2>{labels.steps}</h2>
-      <ol class="guide-steps">
-        {workflow.steps.map(([step, detail]) => <li><strong>{step}</strong><span>{detail}</span></li>)}
-      </ol>
-    </section>
-
-    <figure class="guide-screenshot">
-      <img src={`/blog-workflows/${locale}/${workflow.image}.png`} alt={workflow.caption} loading="lazy" />
-      <figcaption>{workflow.caption}</figcaption>
-    </figure>
-
-    <section class="example-panel">
-      <h2>{labels.proof}</h2>
-      <dl>{guide.example.rows.map(([term, detail]) => <div><dt>{term}</dt><dd>{detail}</dd></div>)}</dl>
-      <p>{guide.example.note}</p>
-    </section>
-
-    <section class="guide-details">
-      <h2>{labels.details}</h2>
-      {guide.sections.map(([heading, text]) => <div><h3>{heading}</h3><p>{text}</p></div>)}
-    </section>
-
-    <section class="guide-sources">
-      <h2>{labels.method}</h2>
-      {guide.sources.map(([heading, text]) => <div><h3>{heading}</h3><p>{text}</p></div>)}
-    </section>
-
-    <section class="guide-next">
-      <h2>{labels.next}</h2>
-      <div>{workflow.links.map(([label, href]) => <a href={`${prefix}${href}`}>{label} <span aria-hidden="true">→</span></a>)}</div>
-    </section>
   </article>
 </BaseLayout>
