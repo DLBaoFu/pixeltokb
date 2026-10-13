@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 
 const origin = process.env.PREVIEW_ORIGIN || 'http://127.0.0.1:4321';
 const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const output = resolve(process.argv[2] || 'docs/product-preview/crop-image-light.png');
+const output = resolve(process.argv[2] || 'public/readme/crop-image-light.png');
 const theme = process.argv[3] || 'light';
 const pathname = process.argv[4] || '/crop-image/';
 const expectedTitle = process.argv[5] || 'Crop image online';

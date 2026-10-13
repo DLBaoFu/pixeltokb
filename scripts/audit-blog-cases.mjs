@@ -1,11 +1,11 @@
 import { spawn } from 'node:child_process';
-import { mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 
 const origin = process.env.PREVIEW_ORIGIN || 'http://127.0.0.1:4321';
 const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const evidencePath = resolve('docs/blog-case-evidence.json');
+const evidencePath = resolve(process.env.BLOG_CASE_EVIDENCE_PATH || 'artifacts/blog-case-evidence.json');
 const downloadDirectory = await mkdtemp(join(tmpdir(), 'pixeltokb-blog-downloads-'));
 const profile = await mkdtemp(join(tmpdir(), 'pixeltokb-blog-audit-'));
 const port = 9342;
@@ -127,6 +127,7 @@ try {
     source: { file: fixtures.jpeg.path.replace(`${process.cwd()}/`, ''), bytes: fixtures.jpeg.bytes, mime: fixtures.jpeg.mime, width: fixtures.jpeg.width, height: fixtures.jpeg.height, alpha: fixtures.jpeg.alpha },
     checkerText: await evaluate('document.querySelector(".info-grid")?.textContent?.trim() || ""')
   });
+  await mkdir(dirname(evidencePath), { recursive: true });
   await writeFile(evidencePath, `${JSON.stringify({ generatedAt: new Date().toISOString(), origin, command: 'pnpm audit:blog-cases', cases: evidence }, null, 2)}\n`);
   console.log(JSON.stringify({ evidencePath, cases: evidence.length, downloaded: evidence.filter((item) => item.output).length, allWithinTarget: evidence.filter((item) => item.output).every((item) => item.output?.withinTarget === true) }));
 } finally {

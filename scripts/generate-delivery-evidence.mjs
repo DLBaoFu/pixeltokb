@@ -89,7 +89,7 @@ await mkdir(deliveryDir, { recursive: true });
 await writeFile(join(artifactDir, 'cloudflare-budget-report.json'), `${JSON.stringify(budgetReport, null, 2)}\n`);
 
 const manifestInputs = [
-  'README.md', 'DELIVERY.md', 'LICENSES.md', 'SETUP_REQUIRED.md',
+  'README.md',
   'delivery/acceptance-report.md',
   'package.json', 'pnpm-lock.yaml', 'astro.config.mjs', 'config/site.json',
   'config/release-evidence.json', 'public/_headers', 'public/_redirects',

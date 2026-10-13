@@ -22,6 +22,12 @@ delivery/delivery-manifest.json
 delivery/evidence/performance/*.json
 PROGRESS.md
 AGENTS.md
+
+# Internal documentation and local audit material; keep the public README only.
+/docs/
+/*.md
+!/README.md
+
 kbresize-dev-package/*
 !kbresize-dev-package/routes.json
 

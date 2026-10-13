@@ -6,15 +6,15 @@
 
 ### Exact-size image compression
 
-![PixelToKB exact-size image compression](docs/product-preview/compress-image.png)
+![PixelToKB exact-size image compression](public/readme/compress-image.png)
 
 ### Image resizing
 
-![PixelToKB image resizing](docs/product-preview/resize-image.png)
+![PixelToKB image resizing](public/readme/resize-image.png)
 
 ### Image cropping
 
-![PixelToKB image cropping in light mode](docs/product-preview/crop-image-light.png)
+![PixelToKB image cropping in light mode](public/readme/crop-image-light.png)
 
 ## Image tools
 
