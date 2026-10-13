@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 const tools = [
-  { icon: '↘', title: '壓縮圖片', text: '依照目標容量壓縮，並在下載前精確檢查實際位元組數。', href: '/zh-tw/compress-image/', action: '開啟壓縮工具' },
+  { icon: '↘', title: '壓縮圖片', text: '在同一套工具中設定 1 KB 到 5 MB 的目標，並使用常見區間快速入口。', href: '/zh-tw/compress-image/', action: '開啟壓縮工具' },
   { icon: '↔', title: '縮放圖片', text: '設定精確的像素寬高，並選擇合適的調整方式。', href: '/zh-tw/resize-image/', action: '調整圖片尺寸' },
   { icon: '⌗', title: '裁切圖片', text: '直接在預覽圖上選取範圍，或輸入像素座標。', href: '/zh-tw/crop-image/', action: '開啟裁切工具' },
   { icon: '▤', title: '圖片大小檢查', text: '查看精確位元組數、KB 與 KiB、像素尺寸和透明度。', href: '/zh-tw/image-size-checker/', action: '檢查圖片資訊' },
   { icon: '◉', title: 'DPI 檢查', text: '讀取檔案中實際存在的列印解析度中繼資料。', href: '/zh-tw/image-dpi-checker/', action: '查看 DPI' }
 ];
-const ranges = [['10–100 KB', '/zh-tw/compress-image/'], ['200–500 KB', '/zh-tw/compress-image-200kb-to-500kb/'], ['500 KB–1 MB', '/zh-tw/compress-image-500kb-to-1mb/'], ['2–5 MB', '/zh-tw/compress-image-2mb-to-5mb/']];
+const ranges = [['10–100 KB', '/zh-tw/compress-image/?preset=10-100kb'], ['200–500 KB', '/zh-tw/compress-image/?preset=200-500kb'], ['500 KB–1 MB', '/zh-tw/compress-image/?preset=500kb-1mb'], ['2–5 MB', '/zh-tw/compress-image/?preset=2mb-5mb']];
 ---
 <BaseLayout locale="zh-tw" title="圖片工具" description="在瀏覽器本機壓縮、縮放、裁切和檢查圖片。">
-  <div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · 圖片工作區</p><h1>重視每個細節的圖片工具。</h1><p>縮小檔案容量、設定精確像素尺寸，或檢查圖片中繼資料——全程在瀏覽器本機完成，圖片不會離開你的裝置。</p></div><div class="directory-note"><span aria-hidden="true">✳</span><div><strong>以隱私為優先</strong>檔案只會在瀏覽器中處理，不會上傳至 pixeltokb 伺服器。</div></div><div class="tool-card-grid">{tools.map((tool) => <a class="tool-card" href={tool.href}><span class="directory-icon" aria-hidden="true">{tool.icon}</span><h2>{tool.title}</h2><p>{tool.text}</p><span class="card-action">{tool.action}<span aria-hidden="true">→</span></span></a>)}</div><section class="directory-section"><h2>依任務瀏覽</h2><div class="category-nav"><a href="/zh-tw/tools/compress/">圖片壓縮</a><a href="/zh-tw/tools/resize/">縮放與裁切</a><a href="/zh-tw/tools/inspect/">圖片資訊檢查</a></div></section><section class="directory-section"><h2>選擇壓縮規格</h2><p>四個規格頁共用同一套壓縮工具，各自提供合適的預設與自訂目標。下載前會核對實際位元組數。</p><div class="preset-links">{ranges.map(([label, href]) => <a class="preset-link" href={href}><strong>{label}</strong><span>開啟壓縮工具 →</span></a>)}</div></section></div>
+  <div class="directory-page"><div class="hero"><p class="eyebrow">PIXELTOKB · 圖片工作區</p><h1>重視每個細節的圖片工具。</h1><p>縮小檔案容量、設定精確像素尺寸，或檢查圖片中繼資料——全程在瀏覽器本機完成，圖片不會離開你的裝置。</p></div><div class="directory-note"><span aria-hidden="true">✳</span><div><strong>以隱私為優先</strong>檔案只會在瀏覽器中處理，不會上傳至 pixeltokb 伺服器。</div></div><div class="tool-card-grid">{tools.map((tool) => <a class="tool-card" href={tool.href}><span class="directory-icon" aria-hidden="true">{tool.icon}</span><h2>{tool.title}</h2><p>{tool.text}</p><span class="card-action">{tool.action}<span aria-hidden="true">→</span></span></a>)}</div><section class="directory-section"><h2>依任務瀏覽</h2><div class="category-nav"><a href="/zh-tw/tools/compress/">圖片壓縮</a><a href="/zh-tw/tools/resize/">縮放與裁切</a><a href="/zh-tw/tools/inspect/">圖片資訊檢查</a></div></section><section class="directory-section"><h2>選擇壓縮規格</h2><p>每個入口都會開啟同一套壓縮工具，並預先選取建議目標；你仍可修改目標、單位、格式和尺寸設定。</p><div class="preset-links">{ranges.map(([label, href]) => <a class="preset-link" href={href}><strong>{label}</strong><span>開啟壓縮工具 →</span></a>)}</div></section></div>
 </BaseLayout>

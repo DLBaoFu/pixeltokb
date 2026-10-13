@@ -13,24 +13,9 @@ const routeTerms: Array<[RegExp, Partial<Record<Locale, string[]>>]> = [
     'zh-tw': ['圖片壓縮工具', '線上壓縮圖片', '壓縮圖片到精確大小', '壓縮圖片到指定 KB', '圖片大小壓縮', '圖片縮放工具', '線上裁切圖片']
   }],
   [/^\/compress-image\/$/, {
-    en: ['image compressor', 'compress image online', 'compress image to exact size', 'compress image to 10–100 KB', 'JPG PNG WebP compressor'],
-    'zh-cn': ['图片压缩工具', '在线压缩图片', '精确 KB 图片压缩', '压缩图片到 10–100 KB', '压缩 JPG PNG WebP'],
-    'zh-tw': ['圖片壓縮工具', '線上壓縮圖片', '精確 KB 圖片壓縮', '壓縮圖片到 10–100 KB', '壓縮 JPG PNG WebP']
-  }],
-  [/^\/compress-image-200kb-to-500kb\/$/, {
-    en: ['compress image to 200KB', 'compress image to 300KB', 'compress image to 400KB', 'compress image to 500KB', 'image under 500KB', 'image compressor online'],
-    'zh-cn': ['压缩图片到 200KB', '压缩图片到 300KB', '压缩图片到 400KB', '压缩图片到 500KB', '图片小于 500KB'],
-    'zh-tw': ['壓縮圖片到 200KB', '壓縮圖片到 300KB', '壓縮圖片到 400KB', '壓縮圖片到 500KB', '圖片小於 500KB']
-  }],
-  [/^\/compress-image-500kb-to-1mb\/$/, {
-    en: ['compress image to 500KB', 'compress image to 750KB', 'compress image to 1MB', 'reduce image below 1MB', 'image compressor online'],
-    'zh-cn': ['压缩图片到 500KB', '压缩图片到 750KB', '压缩图片到 1MB', '图片小于 1MB'],
-    'zh-tw': ['壓縮圖片到 500KB', '壓縮圖片到 750KB', '壓縮圖片到 1MB', '圖片小於 1MB']
-  }],
-  [/^\/compress-image-2mb-to-5mb\/$/, {
-    en: ['compress image to 2MB', 'compress image to 3MB', 'compress image to 4MB', 'compress image to 5MB', 'reduce photo to 5MB', 'image compressor online'],
-    'zh-cn': ['压缩图片到 2MB', '压缩图片到 3MB', '压缩图片到 4MB', '压缩图片到 5MB', '图片小于 5MB'],
-    'zh-tw': ['壓縮圖片到 2MB', '壓縮圖片到 3MB', '壓縮圖片到 4MB', '壓縮圖片到 5MB', '圖片小於 5MB']
+    en: ['image compressor', 'compress image 10 KB 5 MB', 'JPG PNG WebP compressor'],
+    'zh-cn': ['图片压缩工具', '压缩图片 10 KB 到 5 MB', '压缩 JPG PNG WebP'],
+    'zh-tw': ['圖片壓縮工具', '壓縮圖片 10 KB 到 5 MB', '壓縮 JPG PNG WebP']
   }],
   [/^\/resize-image\/$/, {
     en: ['image resizer', 'resize image online', 'resize image in pixels', 'resize JPG', 'resize PNG', 'resize WebP', 'image aspect ratio resizer', 'resize image without cropping'],

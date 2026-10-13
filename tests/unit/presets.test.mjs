@@ -1,16 +1,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { compressionGroups, compressionGroupOrder, compressionPresetLabel } from '../../src/lib/compression-groups.ts';
+import { compressionGroups, compressionGroupOrder, compressionPresetLabel, compressionGroupForSlug, unifiedCompressionConfig, compressionGroupForPreset } from '../../src/lib/compression-groups.ts';
 import { bytesFor, convertTargetUnit } from '../../src/lib/presets.ts';
 import { errorMessages } from '../../src/lib/image/errors.ts';
 
-test('R1 exposes exactly four grouped compression pages with their real presets', () => {
+test('the unified compressor keeps four range recommendations and one canonical slug', () => {
   assert.deepEqual(compressionGroupOrder, ['small', 'medium', 'large', 'megabytes']);
   assert.deepEqual(compressionGroups.small.presets, [10_000, 20_000, 30_000, 50_000, 100_000]);
   assert.deepEqual(compressionGroups.medium.presets, [200_000, 300_000, 400_000, 500_000]);
   assert.deepEqual(compressionGroups.large.presets, [500_000, 750_000, 1_000_000]);
   assert.deepEqual(compressionGroups.megabytes.presets, [2_000_000, 3_000_000, 4_000_000, 5_000_000]);
   assert.equal(new Set(compressionGroupOrder.map((key) => compressionGroups[key].slug)).size, 4);
+  assert.equal(compressionGroupForSlug('compress-image'), 'small');
+  assert.equal(compressionGroupForSlug('compress-image-200kb-to-500kb'), undefined);
+  assert.equal(compressionGroupForPreset('200-500kb'), 'medium');
+  assert.equal(unifiedCompressionConfig.minBytes, 1_000);
+  assert.equal(unifiedCompressionConfig.maxBytes, 5_000_000);
+  assert.ok(unifiedCompressionConfig.presets.includes(1_000_000));
 });
 
 test('each page default and preset stays within its range, with the requested custom unit', () => {

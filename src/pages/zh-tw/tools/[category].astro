@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 const sections = {
-  compress: { title: '圖片壓縮', intro: '選擇目標容量區間，使用同一套工具進行預設或自訂壓縮。', links: [['10–100 KB', '適合嚴格的表單和小圖片限制。', '/zh-tw/compress-image/'], ['200–500 KB', '適合中等容量的照片和檔案。', '/zh-tw/compress-image-200kb-to-500kb/'], ['500 KB–1 MB', '將較大圖片控制在 1 MB 內。', '/zh-tw/compress-image-500kb-to-1mb/'], ['2–5 MB', '在較高容量上限下保留更多細節。', '/zh-tw/compress-image-2mb-to-5mb/']] },
+  compress: { title: '圖片壓縮', intro: '在同一套工具中設定 1 KB 到 5 MB 的目標，並使用常見區間預設。', links: [['10–100 KB', '適合嚴格的表單和小圖片限制。', '/zh-tw/compress-image/?preset=10-100kb'], ['200–500 KB', '適合中等容量的照片和檔案。', '/zh-tw/compress-image/?preset=200-500kb'], ['500 KB–1 MB', '將較大圖片控制在 1 MB 內。', '/zh-tw/compress-image/?preset=500kb-1mb'], ['2–5 MB', '在較高容量上限下保留更多細節。', '/zh-tw/compress-image/?preset=2mb-5mb']] },
   resize: { title: '縮放與裁切', intro: '調整圖片像素尺寸，或只保留需要的畫面範圍。', links: [['縮放圖片', '設定精確寬高，再選擇符合、填滿或拉伸。', '/zh-tw/resize-image/'], ['裁切圖片', '直接選取裁切範圍，或透過像素座標微調。', '/zh-tw/crop-image/']] },
   inspect: { title: '圖片資訊檢查', intro: '上傳或傳送圖片前，先查看檔案本身和列印中繼資料。', links: [['圖片大小檢查', '查看位元組、KB 與 KiB、像素尺寸、長寬比和透明度。', '/zh-tw/image-size-checker/'], ['DPI 檢查', '讀取圖片檔案中實際包含的列印解析度中繼資料。', '/zh-tw/image-dpi-checker/']] }
 };

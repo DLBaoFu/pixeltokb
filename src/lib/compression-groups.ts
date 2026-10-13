@@ -20,7 +20,28 @@ export const compressionGroups = {
 export type CompressionGroup = keyof typeof compressionGroups;
 export const compressionGroupOrder: CompressionGroup[] = ['small', 'medium', 'large', 'megabytes'];
 export const compressionGroupForSlug = (slug: string): CompressionGroup | undefined =>
-  compressionGroupOrder.find((group) => compressionGroups[group].slug === slug);
+  slug === 'compress-image' ? 'small' : undefined;
+
+export const unifiedCompressionConfig = {
+  slug: 'compress-image',
+  label: '1 KB–5 MB',
+  minBytes: 1_000,
+  maxBytes: 5_000_000,
+  defaultBytes: 50_000,
+  defaultUnit: 'KB' as const,
+  presets: [10_000, 20_000, 30_000, 50_000, 100_000, 200_000, 300_000, 400_000, 500_000, 750_000, 1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000]
+};
+
+export const compressionRangePresets: Record<CompressionGroup, { query: string; recommendedBytes: number }> = {
+  small: { query: '10-100kb', recommendedBytes: 50_000 },
+  medium: { query: '200-500kb', recommendedBytes: 300_000 },
+  large: { query: '500kb-1mb', recommendedBytes: 750_000 },
+  megabytes: { query: '2mb-5mb', recommendedBytes: 2_000_000 }
+};
+
+export function compressionGroupForPreset(value: string): CompressionGroup | undefined {
+  return compressionGroupOrder.find((group) => compressionRangePresets[group].query === value);
+}
 
 export function compressionPresetLabel(bytes: number): string {
   return bytes >= 1_000_000 ? `${bytes / 1_000_000} MB` : `${bytes / 1000} KB`;

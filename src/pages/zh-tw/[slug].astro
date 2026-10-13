@@ -7,11 +7,11 @@ import ImageInfoTool from '../../components/ImageInfoTool';
 import FoundationContent from '../../components/FoundationContent.astro';
 import ToolSupportingContent from '../../components/ToolSupportingContent.astro';
 import CompressionRangeNotes from '../../components/CompressionRangeNotes.astro';
-import { compressionGroupForSlug, compressionGroups } from '../../lib/compression-groups';
+import { compressionGroupForSlug } from '../../lib/compression-groups';
 import { toTraditional } from '../../lib/traditionalize';
 
 export function getStaticPaths() {
-  const slugs = ['about', 'contact', 'privacy', 'terms', 'cookies', 'editorial-policy', 'how-it-works', 'faq', 'changelog', 'compress-image', 'compress-image-200kb-to-500kb', 'compress-image-500kb-to-1mb', 'compress-image-2mb-to-5mb', 'resize-image', 'crop-image', 'image-size-checker', 'image-dpi-checker'];
+  const slugs = ['about', 'contact', 'privacy', 'terms', 'cookies', 'editorial-policy', 'how-it-works', 'faq', 'changelog', 'compress-image', 'resize-image', 'crop-image', 'image-size-checker', 'image-dpi-checker'];
   return slugs.map((slug) => ({ params: { slug }, props: { slug } }));
 }
 const { slug } = Astro.props;
@@ -39,10 +39,10 @@ const presets = {
   'image-size-checker': ['檢查圖片大小和尺寸', '查看精確位元組數、KB 與 KiB、像素尺寸、長寬比和透明度資訊。'],
   'image-dpi-checker': ['檢查圖片 DPI', '讀取可用的 DPI 中繼資料，並查看圖片像素尺寸。並非所有圖片都包含 DPI 資訊。']
 } as const;
-const [rawTitle, rawBody] = presets[slug as keyof typeof presets] ?? [group ? `壓縮圖片到 ${compressionGroups[group].label}` : 'pixeltokb 圖片工具', group ? `線上將靜態 JPEG、PNG 或 WebP 圖片壓縮到已核對實際位元組數的 ${compressionGroups[group].label} 目標。處理全程在瀏覽器本機完成，無需上傳。` : '選擇目標大小、加入圖片，並下載已依實際位元組數檢查的結果。'];
+const [rawTitle, rawBody] = presets[slug as keyof typeof presets] ?? [group ? '依目標大小壓縮圖片' : 'pixeltokb 圖片工具', group ? '線上將靜態 JPEG、PNG 或 WebP 圖片壓縮到 1 KB 至 5 MB 的目標。處理全程在瀏覽器本機完成，無需上傳。' : '選擇目標大小、加入圖片，並下載已依實際位元組數檢查的結果。'];
 const title = toTraditional(rawTitle);
 const body = toTraditional(rawBody);
 ---
 <BaseLayout locale="zh-tw" title={title} description={body} application={Boolean(supportTool)}>
-  <div class="detail-page">{isTool ? <><div class="hero"><p class="eyebrow">圖片壓縮</p><h1>{title}</h1><p>{body} 圖片只在本機處理。</p></div><CompressionTool client:load locale="zh-tw" group={group} /><CompressionRangeNotes locale="zh-tw" group={group!} /><section class="cards"><h2>支援格式和限制</h2><p>工具支援靜態 JPEG、PNG 和 WebP 圖片。檔案最大 20 MB，解碼後最多 4,000 萬像素。動態 PNG 和 WebP 會被明確拒絕，請先匯出靜態畫面。選擇自動或 WebP 時會保留透明度；主動選擇 JPEG 時，透明區域會填充為所選背景色。</p></section></> : isResizeTool ? <><div class="hero"><p class="eyebrow">像素縮放</p><h1>{title}</h1><p>{body}</p></div><ResizeTool client:load locale="zh-tw" /><section class="cards"><h2>瀏覽器縮放方式</h2><p>原圖會在瀏覽器 Worker 中解碼、繪製到新畫布，再於本機編碼並提供下載。透明背景會以 PNG 或 WebP 匯出保留。</p></section></> : isCropTool ? <><div class="hero"><p class="eyebrow">圖片裁切</p><h1>{title}</h1><p>{body}</p></div><CropTool client:load locale="zh-tw" /><section class="cards"><h2>如何裁切</h2><p>拖曳或觸控設定裁切範圍，再以像素欄位微調左側、頂端、寬度和高度。</p></section></> : isSizeTool || isDpiTool ? <><div class="hero"><p class="eyebrow">圖片檢查</p><h1>{title}</h1><p>{body} 檔案只會在瀏覽器本機讀取。</p></div><ImageInfoTool client:load locale="zh-tw" mode={isSizeTool ? 'size' : 'dpi'} /><section class="cards"><h2>{isDpiTool ? '認識 DPI' : '支援的圖片資訊'}</h2><p>{isDpiTool ? 'DPI 是列印中繼資料，不會改變圖片像素尺寸。有些檔案不含 DPI 資訊。' : '支援最大 20 MB、4,000 萬像素的靜態 JPEG、PNG 和 WebP 圖片。'}</p></section></> : <FoundationContent locale="zh-tw" slug={slug} title={title} intro={body} />}{supportTool && <ToolSupportingContent locale="zh-tw" tool={supportTool} />}</div>
+  <div class="detail-page">{isTool ? <><div class="hero"><p class="eyebrow">圖片壓縮</p><h1>{title}</h1><p>{body} 圖片只在本機處理。</p></div><CompressionTool client:load locale="zh-tw" group={group} /><CompressionRangeNotes locale="zh-tw" /><section class="cards"><h2>支援格式和限制</h2><p>工具支援靜態 JPEG、PNG 和 WebP 圖片。目標大小可由 1 KB 到 5 MB 自訂，檔案最大 20 MB，解碼後最多 4,000 萬像素。動態 PNG 和 WebP 會被明確拒絕，請先匯出靜態畫面。選擇自動或 WebP 時會保留透明度；主動選擇 JPEG 時，透明區域會填充為所選背景色。</p></section></> : isResizeTool ? <><div class="hero"><p class="eyebrow">像素縮放</p><h1>{title}</h1><p>{body}</p></div><ResizeTool client:load locale="zh-tw" /><section class="cards"><h2>瀏覽器縮放方式</h2><p>原圖會在瀏覽器 Worker 中解碼、繪製到新畫布，再於本機編碼並提供下載。透明背景會以 PNG 或 WebP 匯出保留。</p></section></> : isCropTool ? <><div class="hero"><p class="eyebrow">圖片裁切</p><h1>{title}</h1><p>{body}</p></div><CropTool client:load locale="zh-tw" /><section class="cards"><h2>如何裁切</h2><p>拖曳或觸控設定裁切範圍，再以像素欄位微調左側、頂端、寬度和高度。</p></section></> : isSizeTool || isDpiTool ? <><div class="hero"><p class="eyebrow">圖片檢查</p><h1>{title}</h1><p>{body} 檔案只會在瀏覽器本機讀取。</p></div><ImageInfoTool client:load locale="zh-tw" mode={isSizeTool ? 'size' : 'dpi'} /><section class="cards"><h2>{isDpiTool ? '認識 DPI' : '支援的圖片資訊'}</h2><p>{isDpiTool ? 'DPI 是列印中繼資料，不會改變圖片像素尺寸。有些檔案不含 DPI 資訊。' : '支援最大 20 MB、4,000 萬像素的靜態 JPEG、PNG 和 WebP 圖片。'}</p></section></> : <FoundationContent locale="zh-tw" slug={slug} title={title} intro={body} />}{supportTool && <ToolSupportingContent locale="zh-tw" tool={supportTool} />}</div>
 </BaseLayout>

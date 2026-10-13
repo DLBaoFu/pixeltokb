@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { errorMessages, type ImageErrorCode } from '../lib/image/errors';
 import { bytesFor, convertTargetUnit, type SizeUnit } from '../lib/presets';
-import { compressionGroups, compressionPresetLabel, type CompressionGroup } from '../lib/compression-groups';
+import { compressionGroups, compressionPresetLabel, compressionGroupForPreset, compressionRangePresets, unifiedCompressionConfig, type CompressionGroup } from '../lib/compression-groups';
 import { traditionalize } from '../lib/traditionalize';
 import { safeDownloadName } from '../lib/image/download-name';
 
@@ -10,7 +10,7 @@ const formatTarget = (value: number, unit: SizeUnit) => `${value} ${unit}`;
 const zhErrors: Record<ImageErrorCode, string> = { FILE_TOO_LARGE: '图片超过 20 MB 限制。', PIXEL_LIMIT: '图片像素或目标尺寸超过 4000 万像素限制。', FORMAT_UNSUPPORTED: '仅支持静态 JPEG、PNG 和 WebP 图片。', ANIMATION_UNSUPPORTED: '不支持动态图片。请导出静态画面后重试。', TARGET_UNREACHABLE: '在当前格式和尺寸设置下无法达到目标大小。', ENCODER_UNAVAILABLE: '此浏览器无法完成图片编码。', PROCESSING_TIMEOUT: '处理超时，请尝试更小的图片或更大的目标大小。', DECODE_FAILED: '图片无法读取，请确认文件未损坏。', CANCELLED: '处理已取消。' };
 
 export default function CompressionTool({ group = 'small', locale = 'en' }: Props) {
-  const config = compressionGroups[group];
+  const config = group === 'small' ? unifiedCompressionConfig : compressionGroups[group];
   const zh = locale !== 'en';
   const [file, setFile] = useState<File | null>(null); const [target, setTarget] = useState(config.defaultBytes / (config.defaultUnit === 'MB' ? 1_000_000 : 1000)); const [unit, setUnit] = useState<SizeUnit>(config.defaultUnit);
   const [output, setOutput] = useState<'auto' | 'jpeg' | 'webp' | 'png'>('jpeg'); const [jpegBackground, setJpegBackground] = useState('#ffffff'); const [preserve, setPreserve] = useState(true); const [status, setStatus] = useState(zh ? '处理仅在本设备进行' : 'Processing stays on this device'); const [progress, setProgress] = useState(0); const [result, setResult] = useState<{ url: string; bytes: number; width: number; height: number; extension: string; mime: string } | null>(null); const [activePreset, setActivePreset] = useState<number>(config.defaultBytes);
@@ -22,12 +22,17 @@ export default function CompressionTool({ group = 'small', locale = 'en' }: Prop
   const invalidate = () => { worker.current?.terminate(); worker.current = null; if (timeout.current) clearTimeout(timeout.current); timeout.current = null; setResult(null); setProgress(0); setStatus(zh ? '设置已更改，请重新压缩。' : 'Settings changed. Compress again.'); };
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
-    if (!query.has('target')) return;
+    const preset = compressionGroupForPreset(query.get('preset') || '');
+    const presetBytes = preset ? compressionRangePresets[preset].recommendedBytes : undefined;
     const queryTarget = Number(query.get('target'));
-    const queryUnit: SizeUnit = query.get('unit') === 'MB' ? 'MB' : 'KB';
-    const queryBytes = bytesFor(queryTarget, queryUnit);
-    if (Number.isFinite(queryTarget) && queryTarget > 0 && queryBytes >= config.minBytes && queryBytes <= config.maxBytes) {
-      setTarget(queryTarget); setUnit(queryUnit); setActivePreset(config.presets.some((preset) => preset === queryBytes) ? queryBytes : 0);
+    const queryUnit: SizeUnit = ['KB', 'KiB', 'MB', 'MiB'].includes(query.get('unit') || '') ? query.get('unit') as SizeUnit : 'KB';
+    const queryBytes = Number.isFinite(queryTarget) && queryTarget > 0 ? bytesFor(queryTarget, queryUnit) : undefined;
+    const nextBytes = presetBytes ?? queryBytes;
+    if (nextBytes && nextBytes >= config.minBytes && nextBytes <= config.maxBytes) {
+      const nextUnit: SizeUnit = nextBytes >= 1_000_000 && !query.has('target') ? 'MB' : queryUnit;
+      setTarget(nextBytes / ({ KB: 1000, KiB: 1024, MB: 1_000_000, MiB: 1_048_576 }[nextUnit]));
+      setUnit(nextUnit);
+      setActivePreset(config.presets.some((value) => value === nextBytes) ? nextBytes : 0);
     }
   }, [group]);
   const choose = (next?: File) => {
@@ -37,7 +42,7 @@ export default function CompressionTool({ group = 'small', locale = 'en' }: Prop
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(next.type)) { setStatus(zh ? '仅支持静态 JPEG、PNG 和 WebP 图片。' : 'Use a static JPEG, PNG, or WebP image.'); return; }
     setFile(next); if (next.type !== 'image/jpeg') setOutput('auto'); setStatus(`${next.name} · ${(next.size / 1000).toFixed(1)} KB ${zh ? '已就绪' : 'ready to compress'}`);
   };
-  const setPreset = (bytes: number) => { invalidate(); const nextUnit: SizeUnit = config.defaultUnit; setActivePreset(bytes); setTarget(bytes / (nextUnit === 'MB' ? 1_000_000 : 1000)); setUnit(nextUnit); };
+  const setPreset = (bytes: number) => { invalidate(); const nextUnit: SizeUnit = bytes >= 1_000_000 ? 'MB' : 'KB'; setActivePreset(bytes); setTarget(bytes / (nextUnit === 'MB' ? 1_000_000 : 1000)); setUnit(nextUnit); };
   const compress = () => {
     if (!file) { setStatus(zh ? '请先选择图片。' : 'Choose an image before compressing.'); return; }
     const targetBytes = bytesFor(target, unit);

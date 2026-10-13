@@ -3,13 +3,10 @@ import test from 'node:test';
 import { seoKeywords } from '../../src/lib/seo.ts';
 
 test('exact-size compression routes expose only supported target keywords', () => {
-  const small = seoKeywords('/compress-image/', 'en', 'Compress image to 10–100 KB');
-  for (const term of ['image compressor', 'compress image online', 'compress image to exact size', 'compress image to 10–100 KB']) assert.match(small, new RegExp(term, 'i'));
+  const small = seoKeywords('/compress-image/', 'en', 'Compress images to a target size');
+  for (const term of ['image compressor', 'compress image 10 KB 5 MB', 'JPG PNG WebP compressor']) assert.match(small, new RegExp(term, 'i'));
   assert.ok(small.length <= 100);
   assert.doesNotMatch(small, /AVIF|GIF|HEIC|TIFF|batch|lossless/i);
-
-  const large = seoKeywords('/compress-image-2mb-to-5mb/', 'en', 'Compress image to 2–5 MB');
-  for (const term of ['compress image to 2MB', 'compress image to 5MB']) assert.match(large, new RegExp(term, 'i'));
 });
 
 test('resize, crop, size, and DPI routes use matching search intent', () => {

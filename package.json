@@ -16,6 +16,7 @@
     "check:release": "node scripts/check-release.mjs",
     "build": "node scripts/build.mjs",
     "capture:blog-workflows": "node scripts/capture-blog-workflows.mjs",
+    "audit:blog-cases": "node scripts/audit-blog-cases.mjs",
     "capture:product-preview": "node scripts/capture-product-preview.mjs",
     "evidence:delivery": "node scripts/generate-delivery-evidence.mjs",
     "preview": "astro preview"

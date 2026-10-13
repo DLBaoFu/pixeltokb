@@ -1,13 +1,13 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 const tools = [
-  { icon: '↘', title: 'Compress image', text: 'Choose one of four size ranges, or set a custom target in the same compressor.', href: '/compress-image/', action: 'Open compressor' },
+  { icon: '↘', title: 'Compress image', text: 'Set any target from 1 KB to 5 MB in one compressor, with quick range recommendations.', href: '/compress-image/', action: 'Open compressor' },
   { icon: '↔', title: 'Resize image', text: 'Set output width and height in pixels, with fit, fill, and stretch options.', href: '/resize-image/', action: 'Resize an image' },
   { icon: '⌗', title: 'Crop image', text: 'Choose a crop visually or enter exact pixel coordinates.', href: '/crop-image/', action: 'Open crop tool' },
   { icon: '▤', title: 'Image size checker', text: 'Read exact bytes, KB and KiB, pixel dimensions, and transparency.', href: '/image-size-checker/', action: 'Inspect an image' },
   { icon: '◉', title: 'DPI checker', text: 'Check print-resolution metadata when a file actually contains it.', href: '/image-dpi-checker/', action: 'Check DPI' }
 ];
-const ranges = [['10–100 KB', '/compress-image/'], ['200–500 KB', '/compress-image-200kb-to-500kb/'], ['500 KB–1 MB', '/compress-image-500kb-to-1mb/'], ['2–5 MB', '/compress-image-2mb-to-5mb/']];
+const ranges = [['10–100 KB', '/compress-image/?preset=10-100kb'], ['200–500 KB', '/compress-image/?preset=200-500kb'], ['500 KB–1 MB', '/compress-image/?preset=500kb-1mb'], ['2–5 MB', '/compress-image/?preset=2mb-5mb']];
 ---
 <BaseLayout title="Image tools" description="Private, browser-based tools to compress, resize, crop, and inspect images.">
   <div class="directory-page">
@@ -15,6 +15,6 @@ const ranges = [['10–100 KB', '/compress-image/'], ['200–500 KB', '/compress
     <div class="directory-note"><span aria-hidden="true">✳</span><div><strong>Private by design</strong>Files are processed locally in your browser. Nothing is uploaded to a pixeltokb server.</div></div>
     <div class="tool-card-grid">{tools.map((tool) => <a class="tool-card" href={tool.href}><span class="directory-icon" aria-hidden="true">{tool.icon}</span><h2>{tool.title}</h2><p>{tool.text}</p><span class="card-action">{tool.action}<span aria-hidden="true">→</span></span></a>)}</div>
     <section class="directory-section"><h2>Browse by task</h2><div class="category-nav"><a href="/tools/compress/">Compression</a><a href="/tools/resize/">Resize &amp; crop</a><a href="/tools/inspect/">Image inspection</a></div></section>
-    <section class="directory-section"><h2>Choose a compression range</h2><p>Each range opens the same familiar compressor with suitable presets and a custom target. Output is checked against its actual byte count.</p><div class="preset-links">{ranges.map(([label, href]) => <a class="preset-link" href={href}><strong>{label}</strong><span>Open compressor →</span></a>)}</div></section>
+    <section class="directory-section"><h2>Choose a compression range</h2><p>Each link opens the same compressor with a recommended target. You can change the target, unit, format, and dimension setting before processing.</p><div class="preset-links">{ranges.map(([label, href]) => <a class="preset-link" href={href}><strong>{label}</strong><span>Open compressor →</span></a>)}</div></section>
   </div>
 </BaseLayout>

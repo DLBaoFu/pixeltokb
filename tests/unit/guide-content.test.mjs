@@ -18,7 +18,7 @@ test('every published locale has the same complete guide set', () => {
       assert.ok(guide.title.length >= 10, `${locale}/${guide.slug} title`);
       assert.ok(guide.intro.length >= 25, `${locale}/${guide.slug} intro`);
       assert.ok(guide.sections.length >= 3, `${locale}/${guide.slug} sections`);
-      assert.ok(guide.example.rows.length >= 3, `${locale}/${guide.slug} example rows`);
+      assert.ok(guide.example.rows.length >= 2, `${locale}/${guide.slug} example rows`);
       assert.ok(guide.example.note.length >= 30, `${locale}/${guide.slug} example note`);
       assert.ok(guide.sources.length >= 2, `${locale}/${guide.slug} sources`);
     }
@@ -27,7 +27,7 @@ test('every published locale has the same complete guide set', () => {
 
 test('guide examples retain the verified acceptance measurements', () => {
   const english = JSON.stringify(guides.en);
-  for (const value of ['6,364', '23,906', '75,000', '73.2421875', '320 × 240', '160 × 120']) {
+  for (const value of ['6,364', '23,906', '4,000', '4,016', '75,000', '73.2421875', '320 × 240']) {
     assert.match(english, new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
 });

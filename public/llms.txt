@@ -4,10 +4,7 @@
 
 ## Current image tools
 
-- [Exact-size image compressor](https://www.pixeltokb.com/compress-image/): Compress static JPEG, PNG, and WebP images to verified targets from 10 KB to 100 KB or a custom value.
-- [200 KB to 500 KB image compressor](https://www.pixeltokb.com/compress-image-200kb-to-500kb/): Compress images to targets from 200 KB to 500 KB.
-- [500 KB to 1 MB image compressor](https://www.pixeltokb.com/compress-image-500kb-to-1mb/): Compress images to targets from 500 KB to 1 MB.
-- [2 MB to 5 MB image compressor](https://www.pixeltokb.com/compress-image-2mb-to-5mb/): Compress images to targets from 2 MB to 5 MB.
+- [Target-size image compressor](https://www.pixeltokb.com/compress-image/): Compress static JPEG, PNG, and WebP images to verified targets from 1 KB to 5 MB or a custom value. Range links use `?preset=10-100kb`, `?preset=200-500kb`, `?preset=500kb-1mb`, and `?preset=2mb-5mb` on this same tool.
 - [Image resizer](https://www.pixeltokb.com/resize-image/): Resize JPEG, PNG, and WebP images to exact pixel dimensions using Fit, Fill, or Stretch.
 - [Image cropper](https://www.pixeltokb.com/crop-image/): Crop images visually or with exact pixel coordinates.
 - [Image size checker](https://www.pixeltokb.com/image-size-checker/): Check bytes, KB, KiB, pixel dimensions, aspect ratio, format, and transparency.

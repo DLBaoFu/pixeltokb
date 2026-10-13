@@ -18,9 +18,9 @@
 /en/tools/resize/ /tools/resize/ 301
 /en/tools/inspect/ /tools/inspect/ 301
 /en/compress-image/ /compress-image/ 301
-/en/compress-image-200kb-to-500kb/ /compress-image-200kb-to-500kb/ 301
-/en/compress-image-500kb-to-1mb/ /compress-image-500kb-to-1mb/ 301
-/en/compress-image-2mb-to-5mb/ /compress-image-2mb-to-5mb/ 301
+/en/compress-image-200kb-to-500kb/ /compress-image/?preset=200-500kb 301
+/en/compress-image-500kb-to-1mb/ /compress-image/?preset=500kb-1mb 301
+/en/compress-image-2mb-to-5mb/ /compress-image/?preset=2mb-5mb 301
 /en/resize-image/ /resize-image/ 301
 /en/crop-image/ /crop-image/ 301
 /en/image-size-checker/ /image-size-checker/ 301
@@ -30,6 +30,17 @@
 /en/blog/kb-vs-kib/ /blog/kb-vs-kib/ 301
 /en/blog/check-image-size-and-dpi/ /blog/check-image-size-and-dpi/ 301
 /en/blog/compress-image-to-100kb/ /blog/compress-image-to-100kb/ 301
+
+# Retired range pages: one-hop permanent redirects into the unified compressor.
+/compress-image-200kb-to-500kb/ /compress-image/?preset=200-500kb 301
+/compress-image-500kb-to-1mb/ /compress-image/?preset=500kb-1mb 301
+/compress-image-2mb-to-5mb/ /compress-image/?preset=2mb-5mb 301
+/zh-cn/compress-image-200kb-to-500kb/ /zh-cn/compress-image/?preset=200-500kb 301
+/zh-cn/compress-image-500kb-to-1mb/ /zh-cn/compress-image/?preset=500kb-1mb 301
+/zh-cn/compress-image-2mb-to-5mb/ /zh-cn/compress-image/?preset=2mb-5mb 301
+/zh-tw/compress-image-200kb-to-500kb/ /zh-tw/compress-image/?preset=200-500kb 301
+/zh-tw/compress-image-500kb-to-1mb/ /zh-tw/compress-image/?preset=500kb-1mb 301
+/zh-tw/compress-image-2mb-to-5mb/ /zh-tw/compress-image/?preset=2mb-5mb 301
 
 # English format and size aliases: every target is a real canonical page, never another alias.
 /compress-jpg /compress-image/ 301
@@ -45,33 +56,33 @@
 /compress-jpg-to-30kb /compress-image/?target=30 301
 /compress-jpg-to-50kb /compress-image/?target=50 301
 /compress-jpg-to-100kb /compress-image/?target=100 301
-/compress-jpg-to-200kb /compress-image-200kb-to-500kb/?target=200 301
-/compress-jpg-to-300kb /compress-image-200kb-to-500kb/?target=300 301
-/compress-jpg-to-500kb /compress-image-200kb-to-500kb/?target=500 301
-/compress-jpg-to-1mb /compress-image-500kb-to-1mb/?target=1&unit=MB 301
-/compress-jpg-to-2mb /compress-image-2mb-to-5mb/?target=2&unit=MB 301
+/compress-jpg-to-200kb /compress-image/?target=200&unit=KB 301
+/compress-jpg-to-300kb /compress-image/?target=300&unit=KB 301
+/compress-jpg-to-500kb /compress-image/?target=500&unit=KB 301
+/compress-jpg-to-1mb /compress-image/?target=1&unit=MB 301
+/compress-jpg-to-2mb /compress-image/?target=2&unit=MB 301
 /compress-jpeg-to-20kb /compress-image/?target=20 301
 /compress-jpeg-to-30kb /compress-image/?target=30 301
 /compress-jpeg-to-50kb /compress-image/?target=50 301
 /compress-jpeg-to-100kb /compress-image/?target=100 301
-/compress-jpeg-to-200kb /compress-image-200kb-to-500kb/?target=200 301
-/compress-jpeg-to-300kb /compress-image-200kb-to-500kb/?target=300 301
-/compress-jpeg-to-500kb /compress-image-200kb-to-500kb/?target=500 301
-/compress-jpeg-to-1mb /compress-image-500kb-to-1mb/?target=1&unit=MB 301
-/compress-jpeg-to-2mb /compress-image-2mb-to-5mb/?target=2&unit=MB 301
+/compress-jpeg-to-200kb /compress-image/?target=200&unit=KB 301
+/compress-jpeg-to-300kb /compress-image/?target=300&unit=KB 301
+/compress-jpeg-to-500kb /compress-image/?target=500&unit=KB 301
+/compress-jpeg-to-1mb /compress-image/?target=1&unit=MB 301
+/compress-jpeg-to-2mb /compress-image/?target=2&unit=MB 301
 
 # Published Chinese legacy aliases use the equivalent localized canonical page.
 /zh-cn/compress-jpg /zh-cn/compress-image/ 301
 /zh-cn/compress-jpeg /zh-cn/compress-image/ 301
-/zh-cn/compress-image-to-10kb /zh-cn/compress-image/?target=10 301
-/zh-cn/compress-image-to-20kb /zh-cn/compress-image/?target=20 301
-/zh-cn/compress-image-to-30kb /zh-cn/compress-image/?target=30 301
-/zh-cn/compress-image-to-50kb /zh-cn/compress-image/?target=50 301
-/zh-cn/compress-image-to-100kb /zh-cn/compress-image/?target=100 301
+/zh-cn/compress-image-to-10kb /zh-cn/compress-image/?target=10&unit=KB 301
+/zh-cn/compress-image-to-20kb /zh-cn/compress-image/?target=20&unit=KB 301
+/zh-cn/compress-image-to-30kb /zh-cn/compress-image/?target=30&unit=KB 301
+/zh-cn/compress-image-to-50kb /zh-cn/compress-image/?target=50&unit=KB 301
+/zh-cn/compress-image-to-100kb /zh-cn/compress-image/?target=100&unit=KB 301
 /zh-tw/compress-jpg /zh-tw/compress-image/ 301
 /zh-tw/compress-jpeg /zh-tw/compress-image/ 301
-/zh-tw/compress-image-to-10kb /zh-tw/compress-image/?target=10 301
-/zh-tw/compress-image-to-20kb /zh-tw/compress-image/?target=20 301
-/zh-tw/compress-image-to-30kb /zh-tw/compress-image/?target=30 301
-/zh-tw/compress-image-to-50kb /zh-tw/compress-image/?target=50 301
-/zh-tw/compress-image-to-100kb /zh-tw/compress-image/?target=100 301
+/zh-tw/compress-image-to-10kb /zh-tw/compress-image/?target=10&unit=KB 301
+/zh-tw/compress-image-to-20kb /zh-tw/compress-image/?target=20&unit=KB 301
+/zh-tw/compress-image-to-30kb /zh-tw/compress-image/?target=30&unit=KB 301
+/zh-tw/compress-image-to-50kb /zh-tw/compress-image/?target=50&unit=KB 301
+/zh-tw/compress-image-to-100kb /zh-tw/compress-image/?target=100&unit=KB 301

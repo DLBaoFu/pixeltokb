@@ -1,6 +1,6 @@
 ---
 import { htmlLang, layoutCopy, publishedLocales, type Locale } from '../lib/locales';
-import { compressionGroupOrder, compressionGroups } from '../lib/compression-groups';
+import { compressionGroupOrder, compressionGroups, compressionRangePresets } from '../lib/compression-groups';
 import { isPendingReview } from '../lib/publication.mjs';
 import { seoKeywords } from '../lib/seo';
 interface Props { title: string; description?: string; locale?: Locale; noindex?: boolean; application?: boolean; }
@@ -15,7 +15,7 @@ const localizedPath = (targetLocale: Locale) => {
   if (unprefixedPath === '/') return targetLocale === 'en' ? '/' : `/${targetLocale}/`;
   return targetLocale === 'en' ? unprefixedPath : `/${targetLocale}${unprefixedPath}`;
 };
-const primarySection = unprefixedPath.startsWith('/tools') || ['/compress-image/', '/compress-image-200kb-to-500kb/', '/compress-image-500kb-to-1mb/', '/compress-image-2mb-to-5mb/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/'].includes(unprefixedPath)
+const primarySection = unprefixedPath.startsWith('/tools') || ['/compress-image/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/'].includes(unprefixedPath)
   ? 'tools'
   : unprefixedPath.startsWith('/blog') ? 'blog' : unprefixedPath === '/privacy/' ? 'privacy' : null;
 const skipLabel = locale === 'en' ? 'Skip to main content' : locale === 'zh-cn' ? '跳到主要内容' : '跳到主要內容';
@@ -110,7 +110,7 @@ const applicationSchema = application && !noindex ? JSON.stringify({
       <div class="footer-grid">
         <section><a class="brand footer-brand" href={locale === 'en' ? '/' : `/${locale}/`}><span class="brand-mark" aria-hidden="true"><i></i></span><span>pixel<span>to</span>kb</span></a><p>{copy.footerTagline}</p></section>
         <section><h2>{copy.footerTools}</h2><a href={pathFor('/compress-image/')}>{copy.compress}</a><a href={pathFor('/resize-image/')}>{copy.resize}</a><a href={pathFor('/crop-image/')}>{copy.crop}</a><a href={pathFor('/image-size-checker/')}>{copy.sizeCheck}</a><a href={pathFor('/image-dpi-checker/')}>{copy.dpiCheck}</a></section>
-        <section><h2>{copy.footerSizes}</h2>{compressionGroupOrder.map((group) => <a href={pathFor(`/${compressionGroups[group].slug}/`)}>{copy.compressTo(compressionGroups[group].label)}</a>)}</section>
+        <section><h2>{copy.footerSizes}</h2>{compressionGroupOrder.map((group) => <a href={pathFor(`/compress-image/?preset=${compressionRangePresets[group].query}`)}>{copy.compressTo(compressionGroups[group].label)}</a>)}</section>
         <section><h2>{copy.footerResources}</h2><a href={pathFor('/blog/')}>{copy.blog}</a><a href={pathFor('/privacy/')}>{copy.privacy}</a><a href={pathFor('/how-it-works/')}>{copy.how}</a></section>
         <section><h2>{copy.footerCompany}</h2><a href={pathFor('/about/')}>{copy.about}</a><a href={pathFor('/contact/')}>{copy.contact}</a><a href={pathFor('/terms/')}>{copy.terms}</a></section>
       </div>
@@ -132,6 +132,15 @@ const applicationSchema = application && !noindex ? JSON.stringify({
           const warning = locale === 'zh-cn' ? leaveWarning['zh-cn'] : locale === 'zh-tw' ? leaveWarning['zh-tw'] : leaveWarning.en;
           if (selectedFile && !confirm(warning)) event.preventDefault();
         }));
+        // Keep a selected compression preset when switching between published locales.
+        if (location.pathname.replace(/^\/(?:zh-cn|zh-tw)(?=\/|$)/, '') === '/compress-image/' && location.search) {
+          document.querySelectorAll('.language-menu a').forEach((link) => {
+            const anchor = /** @type {HTMLAnchorElement} */ (link);
+            const target = new URL(anchor.href, location.href);
+            target.search = location.search;
+            anchor.href = target.href;
+          });
+        }
         const buttons = document.querySelectorAll('[data-theme-choice]');
         // @ts-ignore Browser runtime script; Astro emits this verbatim.
         const apply = (choice) => {
@@ -384,6 +393,7 @@ const applicationSchema = application && !noindex ? JSON.stringify({
   .article-pagination span { color:var(--muted); font-size:.76rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
   .article-pagination strong { color:var(--cyan-deep); font-size:.9rem; line-height:1.45; }
   .range-context { margin-top:2.2rem; padding:1.35rem; border:1px solid color-mix(in srgb,var(--cyan) 32%,var(--line)); border-radius:14px; background:color-mix(in srgb,var(--cyan) 5%,var(--surface)); }
+  .range-context-item + .range-context-item { margin-top:1.35rem; padding-top:1.35rem; border-top:1px solid var(--line); }
   .range-context h2 { margin:0 0 .45rem; font-size:1.65rem; letter-spacing:-.045em; }
   .range-context-intro { max-width:760px; margin:0; color:var(--muted); line-height:1.75; }
   .range-context-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin-top:1rem; }
