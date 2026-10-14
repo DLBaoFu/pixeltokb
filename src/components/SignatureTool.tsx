@@ -92,6 +92,7 @@ export default function SignatureTool({ locale = 'en', variant }: { locale?: Loc
   };
 
   const working = status === text.working;
+  const statusError = new Set<string>([text.fileTooLarge, text.unsupported, text.pixelLimit, text.decode, text.unreachable, text.failed]).has(status);
   return <section className="tool-shell signature-tool" aria-label={variant === 'resize' ? 'Signature resizer' : 'Signature compressor'} aria-busy={working}>
     <label className="dropzone" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); choose(event.dataTransfer.files[0]); }}>
       <input type="file" accept="image/jpeg,image/png,image/webp" aria-label={text.choose} onChange={(event) => choose(event.target.files?.[0])} />
@@ -109,9 +110,11 @@ export default function SignatureTool({ locale = 'en', variant }: { locale?: Loc
       <label>{text.target}<input type="number" min="1" max="20000" value={targetKB} onChange={(event) => { clearResult(); setTargetKB(numberInRange(event.target.value, 20_000)); }} /></label>
     </div>
     <p className="signature-note" role="note">{text.exact} {text.noStandard}</p>
-    <button type="button" onClick={prepare} disabled={working}>{working ? text.working : text.action}</button>
-    {working && <button type="button" className="cancel-action" onClick={() => { clearResult(); setStatus(text.canceled); }}>{text.cancel}</button>}
-    <div className={`status ${result ? 'success' : ''}`} role="status" aria-live="polite">{status}</div>
+    <div className="signature-actions">
+      <button type="button" className="primary-action signature-submit" onClick={prepare} disabled={working}>{working ? text.working : text.action}</button>
+      {working && <button type="button" className="cancel-action" onClick={() => { clearResult(); setStatus(text.canceled); }}>{text.cancel}</button>}
+    </div>
+    <div className={`status signature-status ${result ? 'success' : statusError ? 'error' : ''}`} role="status" aria-live="polite">{status}</div>
     {result && <div className="result"><img src={result.url} alt="Prepared signature preview" /><div><strong>{text.ready}</strong><p>{result.width} × {result.height}px · JPEG · {(result.bytes / 1000).toFixed(1)} KB · {result.bytes.toLocaleString()} bytes</p><a href={result.url} download={safeDownloadName(file?.name ?? 'signature.jpg', 'jpg')}>{text.download}</a></div></div>}
   </section>;
 }
