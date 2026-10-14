@@ -5,6 +5,9 @@ export function getJpegMetadata(bytes: Uint8Array) {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength); let offset = 2; let dpi = 0; let orientation = 1;
   while (offset + 4 < bytes.length && bytes[offset] === 0xff) {
     const marker = bytes[offset + 1]; const length = view.getUint16(offset + 2, false); if (length < 2 || offset + length + 2 > bytes.length) break;
+    if (marker === 0xe0 && String.fromCharCode(...bytes.subarray(offset + 4, offset + 9)) === 'JFIF\0' && bytes[offset + 11] === 1) {
+      const x = view.getUint16(offset + 12, false); const y = view.getUint16(offset + 14, false); dpi = x && y ? Math.round((x + y) / 2) : dpi;
+    }
     if (marker === 0xe1 && String.fromCharCode(...bytes.subarray(offset + 4, offset + 10)) === 'Exif\0\0') {
       const tiff = offset + 10; const little = view.getUint16(tiff, false) === 0x4949; const ifd = tiff + read32(view, tiff + 4, little); const count = read16(view, ifd, little); let x = 0; let y = 0; let unit = 2;
       const rational = (entry: number) => { const data = tiff + read32(view, entry + 8, little); const denominator = read32(view, data + 4, little); return denominator ? read32(view, data, little) / denominator : 0; };

@@ -2,6 +2,12 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 const tools = [
   { icon: '↘', title: '压缩图片', text: '在同一套工具中设置 1 KB 到 5 MB 的目标，并使用常用区间快捷入口。', href: '/zh-cn/compress-image/', action: '打开压缩工具' },
+  { icon: '▦', title: 'PNG 无损优化', text: '在本地优化一个或最多 20 个 PNG；通过校验且更小的结果可单独下载或打包为 ZIP。', href: '/zh-cn/compress-png/', action: '优化 PNG 文件' },
+  { icon: '✒', title: '签名图片缩放', text: '裁剪签名区域，设置精确像素，并在本地核对白底 JPEG 的文件大小。', href: '/zh-cn/signature-resizer/', action: '处理签名图片' },
+  { icon: '⌁', title: '签名图片压缩', text: '无需上传图片，即可按所选文件大小限制处理签名 JPEG。', href: '/zh-cn/signature-compressor/', action: '压缩签名图片' },
+  { icon: '∶', title: '图片宽高比计算器', text: '将宽高化为最简比例，并计算匹配的像素边长。', href: '/zh-cn/aspect-ratio-calculator/', action: '计算宽高比' },
+  { icon: '◎', title: 'PPI 计算器', text: '根据图片像素和计划打印尺寸计算像素密度。', href: '/zh-cn/ppi-calculator/', action: '计算 PPI' },
+  { icon: '▧', title: '打印尺寸照片调整', text: '用毫米或英寸设定打印尺寸，并验证 JPEG 或 PNG 的 DPI 元数据。', href: '/zh-cn/photo-resizer/', action: '调整照片尺寸' },
   { icon: '↔', title: '缩放图片', text: '设置精确像素宽高，并选择适合的适配方式。', href: '/zh-cn/resize-image/', action: '调整图片尺寸' },
   { icon: '⌗', title: '裁剪图片', text: '直接在预览图上选择区域，或输入像素坐标。', href: '/zh-cn/crop-image/', action: '打开裁剪工具' },
   { icon: '▤', title: '图片大小检查', text: '查看精确字节数、KB 与 KiB、像素尺寸和透明度。', href: '/zh-cn/image-size-checker/', action: '检查图片信息' },
@@ -9,12 +15,12 @@ const tools = [
 ];
 const ranges = [['10–100 KB', '/zh-cn/compress-image/?preset=10-100kb'], ['200–500 KB', '/zh-cn/compress-image/?preset=200-500kb'], ['500 KB–1 MB', '/zh-cn/compress-image/?preset=500kb-1mb'], ['2–5 MB', '/zh-cn/compress-image/?preset=2mb-5mb']];
 ---
-<BaseLayout locale="zh-cn" title="图片工具" description="在浏览器本地压缩、缩放、裁剪和检查图片。">
+<BaseLayout locale="zh-cn" title="图片工具" description="在浏览器本地压缩和优化图片、缩放像素、裁剪并检查文件信息。">
   <div class="directory-page">
     <div class="hero"><p class="eyebrow">PIXELTOKB · 图片工作台</p><h1>关注每个细节的图片工具。</h1><p>缩小文件体积、设定精确像素尺寸，或检查图片元数据——全部在浏览器本地完成，图片不会离开你的设备。</p></div>
     <div class="directory-note"><span aria-hidden="true">✳</span><div><strong>隐私，从设计开始</strong>文件只在浏览器中处理，不会上传到 pixeltokb 服务器。</div></div>
     <div class="tool-card-grid">{tools.map((tool) => <a class="tool-card" href={tool.href}><span class="directory-icon" aria-hidden="true">{tool.icon}</span><h2>{tool.title}</h2><p>{tool.text}</p><span class="card-action">{tool.action}<span aria-hidden="true">→</span></span></a>)}</div>
-    <section class="directory-section"><h2>按任务浏览</h2><div class="category-nav"><a href="/zh-cn/tools/compress/">图片压缩</a><a href="/zh-cn/tools/resize/">缩放和裁剪</a><a href="/zh-cn/tools/inspect/">图片信息检查</a></div></section>
+    <section class="directory-section"><h2>按任务浏览</h2><div class="category-nav"><a href="/zh-cn/tools/compress/">图片压缩</a><a href="/zh-cn/tools/resize/">缩放和裁剪</a><a href="/zh-cn/tools/forms/">签名和表单图片</a><a href="/zh-cn/tools/inspect/">图片信息检查</a></div></section>
     <section class="directory-section"><h2>选择压缩规格</h2><p>每个入口都会打开同一套压缩工具，并预先选中推荐目标；你仍可以修改目标、单位、格式和尺寸设置。</p><div class="preset-links">{ranges.map(([label, href]) => <a class="preset-link" href={href}><strong>{label}</strong><span>打开压缩工具 →</span></a>)}</div></section>
   </div>
 </BaseLayout>

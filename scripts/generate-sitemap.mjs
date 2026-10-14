@@ -1,6 +1,7 @@
 // @ts-check
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
+import { includedInCurrentBuild } from '../src/lib/current-routes.mjs';
 
 const dist = join(process.cwd(), 'dist');
 const configuredOrigin = process.env.SITE_ORIGIN;
@@ -15,7 +16,7 @@ const site = registry.sites.find((candidate) => candidate.id === 'kb');
 if (!site) throw new Error('KB route registry is missing');
 /** @type {Record<string, string>} */
 const priorityByKind = { home: '1.0', tool: '0.9', category: '0.8', article: '0.8', 'blog-category': '0.7', foundation: '0.7' };
-const routePriority = new Map(site.routes.filter((route) => route.firstRelease === 'R1').map((route) => {
+const routePriority = new Map(site.routes.filter(includedInCurrentBuild).map((route) => {
   const path = route.path === '/' ? '/' : `${route.path}/`;
   return [path, priorityByKind[route.kind] || '0.6'];
 }));

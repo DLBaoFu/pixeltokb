@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoResizer from '../../components/PhotoResizer';
+---
+<BaseLayout locale="zh-tw" title="依毫米、英吋與 DPI 調整相片尺寸" description="設定實體列印尺寸與 DPI，在本機調整相片像素，並下載已驗證密度中繼資料的 JPEG 或 PNG。" application>
+  <div class="detail-page"><div class="hero"><p class="eyebrow">列印尺寸相片調整</p><h1>依毫米、英吋與 DPI 調整相片尺寸</h1><p>設定實體列印尺寸與 DPI，在本機調整相片像素，並下載已驗證密度中繼資料的 JPEG 或 PNG。</p></div><PhotoResizer client:load locale="zh-tw" /><section class="cards"><h2>實體尺寸不等於審核通過</h2><p>請以接收平台目前的尺寸與 DPI 規則為準。工具會驗證匯出的 JPEG 或 PNG 密度標籤，但不保證任何護照、簽證、證件照或表單要求。</p></section></div>
+</BaseLayout>

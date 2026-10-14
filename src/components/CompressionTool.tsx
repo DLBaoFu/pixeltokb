@@ -7,7 +7,7 @@ import { safeDownloadName } from '../lib/image/download-name';
 
 interface Props { group?: CompressionGroup; locale?: 'en' | 'zh-cn' | 'zh-tw'; }
 const formatTarget = (value: number, unit: SizeUnit) => `${value} ${unit}`;
-const zhErrors: Record<ImageErrorCode, string> = { FILE_TOO_LARGE: '图片超过 20 MB 限制。', PIXEL_LIMIT: '图片像素或目标尺寸超过 4000 万像素限制。', FORMAT_UNSUPPORTED: '仅支持静态 JPEG、PNG 和 WebP 图片。', ANIMATION_UNSUPPORTED: '不支持动态图片。请导出静态画面后重试。', TARGET_UNREACHABLE: '在当前格式和尺寸设置下无法达到目标大小。', ENCODER_UNAVAILABLE: '此浏览器无法完成图片编码。', PROCESSING_TIMEOUT: '处理超时，请尝试更小的图片或更大的目标大小。', DECODE_FAILED: '图片无法读取，请确认文件未损坏。', CANCELLED: '处理已取消。' };
+const zhErrors: Record<ImageErrorCode, string> = { FILE_TOO_LARGE: '图片超过 20 MB 限制。', BATCH_TOO_LARGE: '批量文件超过数量或总大小限制。', PIXEL_LIMIT: '图片像素或目标尺寸超过 4000 万像素限制。', FORMAT_UNSUPPORTED: '仅支持静态 JPEG、PNG 和 WebP 图片。', ANIMATION_UNSUPPORTED: '不支持动态图片。请导出静态画面后重试。', TARGET_UNREACHABLE: '在当前格式和尺寸设置下无法达到目标大小。', ENCODER_UNAVAILABLE: '此浏览器无法完成图片编码。', PROCESSING_TIMEOUT: '处理超时，请尝试更小的图片或更大的目标大小。', OUT_OF_MEMORY: '浏览器处理图片时内存不足，请尝试更小的图片。', DECODE_FAILED: '图片无法读取，请确认文件未损坏。', CANCELLED: '处理已取消。' };
 
 export default function CompressionTool({ group = 'small', locale = 'en' }: Props) {
   const config = group === 'small' ? unifiedCompressionConfig : compressionGroups[group];

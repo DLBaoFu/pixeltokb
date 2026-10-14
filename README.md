@@ -1,41 +1,56 @@
 # PixelToKB
 
-[PixelToKB](https://www.pixeltokb.com) is a privacy-first collection of browser-based image tools. Images are processed locally in the browser and are not uploaded to a PixelToKB server.
+[PixelToKB](https://www.pixeltokb.com) is a privacy-first set of browser-based image tools for preparing, compressing, resizing, cropping, and checking image files. Image processing runs in the browser, so selected files are not uploaded to a PixelToKB server.
 
 ## Product preview
 
-### Exact-size image compression
+The single overview below combines representative browser captures for compression, resizing, and cropping. It keeps the README compact while showing the same published interface used on the site.
 
-![PixelToKB exact-size image compression](public/readme/compress-image.png)
+![PixelToKB image tools: compression, resize, and crop](public/readme/product-preview.png)
 
-### Image resizing
+## Tools by workflow
 
-![PixelToKB image resizing](public/readme/resize-image.png)
+### Compression
 
-### Image cropping
+- Exact-size image compression for JPEG, PNG, and WebP
+- Lossless PNG optimization for one file or a batch of up to 20 files, with individual or ZIP downloads
 
-![PixelToKB image cropping in light mode](public/readme/crop-image-light.png)
+### Resizing and cropping
 
-## Image tools
+- Pixel-based image resizing with fit, fill, and stretch options
+- Visual and coordinate-based image cropping
+- Physical photo resizing in millimetres or inches with verified DPI metadata
+- Aspect-ratio and PPI calculators for planning dimensions and print output
 
-- Exact-size image compression
-- Image resizing
-- Image cropping
-- Image size checking
-- Image DPI checking
+### Signatures and form images
 
-## Coming next
+- Signature image resizing with crop and pixel controls
+- Signature image compression for a selected file-size limit
+- Image size checking before an upload or form submission
 
-- PNG optimization
-- Signature image preparation
-- Physical photo resizing
-- Image dimension presets
-- Print size and PPI calculation
+### Inspection
 
-## Privacy
+- Exact file size in bytes, KB, and KiB
+- Pixel dimensions, format, aspect ratio, transparency, and available DPI metadata
+- DPI metadata checking when a file contains print-resolution information
 
-Image processing takes place on the user's device. Selected images are not uploaded or assigned a public result URL. Read the published policies and product information at [www.pixeltokb.com](https://www.pixeltokb.com).
+## Planned image workflows
 
-## Operator
+The next product expansion remains focused on local image preparation:
 
-PixelToKB is operated and reviewed by PixelTokb. Contact: [support@pixeltokb.com](mailto:support@pixeltokb.com).
+- Background removal with transparent-background controls
+- Photo and signature composition
+- A4 and Letter print sheets with a calibration ruler
+- Controlled image enlargement with output validation
+- Additional interface languages after complete translation and review
+
+## Privacy by design
+
+PixelToKB is designed for local, in-browser processing. The published tools do not upload selected images, create public result URLs, or require an account for image processing. See the [Privacy Policy](https://www.pixeltokb.com/privacy/) and [Cookies Policy](https://www.pixeltokb.com/cookies/) for the published data and cookie information.
+
+## Product information
+
+- Website: [www.pixeltokb.com](https://www.pixeltokb.com)
+- Operator: PixelTokb
+- Support: [support@pixeltokb.com](mailto:support@pixeltokb.com)
+- Information: [About](https://www.pixeltokb.com/about/), [Contact](https://www.pixeltokb.com/contact/), [Terms](https://www.pixeltokb.com/terms/), and [Editorial Policy](https://www.pixeltokb.com/editorial-policy/)

@@ -1,0 +1,46 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "orientationCase": {
+    "input": {
+      "file": "generated oriented-gps.jpg",
+      "bytes": 3080,
+      "hasExif": true,
+      "hasGps": true,
+      "orientation": 6,
+      "sourceDimensions": [320, 240]
+    },
+    "output": {
+      "bytes": 7064,
+      "dimensions": [240, 320],
+      "mime": "image/jpeg",
+      "hasExif": false,
+      "hasGps": false,
+      "orientation": null,
+      "hasIcc": true,
+      "savedFile": "pixeltokb-oriented-gps.jpg",
+      "savedFileExif": {
+        "hasExif": false,
+        "hasGps": false,
+        "orientation": null,
+        "hasIcc": true
+      }
+    }
+  },
+  "colorProfileCase": {
+    "input": {
+      "file": "generated display-p3.png",
+      "bytes": 308258,
+      "profile": "Display P3 ICC",
+      "chunk": "iCCP"
+    },
+    "output": {
+      "bytes": 3772,
+      "dimensions": [320, 240],
+      "alpha": true,
+      "chunks": ["IHDR", "sRGB", "IDAT", "IEND"],
+      "metadataChunks": [],
+      "sRgb": true,
+      "iccProfileRemoved": true
+    }
+  }
+}

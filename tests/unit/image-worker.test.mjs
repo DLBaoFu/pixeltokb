@@ -108,6 +108,29 @@ test('crop clamps the requested box and reports the real output dimensions', asy
   assert.deepEqual(draw.slice(2), [3100, 2300, 100, 100, 0, 0, 100, 100]);
 });
 
+test('signature preparation crops the requested area, flattens to white JPEG, and checks actual bytes', async () => {
+  messages.length = 0; encodes = 0; wrongMime = false; canvasOperations = [];
+  await self.onmessage({ data: { type: 'signature', file: transparentPng, crop: { left: 100, top: 200, width: 800, height: 300 }, width: 300, height: 100, targetBytes: 10_000 } });
+  const result = messages.find((message) => message.type === 'success');
+  assert.ok(result);
+  assert.equal(result.width, 300);
+  assert.equal(result.height, 100);
+  assert.equal(result.blob.type, 'image/jpeg');
+  assert.ok(result.blob.size <= 10_000);
+  assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'fillStyle'), ['fillStyle', '#ffffff']);
+  assert.ok(canvasOperations.findIndex((operation) => operation[0] === 'fillRect') < canvasOperations.findIndex((operation) => operation[0] === 'drawImage'));
+  assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'drawImage').slice(2), [100, 200, 800, 300, 0, 0, 300, 100]);
+  assert.ok(encodes <= 12);
+});
+
+test('signature preparation refuses a byte limit that no JPEG candidate can meet', async () => {
+  messages.length = 0; encodes = 0; wrongMime = false; canvasOperations = [];
+  await self.onmessage({ data: { type: 'signature', file, crop: { left: 0, top: 0, width: 3200, height: 2400 }, width: 300, height: 100, targetBytes: 1_000 } });
+  assert.equal(messages.some((message) => message.type === 'success'), false);
+  assert.equal(messages.at(-1).error, 'TARGET_UNREACHABLE');
+  assert.ok(encodes <= 12);
+});
+
 test('corrupt image reports a specific decode failure and never offers a result', async () => {
   const decode = globalThis.createImageBitmap;
   globalThis.createImageBitmap = async () => { throw new Error('The source image cannot be decoded.'); };

@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { includedInCurrentBuild } from '../src/lib/current-routes.mjs';
 
 const origin = process.env.PREVIEW_ORIGIN || 'http://127.0.0.1:4321';
 const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -11,7 +12,7 @@ const axeSource = await readFile(join(process.cwd(), 'node_modules/axe-core/axe.
 const registry = JSON.parse(await readFile(join(process.cwd(), 'kbresize-dev-package/routes.json'), 'utf8'));
 const site = registry.sites.find((candidate) => candidate.id === 'kb');
 if (!site) throw new Error('KB route registry is missing');
-const paths = site.routes.filter((route) => route.firstRelease === 'R1').flatMap((route) => {
+const paths = site.routes.filter(includedInCurrentBuild).flatMap((route) => {
   const path = route.path === '/' ? '/' : `${route.path}/`;
   return ['', '/zh-cn', '/zh-tw'].map((prefix) => `${prefix}${path}`);
 });

@@ -6,8 +6,16 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": ["/sitemap.xml"],
+    "run_worker_first": ["/sitemap.xml", "/admin", "/admin/*", "/api/cms/*", "/api/cms-auth/login", "/api/cms-auth/callback", "/api/cms-auth/logout"],
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
+  },
+  "vars": {
+    "CMS_PUBLIC_ORIGIN": "https://www.pixeltokb.com",
+    "CMS_GITHUB_OWNER": "DLBaoFu",
+    "CMS_GITHUB_REPO": "pixeltokb",
+    "CMS_GITHUB_BRANCH": "main",
+    "CMS_ALLOWED_GITHUB_USERS": "DLBaoFu",
+    "GITHUB_CLIENT_ID": "Ov23lit47qxYjOQovALU"
   }
 }

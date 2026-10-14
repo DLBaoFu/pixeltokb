@@ -1,6 +1,6 @@
 ---
 import EnglishPage from '../../views/en/tools/[category].astro';
-export function getStaticPaths() { return ['compress', 'resize', 'inspect'].map((category) => ({ params: { category }, props: { category } })); }
+export function getStaticPaths() { return ['compress', 'resize', 'forms', 'inspect'].map((category) => ({ params: { category }, props: { category } })); }
 const { category } = Astro.props;
 ---
 <EnglishPage category={category} />

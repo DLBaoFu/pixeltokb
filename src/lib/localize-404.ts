@@ -8,6 +8,11 @@ const pageCopy = {
   'zh-tw': { title: '找不到頁面', description: '找不到你要求的 pixeltokb 頁面。', intro: '你要求的頁面不存在。可以從這裡返回圖片工具。', browse: '瀏覽圖片工具 →', home: '返回首頁' }
 };
 
+const footerToolCopy = {
+  'zh-cn': ['压缩图片', 'PNG 无损优化', '签名图片缩放', '签名图片压缩', '图片宽高比计算器', 'PPI 计算器', '打印尺寸照片调整', '缩放图片', '裁剪图片', '图片大小检查', 'DPI 检查'],
+  'zh-tw': ['壓縮圖片', 'PNG 無損最佳化', '簽名圖片縮放', '簽名圖片壓縮', '圖片長寬比計算器', 'PPI 計算器', '列印尺寸相片調整', '縮放圖片', '裁切圖片', '圖片大小檢查', 'DPI 檢查']
+} as const;
+
 export function localize404() {
   const match = location.pathname.match(/^\/(zh-cn|zh-tw)(?:\/|$)/);
   if (!match) return;
@@ -56,7 +61,7 @@ export function localize404() {
   const sections = footer.querySelectorAll('.footer-grid section');
   setText(sections[0]?.querySelector('p'), copy.footerTagline);
   [copy.footerTools, copy.footerSizes, copy.footerResources, copy.footerCompany].forEach((label, index) => setText(sections[index + 1]?.querySelector('h2'), label));
-  [copy.compress, copy.resize, copy.crop, copy.sizeCheck, copy.dpiCheck].forEach((label, index) => setText(sections[1]?.querySelectorAll('a')[index], label));
+  footerToolCopy[locale].forEach((label, index) => setText(sections[1]?.querySelectorAll('a')[index], label));
   compressionGroupOrder.forEach((group, index) => setText(sections[2]?.querySelectorAll('a')[index], copy.compressTo(compressionGroups[group].label)));
   [copy.blog, copy.privacy, copy.how].forEach((label, index) => setText(sections[3]?.querySelectorAll('a')[index], label));
   [copy.about, copy.contact, copy.terms].forEach((label, index) => setText(sections[4]?.querySelectorAll('a')[index], label));

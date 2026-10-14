@@ -5,6 +5,12 @@
 ## Current image tools
 
 - [Target-size image compressor](https://www.pixeltokb.com/compress-image/): Compress static JPEG, PNG, and WebP images to verified targets from 1 KB to 5 MB or a custom value. Range links use `?preset=10-100kb`, `?preset=200-500kb`, `?preset=500kb-1mb`, and `?preset=2mb-5mb` on this same tool.
+- [Lossless PNG optimizer](https://www.pixeltokb.com/compress-png/): Re-encode one static PNG or a local batch of up to 20 files and offer individual or ZIP downloads only for smaller results whose decoded RGBA pixels, dimensions, and transparency pass exact browser verification.
+- [Signature resizer](https://www.pixeltokb.com/signature-resizer/): Crop a signature area, set exact output pixels, and export a locally verified white-background JPEG.
+- [Signature compressor](https://www.pixeltokb.com/signature-compressor/): Prepare a signature JPEG for a chosen file-size limit without uploading the image.
+- [Aspect ratio calculator](https://www.pixeltokb.com/aspect-ratio-calculator/): Reduce integer pixel dimensions to a simple ratio and calculate a matching side locally.
+- [PPI calculator](https://www.pixeltokb.com/ppi-calculator/): Calculate horizontal, vertical, and diagonal pixels per inch from planned print dimensions without changing an image file.
+- [Photo resizer](https://www.pixeltokb.com/photo-resizer/): Resize a photo from millimetres or inches at a chosen DPI and verify the written JPEG or PNG density metadata.
 - [Image resizer](https://www.pixeltokb.com/resize-image/): Resize JPEG, PNG, and WebP images to exact pixel dimensions using Fit, Fill, or Stretch.
 - [Image cropper](https://www.pixeltokb.com/crop-image/): Crop images visually or with exact pixel coordinates.
 - [Image size checker](https://www.pixeltokb.com/image-size-checker/): Check bytes, KB, KiB, pixel dimensions, aspect ratio, format, and transparency.

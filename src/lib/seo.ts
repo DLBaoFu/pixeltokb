@@ -17,6 +17,36 @@ const routeTerms: Array<[RegExp, Partial<Record<Locale, string[]>>]> = [
     'zh-cn': ['图片压缩工具', '压缩图片 10 KB 到 5 MB', '压缩 JPG PNG WebP'],
     'zh-tw': ['圖片壓縮工具', '壓縮圖片 10 KB 到 5 MB', '壓縮 JPG PNG WebP']
   }],
+  [/^\/compress-png\/$/, {
+    en: ['lossless PNG compressor', 'batch PNG optimizer', 'compress PNG preserve transparency'],
+    'zh-cn': ['PNG 无损压缩', '批量 PNG 优化', '压缩 PNG 保留透明度'],
+    'zh-tw': ['PNG 無損壓縮', '批次 PNG 最佳化', '壓縮 PNG 保留透明度']
+  }],
+  [/^\/signature-resizer\/$/, {
+    en: ['signature resizer', 'resize signature image', 'signature image size', 'signature cropper'],
+    'zh-cn': ['签名图片缩放', '调整签名图片尺寸', '签名图片裁剪'],
+    'zh-tw': ['簽名圖片縮放', '調整簽名圖片尺寸', '簽名圖片裁切']
+  }],
+  [/^\/signature-compressor\/$/, {
+    en: ['signature compressor', 'compress signature image', 'reduce signature image size', 'signature JPEG compressor'],
+    'zh-cn': ['签名图片压缩', '压缩签名图片', '减小签名图片大小'],
+    'zh-tw': ['簽名圖片壓縮', '壓縮簽名圖片', '縮小簽名圖片大小']
+  }],
+  [/^\/aspect-ratio-calculator\/$/, {
+    en: ['aspect ratio calculator', 'image aspect ratio', 'calculate image dimensions'],
+    'zh-cn': ['图片宽高比计算器', '图片比例计算', '计算图片尺寸'],
+    'zh-tw': ['圖片長寬比計算器', '圖片比例計算', '計算圖片尺寸']
+  }],
+  [/^\/ppi-calculator\/$/, {
+    en: ['PPI calculator', 'pixels per inch calculator', 'print size resolution'],
+    'zh-cn': ['PPI 计算器', '每英寸像素计算', '打印尺寸分辨率'],
+    'zh-tw': ['PPI 計算器', '每英吋像素計算', '列印尺寸解析度']
+  }],
+  [/^\/photo-resizer\/$/, {
+    en: ['photo resizer', 'photo size in mm', 'photo size in inches', 'DPI photo resize'],
+    'zh-cn': ['照片尺寸调整', '毫米照片尺寸', '英寸照片尺寸', 'DPI 照片调整'],
+    'zh-tw': ['相片尺寸調整', '毫米相片尺寸', '英吋相片尺寸', 'DPI 相片調整']
+  }],
   [/^\/resize-image\/$/, {
     en: ['image resizer', 'resize image online', 'resize image in pixels', 'resize JPG', 'resize PNG', 'resize WebP', 'image aspect ratio resizer', 'resize image without cropping'],
     'zh-cn': ['图片缩放工具', '在线调整图片尺寸', '按像素缩放图片', '缩放 JPG PNG WebP', '图片宽高比缩放', '不裁剪缩放图片'],

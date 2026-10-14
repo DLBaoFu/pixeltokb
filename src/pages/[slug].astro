@@ -1,6 +1,6 @@
 ---
 import EnglishPage from '../views/en/[slug].astro';
-export function getStaticPaths() { return ['about', 'contact', 'privacy', 'terms', 'cookies', 'editorial-policy', 'how-it-works', 'faq', 'changelog', 'compress-image', 'resize-image', 'crop-image', 'image-size-checker', 'image-dpi-checker'].map((slug) => ({ params: { slug }, props: { slug } })); }
+export function getStaticPaths() { return ['about', 'contact', 'privacy', 'terms', 'cookies', 'editorial-policy', 'how-it-works', 'faq', 'changelog', 'compress-image', 'compress-png', 'signature-resizer', 'signature-compressor', 'aspect-ratio-calculator', 'ppi-calculator', 'photo-resizer', 'resize-image', 'crop-image', 'image-size-checker', 'image-dpi-checker'].map((slug) => ({ params: { slug }, props: { slug } })); }
 const { slug } = Astro.props;
 ---
 <EnglishPage slug={slug} />

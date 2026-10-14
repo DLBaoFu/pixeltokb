@@ -24,10 +24,16 @@ test('Traditional Chinese conversion covers active UI and preserves user filenam
 });
 
 test('authored Chinese tool labels and status messages have no known simplified-only glyphs after conversion', async () => {
-  for (const name of ['CompressionTool', 'ResizeTool', 'CropTool', 'ImageInfoTool']) {
+  for (const name of ['CompressionTool', 'PngOptimizationTool', 'PngBatchOptimizationTool', 'ResizeTool', 'CropTool', 'ImageInfoTool']) {
     const source = await readFile(new URL(`../../src/components/${name}.tsx`, import.meta.url), 'utf8');
     const literals = [...source.matchAll(/'([^'\n]*[\u3400-\u9fff][^'\n]*)'/gu)].map((match) => match[1]);
     assert.ok(literals.length > 0, `${name} should contain Chinese copy`);
     for (const literal of literals) assert.doesNotMatch(toTraditional(literal), simplifiedOnly, `${name}: ${literal}`);
+  }
+  const batchCopy = await readFile(new URL('../../src/lib/png/batch-content.ts', import.meta.url), 'utf8');
+  const traditionalSection = batchCopy.split("'zh-tw': {")[1];
+  assert.ok(traditionalSection, 'Traditional Chinese batch copy must exist');
+  for (const literal of [...traditionalSection.matchAll(/'([^'\n]*[\u3400-\u9fff][^'\n]*)'/gu)].map((match) => match[1])) {
+    assert.doesNotMatch(literal, simplifiedOnly, `batch-content zh-tw: ${literal}`);
   }
 });

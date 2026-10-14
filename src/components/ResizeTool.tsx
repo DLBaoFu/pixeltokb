@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { traditionalize } from '../lib/traditionalize';
 import { ImageValidationError, validateImageFile } from '../lib/image/file-validation';
+import { resizePresetFromSearch, type ResizeMode } from '../lib/resize-presets';
 
-type ResizeMode = 'fit' | 'fill' | 'stretch';
 type OutputFormat = 'png' | 'jpeg' | 'webp';
 type ResizeResult = { url: string; bytes: number; width: number; height: number; mime: string; extension: 'png' | 'jpg' | 'webp'; label: 'PNG' | 'JPEG' | 'WebP' };
 interface Props { locale?: 'en' | 'zh-cn' | 'zh-tw'; }
 
 export default function ResizeTool({ locale = 'en' }: Props) {
   const zh = locale !== 'en';
-  const [file, setFile] = useState<File | null>(null); const [width, setWidth] = useState(1080); const [height, setHeight] = useState(1080); const [ratio, setRatio] = useState(1); const [lockRatio, setLockRatio] = useState(true); const [mode, setMode] = useState<ResizeMode>('fit'); const [output, setOutput] = useState<OutputFormat>('png'); const [jpegBackground, setJpegBackground] = useState('#ffffff'); const [status, setStatus] = useState(zh ? '选择一张图片开始。' : 'Choose an image to begin.'); const [result, setResult] = useState<ResizeResult | null>(null); const input = useRef<HTMLInputElement>(null); const worker = useRef<Worker | null>(null); const timeout = useRef<ReturnType<typeof setTimeout> | null>(null); const selection = useRef(0);
+  const [file, setFile] = useState<File | null>(null); const [width, setWidth] = useState(1080); const [height, setHeight] = useState(1080); const [ratio, setRatio] = useState(1); const [lockRatio, setLockRatio] = useState(true); const [mode, setMode] = useState<ResizeMode>('fit'); const [output, setOutput] = useState<OutputFormat>('png'); const [jpegBackground, setJpegBackground] = useState('#ffffff'); const [status, setStatus] = useState(zh ? '选择一张图片开始。' : 'Choose an image to begin.'); const [result, setResult] = useState<ResizeResult | null>(null); const input = useRef<HTMLInputElement>(null); const worker = useRef<Worker | null>(null); const timeout = useRef<ReturnType<typeof setTimeout> | null>(null); const selection = useRef(0); const dimensionsConfigured = useRef(false);
   const stopWorker = () => { worker.current?.terminate(); worker.current = null; if (timeout.current) clearTimeout(timeout.current); timeout.current = null; };
   const invalidate = () => { stopWorker(); setResult(null); };
   useEffect(() => () => { worker.current?.terminate(); if (timeout.current) clearTimeout(timeout.current); }, []);
   useEffect(() => () => { if (result) URL.revokeObjectURL(result.url); }, [result]);
+  useEffect(() => { const preset = resizePresetFromSearch(window.location.search); if (preset) { dimensionsConfigured.current = true; setWidth(preset.width); setHeight(preset.height); setMode(preset.mode); } }, []);
   const choose = async (next?: File) => {
     if (!next) return;
     const selected = ++selection.current;
@@ -26,7 +27,7 @@ export default function ResizeTool({ locale = 'en' }: Props) {
       const sourceWidth = bitmap.width; const sourceHeight = bitmap.height; const sourceRatio = sourceWidth / sourceHeight;
       const scale = Math.min(1, 10_000 / Math.max(sourceWidth, sourceHeight));
       const nextWidth = Math.max(1, Math.round(sourceWidth * scale)); const nextHeight = Math.max(1, Math.round(sourceHeight * scale));
-      bitmap.close(); setFile(next); setRatio(sourceRatio); setWidth(nextWidth); setHeight(nextHeight);
+      bitmap.close(); setFile(next); setRatio(sourceRatio); if (!dimensionsConfigured.current) { setWidth(nextWidth); setHeight(nextHeight); }
       if (next.type !== 'image/jpeg' && output === 'jpeg') setOutput('png'); setStatus(`${next.name} · ${sourceWidth} × ${sourceHeight}px · ${(next.size / 1000).toFixed(1)} KB`);
     } catch (error) {
       if (selected !== selection.current) return;
@@ -34,8 +35,8 @@ export default function ResizeTool({ locale = 'en' }: Props) {
     }
   };
   const dimension = (value: string) => Math.min(10_000, Math.max(1, Math.round(Number(value) || 1)));
-  const setWidthFromInput = (value: string) => { invalidate(); const nextWidth = dimension(value); setWidth(nextWidth); if (lockRatio) setHeight(Math.min(10_000, Math.max(1, Math.round(nextWidth / ratio)))); };
-  const setHeightFromInput = (value: string) => { invalidate(); const nextHeight = dimension(value); setHeight(nextHeight); if (lockRatio) setWidth(Math.min(10_000, Math.max(1, Math.round(nextHeight * ratio)))); };
+  const setWidthFromInput = (value: string) => { dimensionsConfigured.current = true; invalidate(); const nextWidth = dimension(value); setWidth(nextWidth); if (lockRatio) setHeight(Math.min(10_000, Math.max(1, Math.round(nextWidth / ratio)))); };
+  const setHeightFromInput = (value: string) => { dimensionsConfigured.current = true; invalidate(); const nextHeight = dimension(value); setHeight(nextHeight); if (lockRatio) setWidth(Math.min(10_000, Math.max(1, Math.round(nextHeight * ratio)))); };
   const resize = () => {
     if (!file) { setStatus(zh ? '请先选择图片。' : 'Choose an image first.'); return; }
     invalidate(); const nextWorker = new Worker(new URL('../workers/image-worker.ts', import.meta.url), { type: 'module' }); worker.current = nextWorker; setStatus(zh ? '正在缩放…' : 'Resizing image…');

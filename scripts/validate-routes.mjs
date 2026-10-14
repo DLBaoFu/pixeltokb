@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 import { isPendingReview } from '../src/lib/publication.mjs';
+import { includedInCurrentBuild } from '../src/lib/current-routes.mjs';
 
 const dist = join(process.cwd(), 'dist');
 const origin = (process.env.SITE_ORIGIN || 'https://www.pixeltokb.com').replace(/\/$/, '');
@@ -36,21 +37,22 @@ function value(tag, attribute) {
 const registry = JSON.parse(await readFile(join(process.cwd(), 'kbresize-dev-package/routes.json'), 'utf8'));
 const site = registry.sites.find((candidate) => candidate.id === 'kb');
 if (!site) throw new Error('KB route registry is missing');
-const r1 = site.routes.filter((route) => route.firstRelease === 'R1');
-const toolPaths = new Set(r1.filter((route) => route.kind === 'tool').map((route) => `${route.path}/`));
-const expectedRoutes = new Set(r1.flatMap((route) => ['en', 'zh-cn', 'zh-tw'].map((locale) => {
+const currentRoutes = site.routes.filter(includedInCurrentBuild);
+const internalRoutes = new Set(['/admin/']);
+const toolPaths = new Set(currentRoutes.filter((route) => route.kind === 'tool').map((route) => `${route.path}/`));
+const expectedRoutes = new Set(currentRoutes.flatMap((route) => ['en', 'zh-cn', 'zh-tw'].map((locale) => {
   const base = route.path === '/' ? '/' : `${route.path}/`;
   return locale === 'en' ? base : `/${locale}${base}`;
 })));
 const generated = await pages(dist);
-const generatedRoutes = new Set(generated.map(routeFor));
+const generatedRoutes = new Set(generated.map(routeFor).filter((route) => !internalRoutes.has(route)));
 const simplifiedOnly = new Set('图过标万仅静态当设无达浏览编码处时请尝试读确认损坏备进压缩绪选择须间输节检载败传为后点击实数会画质还吗决于细调许体积减应该广网么难采并适来将这预义单动结离开终获从项场邮带见问题张宽显铺满内区侧顶发现据说变');
 const traditionalOnly = new Set('圖過標萬僅靜態當設無達瀏覽編碼處時請嘗試讀確認損壞備進壓縮緒選擇須間輸節檢載敗傳為後點擊實數會畫質還嗎決於細調許體積減應該廣網麼難採並適來將這預義單動結離開終獲從項場郵帶見問題張寬顯鋪滿內區側頂發現據說變');
 const internalCopy = [
   /\b(?:E2E|R1|acceptance evidence|publication status|draft boundary|not yet a production release|production release remains blocked|local browser run|repository fixture)\b/i,
   /(?:验收证据|驗收證據|本地浏览器 E2E|本機瀏覽器 E2E|发布状态|發布狀態|尚非正式发布|尚非正式發布|本地验证|本機驗證|仍待测试|仍待測試)/
 ];
-for (const route of expectedRoutes) if (!generatedRoutes.has(route)) failures.push(`Registered R1 route not generated: ${route}`);
+for (const route of expectedRoutes) if (!generatedRoutes.has(route)) failures.push(`Registered current-build route not generated: ${route}`);
 for (const route of generatedRoutes) if (!expectedRoutes.has(route)) failures.push(`Unregistered route generated: ${route}`);
 
 const indexable = new Set();
@@ -59,6 +61,7 @@ const descriptionsByLocale = new Map();
 for (const file of generated) {
   const html = await readFile(file, 'utf8');
   const source = routeFor(file);
+  if (internalRoutes.has(source)) continue;
   const locale = source.startsWith('/zh-cn/') ? 'zh-CN' : source.startsWith('/zh-tw/') ? 'zh-TW' : 'en';
   if (value(html.match(/<html\b[^>]*>/i)?.[0] || '', 'lang') !== locale) failures.push(`${source}: html lang must be ${locale}`);
   const visibleText = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, '');
@@ -166,10 +169,10 @@ const socialImage = await readFile(join(dist, 'og-image.png'));
 const pngSignature = '89504e470d0a1a0a';
 if (socialImage.subarray(0, 8).toString('hex') !== pngSignature || socialImage.readUInt32BE(16) !== 1200 || socialImage.readUInt32BE(20) !== 630) failures.push('og-image.png: expected a valid 1200×630 PNG');
 const llms = await readFile(join(dist, 'llms.txt'), 'utf8');
-for (const route of ['/compress-image/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/']) if (!llms.includes(`${origin}${route}`)) failures.push(`llms.txt: missing current tool ${route}`);
-if (/\b(?:AVIF|GIF|HEIC|TIFF|batch|OCR|AI image generator)\b/i.test(llms)) failures.push('llms.txt: contains an unsupported current feature');
+for (const route of ['/compress-image/', '/compress-png/', '/signature-resizer/', '/signature-compressor/', '/aspect-ratio-calculator/', '/ppi-calculator/', '/photo-resizer/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/']) if (!llms.includes(`${origin}${route}`)) failures.push(`llms.txt: missing current tool ${route}`);
+if (/\b(?:AVIF|GIF|HEIC|TIFF|OCR|AI image generator)\b/i.test(llms)) failures.push('llms.txt: contains an unsupported current feature');
 
 if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
-} else console.log(`Validated ${generated.length} registered R1 pages, ${indexable.size} indexable URLs, canonical/hreflang, sitemap, robots and internal links.`);
+} else console.log(`Validated ${generated.length} registered current-build pages, ${indexable.size} indexable URLs, canonical/hreflang, sitemap, robots and internal links.`);

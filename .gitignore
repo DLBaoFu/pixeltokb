@@ -31,11 +31,6 @@ AGENTS.md
 kbresize-dev-package/*
 !kbresize-dev-package/routes.json
 
-# Isolated post-R1 experiment; not part of the R1 repository delivery.
-src/lib/png/lossless.ts
-tests/unit/png-lossless.test.mjs
-tests/fixtures/images/unoptimized-alpha.png
-
 # Operator-supplied audit prompts; keep local and do not commit.
 PixelToKB-AdSense-整改执行报告-2026-10-13.md
 PixelToKB-博客真实案例写作与实测提示词.md

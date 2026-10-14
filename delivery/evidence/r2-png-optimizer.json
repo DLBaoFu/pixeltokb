@@ -1,0 +1,182 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "route": "/compress-png/",
+  "input": {
+    "file": "tests/fixtures/images/unoptimized-alpha.png",
+    "bytes": 307892,
+    "width": 320,
+    "height": 240,
+    "alpha": true,
+    "metadataChunks": [
+      "tIME",
+      "tEXt",
+      "tEXt",
+      "tEXt"
+    ]
+  },
+  "output": {
+    "file": "pixeltokb-unoptimized-alpha-optimized.png",
+    "bytes": 3891,
+    "width": 320,
+    "height": 240,
+    "alpha": true,
+    "pixelComparison": {
+      "mismatches": 0,
+      "corner": 0,
+      "center": 255
+    },
+    "metadataChunks": [],
+    "colorChunks": [
+      "sRGB"
+    ],
+    "signature": "89504e470d0a1a0a",
+    "savedToDisk": true
+  },
+  "opaqueCase": {
+    "state": "optimized",
+    "originalBytes": 175636,
+    "outputBytes": 790,
+    "alpha": false,
+    "colorType": 2,
+    "signature": "89504e470d0a1a0a"
+  },
+  "metadataCase": {
+    "state": "optimized",
+    "result": true,
+    "download": true,
+    "metadata": "Removed and verified"
+  },
+  "noSaving": {
+    "state": "unchanged",
+    "text": "This PNG is already as small as this browser can make it without changing decoded pixels. Keep the original file.",
+    "result": false,
+    "download": false
+  },
+  "negativeCases": [
+    {
+      "name": "animated PNG",
+      "state": "error",
+      "message": "Animated images are not supported. Export a still frame and try again.",
+      "result": false,
+      "download": false
+    },
+    {
+      "name": "mismatched PNG signature",
+      "state": "error",
+      "message": "Only static JPEG, PNG, and WebP files are supported.",
+      "result": false,
+      "download": false
+    }
+  ],
+  "cancellation": {
+    "state": "cancelled",
+    "result": false,
+    "download": false
+  },
+  "batchCase": {
+    "rows": [
+      {
+        "name": "unoptimized-alpha.png",
+        "status": "optimized",
+        "download": true
+      },
+      {
+        "name": "opaque-rgb.png",
+        "status": "optimized",
+        "download": true
+      },
+      {
+        "name": "animated.png",
+        "status": "error",
+        "download": false
+      },
+      {
+        "name": "jpeg-disguised-as-png.png",
+        "status": "error",
+        "download": false
+      },
+      {
+        "name": "pixeltokb-unoptimized-alpha-optimized.png",
+        "status": "unchanged",
+        "download": false
+      }
+    ],
+    "zip": {
+      "file": "pixeltokb-optimized-pngs.zip",
+      "entries": [
+        {
+          "name": "unoptimized-alpha-optimized.png",
+          "bytes": 3891,
+          "signature": "89504e470d0a1a0a"
+        },
+        {
+          "name": "opaque-rgb-optimized.png",
+          "bytes": 790,
+          "signature": "89504e470d0a1a0a"
+        }
+      ]
+    }
+  },
+  "batchOverflow": {
+    "state": "error",
+    "text": "A batch can contain at most 20 files. Remove extra files and try again.",
+    "rows": 0,
+    "zip": false
+  },
+  "lowMemoryBatch": {
+    "notice": "This device reports limited memory, so files will be processed one at a time.",
+    "statuses": [
+      "optimized",
+      "optimized"
+    ]
+  },
+  "batchCancellation": {
+    "state": "cancelled",
+    "statuses": [
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled"
+    ]
+  },
+  "localizedRuns": [
+    {
+      "pathname": "/zh-cn/compress-png/",
+      "lang": "zh-CN",
+      "status": "已验证更小的 PNG",
+      "result": true,
+      "download": true,
+      "batch": {
+        "phase": "complete",
+        "statuses": [
+          "optimized",
+          "optimized"
+        ],
+        "downloads": 2,
+        "zipDisabled": false
+      }
+    },
+    {
+      "pathname": "/zh-tw/compress-png/",
+      "lang": "zh-TW",
+      "status": "已驗證較小的 PNG",
+      "result": true,
+      "download": true,
+      "batch": {
+        "phase": "complete",
+        "statuses": [
+          "optimized",
+          "optimized"
+        ],
+        "downloads": 2,
+        "zipDisabled": false
+      }
+    }
+  ]
+}

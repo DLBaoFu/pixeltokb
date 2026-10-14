@@ -16,8 +16,10 @@
 /en/blog/category/troubleshooting/ /blog/category/troubleshooting/ 301
 /en/tools/compress/ /tools/compress/ 301
 /en/tools/resize/ /tools/resize/ 301
+/en/tools/forms/ /tools/forms/ 301
 /en/tools/inspect/ /tools/inspect/ 301
 /en/compress-image/ /compress-image/ 301
+/en/compress-png/ /compress-png/ 301
 /en/compress-image-200kb-to-500kb/ /compress-image/?preset=200-500kb 301
 /en/compress-image-500kb-to-1mb/ /compress-image/?preset=500kb-1mb 301
 /en/compress-image-2mb-to-5mb/ /compress-image/?preset=2mb-5mb 301
@@ -30,6 +32,11 @@
 /en/blog/kb-vs-kib/ /blog/kb-vs-kib/ 301
 /en/blog/check-image-size-and-dpi/ /blog/check-image-size-and-dpi/ 301
 /en/blog/compress-image-to-100kb/ /blog/compress-image-to-100kb/ 301
+/en/signature-resizer/ /signature-resizer/ 301
+/en/signature-compressor/ /signature-compressor/ 301
+/en/aspect-ratio-calculator/ /aspect-ratio-calculator/ 301
+/en/ppi-calculator/ /ppi-calculator/ 301
+/en/photo-resizer/ /photo-resizer/ 301
 
 # Retired range pages: one-hop permanent redirects into the unified compressor.
 /compress-image-200kb-to-500kb/ /compress-image/?preset=200-500kb 301
@@ -71,6 +78,28 @@
 /compress-jpeg-to-1mb /compress-image/?target=1&unit=MB 301
 /compress-jpeg-to-2mb /compress-image/?target=2&unit=MB 301
 
+# R2 size presets use the canonical resizer with validated parameters, not duplicate pages.
+/resize-image-to-1080x1080 /resize-image/?width=1080&height=1080&mode=fit 301
+/resize-image-to-1920x1080 /resize-image/?width=1920&height=1080&mode=fit 301
+/resize-image-to-1280x720 /resize-image/?width=1280&height=720&mode=fit 301
+/resize-image-to-1200x630 /resize-image/?width=1200&height=630&mode=fit 301
+/resize-image-to-1080x1920 /resize-image/?width=1080&height=1920&mode=fit 301
+/resize-image-to-600x600 /resize-image/?width=600&height=600&mode=fit 301
+/photo-2x2-inch /photo-resizer/?width=2&height=2&unit=in&dpi=300 301
+/photo-35x45-mm /photo-resizer/?width=35&height=45&unit=mm&dpi=300 301
+/photo-30x40-mm /photo-resizer/?width=30&height=40&unit=mm&dpi=300 301
+/photo-50x50-mm /photo-resizer/?width=50&height=50&unit=mm&dpi=300 301
+/en/resize-image-to-1080x1080 /resize-image/?width=1080&height=1080&mode=fit 301
+/en/resize-image-to-1920x1080 /resize-image/?width=1920&height=1080&mode=fit 301
+/en/resize-image-to-1280x720 /resize-image/?width=1280&height=720&mode=fit 301
+/en/resize-image-to-1200x630 /resize-image/?width=1200&height=630&mode=fit 301
+/en/resize-image-to-1080x1920 /resize-image/?width=1080&height=1920&mode=fit 301
+/en/resize-image-to-600x600 /resize-image/?width=600&height=600&mode=fit 301
+/en/photo-2x2-inch /photo-resizer/?width=2&height=2&unit=in&dpi=300 301
+/en/photo-35x45-mm /photo-resizer/?width=35&height=45&unit=mm&dpi=300 301
+/en/photo-30x40-mm /photo-resizer/?width=30&height=40&unit=mm&dpi=300 301
+/en/photo-50x50-mm /photo-resizer/?width=50&height=50&unit=mm&dpi=300 301
+
 # Published Chinese legacy aliases use the equivalent localized canonical page.
 /zh-cn/compress-jpg /zh-cn/compress-image/ 301
 /zh-cn/compress-jpeg /zh-cn/compress-image/ 301
@@ -86,3 +115,23 @@
 /zh-tw/compress-image-to-30kb /zh-tw/compress-image/?target=30&unit=KB 301
 /zh-tw/compress-image-to-50kb /zh-tw/compress-image/?target=50&unit=KB 301
 /zh-tw/compress-image-to-100kb /zh-tw/compress-image/?target=100&unit=KB 301
+/zh-cn/resize-image-to-1080x1080 /zh-cn/resize-image/?width=1080&height=1080&mode=fit 301
+/zh-cn/resize-image-to-1920x1080 /zh-cn/resize-image/?width=1920&height=1080&mode=fit 301
+/zh-cn/resize-image-to-1280x720 /zh-cn/resize-image/?width=1280&height=720&mode=fit 301
+/zh-cn/resize-image-to-1200x630 /zh-cn/resize-image/?width=1200&height=630&mode=fit 301
+/zh-cn/resize-image-to-1080x1920 /zh-cn/resize-image/?width=1080&height=1920&mode=fit 301
+/zh-cn/resize-image-to-600x600 /zh-cn/resize-image/?width=600&height=600&mode=fit 301
+/zh-cn/photo-2x2-inch /zh-cn/photo-resizer/?width=2&height=2&unit=in&dpi=300 301
+/zh-cn/photo-35x45-mm /zh-cn/photo-resizer/?width=35&height=45&unit=mm&dpi=300 301
+/zh-cn/photo-30x40-mm /zh-cn/photo-resizer/?width=30&height=40&unit=mm&dpi=300 301
+/zh-cn/photo-50x50-mm /zh-cn/photo-resizer/?width=50&height=50&unit=mm&dpi=300 301
+/zh-tw/resize-image-to-1080x1080 /zh-tw/resize-image/?width=1080&height=1080&mode=fit 301
+/zh-tw/resize-image-to-1920x1080 /zh-tw/resize-image/?width=1920&height=1080&mode=fit 301
+/zh-tw/resize-image-to-1280x720 /zh-tw/resize-image/?width=1280&height=720&mode=fit 301
+/zh-tw/resize-image-to-1200x630 /zh-tw/resize-image/?width=1200&height=630&mode=fit 301
+/zh-tw/resize-image-to-1080x1920 /zh-tw/resize-image/?width=1080&height=1920&mode=fit 301
+/zh-tw/resize-image-to-600x600 /zh-tw/resize-image/?width=600&height=600&mode=fit 301
+/zh-tw/photo-2x2-inch /zh-tw/photo-resizer/?width=2&height=2&unit=in&dpi=300 301
+/zh-tw/photo-35x45-mm /zh-tw/photo-resizer/?width=35&height=45&unit=mm&dpi=300 301
+/zh-tw/photo-30x40-mm /zh-tw/photo-resizer/?width=30&height=40&unit=mm&dpi=300 301
+/zh-tw/photo-50x50-mm /zh-tw/photo-resizer/?width=50&height=50&unit=mm&dpi=300 301

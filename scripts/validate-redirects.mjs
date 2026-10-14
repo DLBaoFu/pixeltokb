@@ -1,5 +1,6 @@
 import { readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
+import { includedInCurrentBuild } from '../src/lib/current-routes.mjs';
 
 const root = process.cwd();
 const dist = join(root, 'dist');
@@ -46,7 +47,7 @@ for (const [source, target] of redirects) {
 
 const site = registry.sites.find((candidate) => candidate.id === 'kb');
 if (!site) throw new Error('KB route registry is missing');
-for (const route of site.routes.filter((candidate) => candidate.firstRelease === 'R1')) {
+for (const route of site.routes.filter(includedInCurrentBuild)) {
   const canonical = route.path === '/' ? '/' : `${route.path}/`;
   const legacy = `/en${canonical}`;
   const actual = redirects.get(legacy);

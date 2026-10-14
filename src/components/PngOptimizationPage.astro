@@ -1,0 +1,9 @@
+---
+import PngOptimizationTool from './PngOptimizationTool';
+import { pngCopy, type PngLocale } from '../lib/png/content';
+interface Props { locale?: PngLocale; }
+const { locale = 'en' } = Astro.props;
+const copy = pngCopy[locale];
+---
+<div class="hero"><p class="eyebrow">{copy.eyebrow}</p><h1>{copy.pageTitle}</h1><p>{copy.pageDescription}</p></div>
+<PngOptimizationTool client:load locale={locale} />

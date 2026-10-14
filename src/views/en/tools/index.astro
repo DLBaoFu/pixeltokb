@@ -2,6 +2,12 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 const tools = [
   { icon: '↘', title: 'Compress image', text: 'Set any target from 1 KB to 5 MB in one compressor, with quick range recommendations.', href: '/compress-image/', action: 'Open compressor' },
+  { icon: '▦', title: 'Lossless PNG optimizer', text: 'Optimize one PNG or up to 20 files locally; download verified smaller results separately or as a ZIP.', href: '/compress-png/', action: 'Optimize PNG files' },
+  { icon: '✒', title: 'Signature resizer', text: 'Crop a signature area, set exact pixels, and verify a white JPEG file-size limit locally.', href: '/signature-resizer/', action: 'Prepare a signature' },
+  { icon: '⌁', title: 'Signature compressor', text: 'Prepare a signature JPEG for a selected file-size limit without uploading the image.', href: '/signature-compressor/', action: 'Compress a signature' },
+  { icon: '∶', title: 'Aspect ratio calculator', text: 'Reduce width and height to a simple ratio and calculate a matching pixel dimension.', href: '/aspect-ratio-calculator/', action: 'Calculate a ratio' },
+  { icon: '◎', title: 'PPI calculator', text: 'Calculate print pixel density from image pixels and a planned print size.', href: '/ppi-calculator/', action: 'Calculate PPI' },
+  { icon: '▧', title: 'Photo resizer', text: 'Set a physical size in millimetres or inches and verify JPEG or PNG DPI metadata.', href: '/photo-resizer/', action: 'Resize a photo' },
   { icon: '↔', title: 'Resize image', text: 'Set output width and height in pixels, with fit, fill, and stretch options.', href: '/resize-image/', action: 'Resize an image' },
   { icon: '⌗', title: 'Crop image', text: 'Choose a crop visually or enter exact pixel coordinates.', href: '/crop-image/', action: 'Open crop tool' },
   { icon: '▤', title: 'Image size checker', text: 'Read exact bytes, KB and KiB, pixel dimensions, and transparency.', href: '/image-size-checker/', action: 'Inspect an image' },
@@ -9,12 +15,12 @@ const tools = [
 ];
 const ranges = [['10–100 KB', '/compress-image/?preset=10-100kb'], ['200–500 KB', '/compress-image/?preset=200-500kb'], ['500 KB–1 MB', '/compress-image/?preset=500kb-1mb'], ['2–5 MB', '/compress-image/?preset=2mb-5mb']];
 ---
-<BaseLayout title="Image tools" description="Private, browser-based tools to compress, resize, crop, and inspect images.">
+<BaseLayout title="Image tools" description="Private browser tools to compress and optimize images, resize pixels, crop, and inspect file details.">
   <div class="directory-page">
     <div class="hero"><p class="eyebrow">PIXELTOKB · IMAGE WORKSPACE</p><h1>Image tools for the details that matter.</h1><p>Reduce file size, set precise pixel dimensions, or check image metadata—all in your browser. Your images stay on your device.</p></div>
     <div class="directory-note"><span aria-hidden="true">✳</span><div><strong>Private by design</strong>Files are processed locally in your browser. Nothing is uploaded to a pixeltokb server.</div></div>
     <div class="tool-card-grid">{tools.map((tool) => <a class="tool-card" href={tool.href}><span class="directory-icon" aria-hidden="true">{tool.icon}</span><h2>{tool.title}</h2><p>{tool.text}</p><span class="card-action">{tool.action}<span aria-hidden="true">→</span></span></a>)}</div>
-    <section class="directory-section"><h2>Browse by task</h2><div class="category-nav"><a href="/tools/compress/">Compression</a><a href="/tools/resize/">Resize &amp; crop</a><a href="/tools/inspect/">Image inspection</a></div></section>
+    <section class="directory-section"><h2>Browse by task</h2><div class="category-nav"><a href="/tools/compress/">Compression</a><a href="/tools/resize/">Resize &amp; crop</a><a href="/tools/forms/">Signature &amp; form images</a><a href="/tools/inspect/">Image inspection</a></div></section>
     <section class="directory-section"><h2>Choose a compression range</h2><p>Each link opens the same compressor with a recommended target. You can change the target, unit, format, and dimension setting before processing.</p><div class="preset-links">{ranges.map(([label, href]) => <a class="preset-link" href={href}><strong>{label}</strong><span>Open compressor →</span></a>)}</div></section>
   </div>
 </BaseLayout>

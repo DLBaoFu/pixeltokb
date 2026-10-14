@@ -59,7 +59,7 @@ try {
   await send('Page.enable');
   await send('Runtime.enable');
 
-  const paths = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/why-image-wont-fit-50kb/', '/blog/kb-vs-kib/', '/blog/check-image-size-and-dpi/', '/blog/compress-image-to-100kb/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/how-it-works/', '/faq/', '/changelog/', '/authors/editor/', '/compress-image/', '/compress-image/?preset=200-500kb', '/compress-image/?preset=500kb-1mb', '/compress-image/?preset=2mb-5mb', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/'];
+  const paths = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/forms/', '/tools/inspect/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/why-image-wont-fit-50kb/', '/blog/kb-vs-kib/', '/blog/check-image-size-and-dpi/', '/blog/compress-image-to-100kb/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/how-it-works/', '/faq/', '/changelog/', '/authors/editor/', '/compress-image/', '/compress-png/', '/signature-resizer/', '/signature-compressor/', '/aspect-ratio-calculator/', '/ppi-calculator/', '/photo-resizer/', '/compress-image/?preset=200-500kb', '/compress-image/?preset=500kb-1mb', '/compress-image/?preset=2mb-5mb', '/resize-image/', '/resize-image/?width=1200&height=630&mode=fit', '/photo-resizer/?width=2&height=2&unit=in&dpi=300', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/'];
   const localePrefixes = ['', '/zh-cn', '/zh-tw'];
   const widths = [360, 390, 768, 1366];
   const failures = [];
@@ -92,7 +92,7 @@ try {
         if(document.querySelectorAll('.language-menu a[aria-current="page"]').length!==1) bad.push('language-current');
         if(Math.max(root.scrollWidth,body.scrollWidth)>innerWidth+1) bad.push('overflow:'+Math.max(root.scrollWidth,body.scrollWidth));
         if(!document.querySelector('main')?.textContent?.trim()) bad.push('empty-main');
-        if(location.pathname.endsWith('/compress-image/') && location.search && [...document.querySelectorAll('.language-menu a')].some((link) => new URL(link.href, location.href).search !== location.search)) bad.push('language-preset');
+        if(location.search && [...document.querySelectorAll('.language-menu a')].some((link) => new URL(link.href, location.href).search !== location.search)) bad.push('language-query');
         const isGuide=location.pathname.includes('/blog/')&&!location.pathname.includes('/category/')&&!location.pathname.endsWith('/blog/');
         // Every article must expose the verified measurements that exist for its fixture;
         // two rows is sufficient when an experiment has fewer reproducible dimensions.
@@ -131,7 +131,7 @@ try {
 
   if (screenshotDirectory) {
     await mkdir(screenshotDirectory, { recursive: true });
-    const families = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/inspect/', '/compress-image/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/compress-image-to-100kb/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/changelog/', '/authors/editor/', '/not-a-real-route/'];
+    const families = ['/', '/tools/', '/tools/compress/', '/tools/resize/', '/tools/forms/', '/tools/inspect/', '/compress-image/', '/compress-png/', '/signature-resizer/', '/signature-compressor/', '/aspect-ratio-calculator/', '/ppi-calculator/', '/photo-resizer/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/', '/blog/', '/blog/category/tutorials/', '/blog/category/troubleshooting/', '/blog/compress-without-changing-dimensions/', '/blog/compress-image-to-100kb/', '/about/', '/contact/', '/privacy/', '/terms/', '/cookies/', '/editorial-policy/', '/changelog/', '/authors/editor/', '/not-a-real-route/'];
     let index = 0;
     for (const prefix of localePrefixes) for (const path of families) {
       const width = widths[index % widths.length];
