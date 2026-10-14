@@ -1,4 +1,4 @@
-import { compressionGroupOrder, compressionGroups } from './compression-groups';
+import { footerGroupCopy } from './footer-groups';
 import { layoutCopy } from './locales';
 
 type FallbackLocale = 'zh-cn' | 'zh-tw';
@@ -9,8 +9,8 @@ const pageCopy = {
 };
 
 const footerToolCopy = {
-  'zh-cn': ['压缩图片', 'PNG 无损优化', '签名图片缩放', '签名图片压缩', '图片宽高比计算器', 'PPI 计算器', '打印尺寸照片调整', '缩放图片', '裁剪图片', '图片大小检查', 'DPI 检查'],
-  'zh-tw': ['壓縮圖片', 'PNG 無損最佳化', '簽名圖片縮放', '簽名圖片壓縮', '圖片長寬比計算器', 'PPI 計算器', '列印尺寸相片調整', '縮放圖片', '裁切圖片', '圖片大小檢查', 'DPI 檢查']
+  'zh-cn': ['压缩图片', 'PNG 无损优化', '签名图片压缩', '签名图片缩放', '打印尺寸照片调整', '缩放图片', '裁剪图片', '图片宽高比计算器', 'PPI 计算器', '图片大小检查', 'DPI 检查'],
+  'zh-tw': ['壓縮圖片', 'PNG 無損最佳化', '簽名圖片壓縮', '簽名圖片縮放', '列印尺寸相片調整', '縮放圖片', '裁切圖片', '圖片長寬比計算器', 'PPI 計算器', '圖片大小檢查', 'DPI 檢查']
 } as const;
 
 export function localize404() {
@@ -60,11 +60,16 @@ export function localize404() {
 
   const sections = footer.querySelectorAll('.footer-grid section');
   setText(sections[0]?.querySelector('p'), copy.footerTagline);
-  [copy.footerTools, copy.footerSizes, copy.footerResources, copy.footerCompany].forEach((label, index) => setText(sections[index + 1]?.querySelector('h2'), label));
-  footerToolCopy[locale].forEach((label, index) => setText(sections[1]?.querySelectorAll('a')[index], label));
-  compressionGroupOrder.forEach((group, index) => setText(sections[2]?.querySelectorAll('a')[index], copy.compressTo(compressionGroups[group].label)));
-  [copy.blog, copy.privacy, copy.how].forEach((label, index) => setText(sections[3]?.querySelectorAll('a')[index], label));
-  [copy.about, copy.contact, copy.terms].forEach((label, index) => setText(sections[4]?.querySelectorAll('a')[index], label));
+  [copy.footerTools, copy.footerResources, copy.footerCompany].forEach((label, index) => setText(sections[index + 1]?.querySelector('h2'), label));
+  const groups = footerGroupCopy[locale];
+  if (groups) {
+    setText(footer.querySelector('[data-footer-group="compression"]'), groups.compression);
+    setText(footer.querySelector('[data-footer-group="resizeCrop"]'), groups.resizeCrop);
+    setText(footer.querySelector('[data-footer-group="inspectPlan"]'), groups.inspectPlan);
+  }
+  footerToolCopy[locale].forEach((label, index) => setText(sections[1]?.querySelectorAll('.footer-tool-group a')[index], label));
+  [copy.blog, copy.privacy, copy.how].forEach((label, index) => setText(sections[2]?.querySelectorAll('a')[index], label));
+  [copy.about, copy.contact, copy.terms].forEach((label, index) => setText(sections[3]?.querySelectorAll('a')[index], label));
   setText(footer.querySelector('.footer-bottom span:first-child'), `© 2026 pixeltokb. ${copy.allRights}`);
   [copy.privacy, copy.contact].forEach((label, index) => setText(footer.querySelectorAll('.footer-bottom span:last-child a')[index], label));
   footer.querySelectorAll('a').forEach((link) => link.setAttribute('href', prefix(link.getAttribute('href'))));
