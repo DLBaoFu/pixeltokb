@@ -92,7 +92,17 @@ function callbackUrl(config: CmsConfig) { return `${config.origin}/api/cms-auth/
 function sha256Base64Url(value: string) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then((hash) => base64UrlEncode(new Uint8Array(hash))); }
 function githubHeaders(token?: string): HeadersInit { return { accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', ...(token ? { authorization: `Bearer ${token}` } : {}) }; }
 async function githubUser(token: string) { const response = await fetch('https://api.github.com/user', { headers: githubHeaders(token) }); if (!response.ok) return null; const data = await response.json() as { login?: unknown }; return typeof data.login === 'string' ? data.login : null; }
-async function canPush(config: CmsConfig, token: string) { const response = await fetch(`https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}`, { headers: githubHeaders(token) }); if (!response.ok) return false; const data = await response.json() as { permissions?: { push?: unknown } }; return data.permissions?.push === true; }
+async function canPush(config: CmsConfig, token: string, login: string) {
+  const response = await fetch(`https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}`, { headers: githubHeaders(token) });
+  if (!response.ok) return false;
+  const data = await response.json() as { owner?: { login?: unknown }; permissions?: { push?: unknown } };
+  if (data.permissions?.push === true) return true;
+  // GitHub can omit the permissions object for an OAuth token even when the
+  // authenticated account owns the repository. The repository owner still has
+  // write authority, so keep the explicit username allowlist and accept that
+  // authoritative owner relationship as a safe fallback.
+  return typeof data.owner?.login === 'string' && data.owner.login.toLowerCase() === login.toLowerCase() && config.owner.toLowerCase() === login.toLowerCase();
+}
 async function validSession(request: Request, config: CmsConfig) { const session = await unseal<CmsSession>(cookieValue(request, SESSION_COOKIE), config.cookieSecret); if (!session || typeof session.login !== 'string' || typeof session.token !== 'string' || !Number.isFinite(session.exp) || session.exp <= Date.now() || !config.allowedUsers.has(session.login.toLowerCase())) return null; return session; }
 function protectJsonOrigin(request: Request, config: CmsConfig, required = false) { const origin = request.headers.get('origin'); return required ? origin === config.origin : !origin || origin === config.origin; }
 function gitContentUrl(config: CmsConfig, contentPath: string) { return `https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}/contents/${contentPath.split('/').map(encodeURIComponent).join('/')}`; }
@@ -134,7 +144,7 @@ async function handleCms(request: Request, env: Env, url: URL) {
     const tokenResult = await tokenResponse.json() as { access_token?: unknown };
     if (!tokenResponse.ok || typeof tokenResult.access_token !== 'string') return new Response('GitHub authorization could not be completed.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
     const login = await githubUser(tokenResult.access_token);
-    if (!login || !config.allowedUsers.has(login.toLowerCase()) || !(await canPush(config, tokenResult.access_token))) return new Response('This GitHub account is not allowed to edit this repository.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
+    if (!login || !config.allowedUsers.has(login.toLowerCase()) || !(await canPush(config, tokenResult.access_token, login))) return new Response('This GitHub account is not allowed to edit this repository.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
     return new Response(null, { status: 302, headers: headersWithCookies({ location: '/admin/?cms=authorized', 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE), await sessionCookie({ login, token: tokenResult.access_token, exp: Date.now() + oneHour * 1000 }, config)]) });
   }
   if (url.pathname === '/api/cms-auth/logout' && request.method === 'POST') {
