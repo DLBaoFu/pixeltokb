@@ -90,7 +90,14 @@ async function oauthCookie(state: OAuthState, config: CmsConfig) { return cookie
 async function sessionCookie(session: CmsSession, config: CmsConfig) { return cookie(SESSION_COOKIE, await seal(session, config.cookieSecret), oneHour); }
 function callbackUrl(config: CmsConfig) { return `${config.origin}/api/cms-auth/callback`; }
 function sha256Base64Url(value: string) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then((hash) => base64UrlEncode(new Uint8Array(hash))); }
-function githubHeaders(token?: string): HeadersInit { return { accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', ...(token ? { authorization: `Bearer ${token}` } : {}) }; }
+function githubHeaders(token?: string): HeadersInit {
+  return {
+    accept: 'application/vnd.github+json',
+    'user-agent': 'PixelToKB-CMS',
+    'x-github-api-version': '2022-11-28',
+    ...(token ? { authorization: `Bearer ${token}` } : {}),
+  };
+}
 async function githubUser(token: string) { const response = await fetch('https://api.github.com/user', { headers: githubHeaders(token) }); if (!response.ok) return null; const data = await response.json() as { login?: unknown }; return typeof data.login === 'string' ? data.login : null; }
 async function canPush(config: CmsConfig, token: string, login: string) {
   // The configured repository owner is an explicit deployment-level allowlist
@@ -149,7 +156,9 @@ async function handleCms(request: Request, env: Env, url: URL) {
     const tokenResult = await tokenResponse.json() as { access_token?: unknown };
     if (!tokenResponse.ok || typeof tokenResult.access_token !== 'string') return new Response('GitHub authorization could not be completed.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
     const login = await githubUser(tokenResult.access_token);
-    if (!login || !config.allowedUsers.has(login.toLowerCase()) || !(await canPush(config, tokenResult.access_token, login))) return new Response('This GitHub account is not allowed to edit this repository.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
+    if (!login) return new Response('GitHub account identity could not be verified. Please try again.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
+    if (!config.allowedUsers.has(login.toLowerCase())) return new Response('This GitHub account is not on the CMS allowlist.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
+    if (!(await canPush(config, tokenResult.access_token, login))) return new Response('The allowlisted GitHub account does not have write access to this repository.', { status: 403, headers: headersWithCookies({ 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE)]) });
     return new Response(null, { status: 302, headers: headersWithCookies({ location: '/admin/?cms=authorized', 'cache-control': 'no-store' }, [clearCookie(OAUTH_COOKIE), await sessionCookie({ login, token: tokenResult.access_token, exp: Date.now() + oneHour * 1000 }, config)]) });
   }
   if (url.pathname === '/api/cms-auth/logout' && request.method === 'POST') {
