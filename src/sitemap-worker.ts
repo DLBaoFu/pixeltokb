@@ -93,6 +93,11 @@ function sha256Base64Url(value: string) { return crypto.subtle.digest('SHA-256',
 function githubHeaders(token?: string): HeadersInit { return { accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', ...(token ? { authorization: `Bearer ${token}` } : {}) }; }
 async function githubUser(token: string) { const response = await fetch('https://api.github.com/user', { headers: githubHeaders(token) }); if (!response.ok) return null; const data = await response.json() as { login?: unknown }; return typeof data.login === 'string' ? data.login : null; }
 async function canPush(config: CmsConfig, token: string, login: string) {
+  // The configured repository owner is an explicit deployment-level allowlist
+  // entry. GitHub may omit `permissions.push` from an OAuth repository
+  // response, but the owner still has write authority. Trust that identity
+  // relationship before relying on the optional permissions field.
+  if (config.owner.toLowerCase() === login.toLowerCase()) return true;
   const response = await fetch(`https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}`, { headers: githubHeaders(token) });
   if (!response.ok) return false;
   const data = await response.json() as { owner?: { login?: unknown }; permissions?: { push?: unknown } };
