@@ -1,6 +1,10 @@
 import { validateImageFile } from '../lib/image/file-validation.ts';
 import { optimizePngLosslessly, type PngMetadataStatus } from '../lib/png/lossless.ts';
 import { verifyWrittenDpi, withJpegDpi, withPngDpi } from '../lib/physical-resize.ts';
+import { removeSampledBackground } from '../lib/background-removal.ts';
+import { mergedCanvasSize, type MergeLayout } from '../lib/photo-signature-merge.ts';
+import { addJpegCommentPadding } from '../lib/jpeg-padding.ts';
+import { buildPhotoSheetPdf, type Paper } from '../lib/pdf-sheet.ts';
 
 type WorkRequest =
   | { type: 'compress'; file: File; targetBytes: number; output: 'auto' | 'jpeg' | 'webp' | 'png'; preserveDimensions: boolean; jpegBackground: string }
@@ -8,7 +12,11 @@ type WorkRequest =
   | { type: 'signature'; file: File; crop: { left: number; top: number; width: number; height: number }; width: number; height: number; targetBytes: number }
   | { type: 'physical-resize'; file: File; width: number; height: number; dpi: number; output: 'jpeg' | 'png' }
   | { type: 'resize'; file: File; width: number; height: number; mode: 'fit' | 'fill' | 'stretch'; output: 'png' | 'jpeg' | 'webp'; jpegBackground?: string }
-  | { type: 'crop'; file: File; x: number; y: number; width: number; height: number; output: 'png' | 'jpeg' | 'webp'; jpegBackground: string };
+  | { type: 'crop'; file: File; x: number; y: number; width: number; height: number; output: 'png' | 'jpeg' | 'webp'; jpegBackground: string }
+  | { type: 'remove-background'; file: File; tolerance: number }
+  | { type: 'merge'; photo: File; signature: File; layout: MergeLayout; background: string }
+  | { type: 'print-sheet'; file: File; paper: Paper; photoWidthMm: number; photoHeightMm: number; copies: number }
+  | { type: 'increase-size'; file: File; targetBytes: number; mode: 'quality' | 'padding' };
 type WorkResponse = { type: 'progress' | 'success' | 'error'; value?: number; blob?: Blob; width?: number; height?: number; bytes?: number; dpi?: number; originalBytes?: number; hasAlpha?: boolean; outcome?: 'optimized' | 'unchanged'; reason?: 'not-smaller' | 'pixel-mismatch' | 'metadata-retained'; metadataStatus?: PngMetadataStatus; error?: string };
 
 const post = (message: WorkResponse) => self.postMessage(message);
@@ -21,8 +29,8 @@ async function encode(canvas: OffscreenCanvas, format: string, quality?: number)
 }
 
 self.onmessage = async (event: MessageEvent<WorkRequest>) => {
-  if (event.data.type !== 'compress' && event.data.type !== 'optimize-png' && event.data.type !== 'signature' && event.data.type !== 'physical-resize' && event.data.type !== 'resize' && event.data.type !== 'crop') return;
-  const { file } = event.data;
+  if (event.data.type !== 'compress' && event.data.type !== 'optimize-png' && event.data.type !== 'signature' && event.data.type !== 'physical-resize' && event.data.type !== 'resize' && event.data.type !== 'crop' && event.data.type !== 'remove-background' && event.data.type !== 'merge' && event.data.type !== 'print-sheet' && event.data.type !== 'increase-size') return;
+  const file = 'file' in event.data ? event.data.file : event.data.photo;
   let bitmap: ImageBitmap | null = null;
   try {
     if (event.data.type === 'optimize-png') {
@@ -40,6 +48,46 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
     try { bitmap = await createImageBitmap(file); }
     catch { throw new Error('DECODE_FAILED'); }
     if (bitmap.width * bitmap.height > 40_000_000) throw new Error('PIXEL_LIMIT');
+    if (event.data.type === 'remove-background') {
+      const { tolerance } = event.data;
+      if (!Number.isFinite(tolerance) || tolerance < 0 || tolerance > 442) throw new Error('DECODE_FAILED');
+      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      if (!context) throw new Error('ENCODER_UNAVAILABLE');
+      context.drawImage(bitmap, 0, 0);
+      const pixels = context.getImageData(0, 0, bitmap.width, bitmap.height);
+      const background = { r: pixels.data[0] ?? 255, g: pixels.data[1] ?? 255, b: pixels.data[2] ?? 255 };
+      removeSampledBackground(pixels.data, background, tolerance);
+      context.putImageData(pixels, 0, 0);
+      const blob = await encode(canvas, 'image/png');
+      post({ type: 'success', blob, width: bitmap.width, height: bitmap.height, bytes: blob.size, hasAlpha: true });
+      return;
+    }
+    if (event.data.type === 'merge') {
+      await validateImageFile(event.data.photo); await validateImageFile(event.data.signature);
+      const signatureBitmap = await createImageBitmap(event.data.signature); const size = mergedCanvasSize(bitmap, signatureBitmap, event.data.layout);
+      if (size.width * size.height > 40_000_000 || !/^#[0-9a-f]{6}$/i.test(event.data.background)) { signatureBitmap.close(); throw new Error('PIXEL_LIMIT'); }
+      const canvas = new OffscreenCanvas(size.width, size.height); const context = canvas.getContext('2d'); if (!context) { signatureBitmap.close(); throw new Error('ENCODER_UNAVAILABLE'); }
+      context.fillStyle = event.data.background; context.fillRect(0, 0, size.width, size.height);
+      if (event.data.layout === 'vertical') { context.drawImage(bitmap, 0, 0); context.drawImage(signatureBitmap, 0, bitmap.height); }
+      else { context.drawImage(bitmap, 0, 0); context.drawImage(signatureBitmap, bitmap.width, 0); }
+      const blob = await encode(canvas, 'image/png'); signatureBitmap.close(); post({ type: 'success', blob, width: size.width, height: size.height, bytes: blob.size, hasAlpha: false }); return;
+    }
+    if (event.data.type === 'print-sheet') {
+      const { paper, photoWidthMm, photoHeightMm, copies } = event.data;
+      if (!['A4', 'Letter'].includes(paper) || ![photoWidthMm, photoHeightMm, copies].every(Number.isFinite)) throw new Error('DECODE_FAILED');
+      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height); const context = canvas.getContext('2d'); if (!context) throw new Error('ENCODER_UNAVAILABLE'); context.fillStyle = '#ffffff'; context.fillRect(0, 0, bitmap.width, bitmap.height); context.drawImage(bitmap, 0, 0);
+      const jpeg = await encode(canvas, 'image/jpeg', .95); const pdf = buildPhotoSheetPdf(new Uint8Array(await jpeg.arrayBuffer()), bitmap.width, bitmap.height, photoWidthMm, photoHeightMm, paper, Math.round(copies));
+      const blob = new Blob([pdf.buffer as ArrayBuffer], { type: 'application/pdf' }); post({ type: 'success', blob, width: bitmap.width, height: bitmap.height, bytes: blob.size }); return;
+    }
+    if (event.data.type === 'increase-size') {
+      const { targetBytes, mode } = event.data; if (!Number.isInteger(targetBytes) || targetBytes < file.size || targetBytes > 20_000_000 || !['quality', 'padding'].includes(mode)) throw new Error('TARGET_UNREACHABLE');
+      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height); const context = canvas.getContext('2d'); if (!context) throw new Error('ENCODER_UNAVAILABLE'); context.drawImage(bitmap, 0, 0);
+      const encoded = await encode(canvas, 'image/jpeg', .98); const source = new Uint8Array(await encoded.arrayBuffer());
+      if (mode === 'padding') { const padded = addJpegCommentPadding(source, targetBytes); post({ type: 'success', blob: new Blob([padded.buffer as ArrayBuffer], { type: 'image/jpeg' }), width: bitmap.width, height: bitmap.height, bytes: padded.byteLength }); return; }
+      let best: Uint8Array<ArrayBufferLike> | null = null; for (const quality of [.98, .99, 1]) { const candidate = await encode(canvas, 'image/jpeg', quality); if (candidate.size >= file.size && candidate.size <= targetBytes && (!best || candidate.size > best.length)) best = new Uint8Array(await candidate.arrayBuffer()); }
+      if (!best) throw new Error('TARGET_UNREACHABLE'); post({ type: 'success', blob: new Blob([best.buffer as ArrayBuffer], { type: 'image/jpeg' }), width: bitmap.width, height: bitmap.height, bytes: best.length }); return;
+    }
     if (event.data.type === 'signature') {
       const { crop, width: targetWidth, height: targetHeight, targetBytes } = event.data;
       if (![crop.left, crop.top, crop.width, crop.height, targetWidth, targetHeight, targetBytes].every(Number.isFinite) || targetWidth < 1 || targetHeight < 1 || targetWidth * targetHeight > 40_000_000 || targetBytes < 1 || targetBytes > 20_000_000) throw new Error('PIXEL_LIMIT');

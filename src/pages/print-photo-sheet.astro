@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PrintPhotoSheet from '../components/PrintPhotoSheet';
+---
+<BaseLayout title="Create an A4 or Letter photo sheet PDF" description="Place repeated photos at a physical millimetre size on an A4 or Letter PDF with a 20 mm calibration line." application>
+  <div class="detail-page">
+    <div class="hero"><p class="eyebrow">PHOTO PRINTING</p><h1>Create an A4 or Letter photo sheet PDF</h1><p>Choose a photo size in millimetres, set the paper format and number of copies, then download a PDF arranged for printing. The 20 mm calibration line helps you check printer scaling.</p></div>
+    <PrintPhotoSheet client:load />
+    <section class="cards"><h2>Check print scaling before using the sheet</h2><p>Print at 100% or Actual size and measure the calibration line. Printer margins, paper handling, and any official photo rules are outside this tool and must be confirmed with the receiving service.</p></section>
+  </div>
+</BaseLayout>

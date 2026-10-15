@@ -15,6 +15,26 @@ const validArticle = {
   body: '# What changed\n\nThe source file stays on the device.'
 };
 
+const render = {
+  articleId: 'jpeg-to-webp-case-study',
+  sourceLocale: 'en',
+  readMinutes: 5,
+  categorySlug: 'tutorials',
+  workflow: {
+    situation: 'A reproducible browser run with a saved file.',
+    steps: [['Choose the source', 'Read the input bytes.'], ['Set the target', 'Use the exact byte ceiling.']],
+    image: 'compress-20kb',
+    caption: 'The saved file was checked again.',
+    links: [['Open the tool', '/compress-image/']]
+  },
+  example: {
+    heading: 'Verified result',
+    rows: [['Input', 'JPEG'], ['Output', '6,364 bytes']],
+    note: 'The output was opened again.'
+  },
+  sources: [['Method', 'The file was processed locally and checked again.']]
+};
+
 test('CMS article validation accepts a bounded draft and serializes JSON-safe frontmatter', () => {
   const result = validateCmsArticle(validArticle);
   assert.equal(result.ok, true);
@@ -31,6 +51,19 @@ test('CMS article validation rejects unsafe identity, dates and oversized fields
   assert.equal(result.ok, false);
   if (result.ok) return;
   assert.equal(result.errors.length, 3);
+});
+
+test('published CMS articles require render data and serialize the shared template fields', () => {
+  const incomplete = validateCmsArticle({ ...validArticle, status: 'published' });
+  assert.equal(incomplete.ok, false);
+  if (incomplete.ok) return;
+  assert.match(incomplete.errors.join(' '), /complete rendering data/);
+  const result = validateCmsArticle({ ...validArticle, status: 'published', render });
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+  const markdown = articleToMarkdown(result.article);
+  assert.match(markdown, /render: \{"articleId":"jpeg-to-webp-case-study"/);
+  assert.match(markdown, /"categorySlug":"tutorials"/);
 });
 
 test('CMS paths and locale allowlist cover preparation languages without publishing them', () => {

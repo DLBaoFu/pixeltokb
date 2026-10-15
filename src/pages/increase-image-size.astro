@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IncreaseImageSize from '../components/IncreaseImageSize';
+---
+<BaseLayout title="Increase a JPEG file size safely" description="Create a valid larger JPEG with an explicit standard comment-padding method, without adding pixels or claiming sharper detail." application>
+  <div class="detail-page">
+    <div class="hero"><p class="eyebrow">FILE SIZE CONTROL</p><h1>Increase a JPEG file size safely</h1><p>When a receiving service requires a minimum byte count, create a valid JPEG with either a higher-quality re-encode or transparent standard comment padding. The image dimensions and visible detail are not falsely presented as improved.</p></div>
+    <IncreaseImageSize client:load />
+    <section class="cards"><h2>Use padding only for a byte-count rule</h2><p>Comment padding changes file bytes without adding image detail. Confirm that the receiving service accepts JPEG comments, and never use this method to bypass a rule that requires a specific resolution, quality, or visual standard.</p></section>
+  </div>
+</BaseLayout>

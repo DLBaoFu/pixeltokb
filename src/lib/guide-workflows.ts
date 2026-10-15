@@ -1,4 +1,4 @@
-import type { PublishedLocale } from './guide-content';
+import type { PublishedLocale } from './guide-content.ts';
 
 export type GuideWorkflow = {
   situation: string;

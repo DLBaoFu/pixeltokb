@@ -1,20 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { guides, type PublishedLocale } from '../lib/guide-content';
-import { guideWorkflows } from '../lib/guide-workflows';
-import { articleMeta, blogLabels, localizedBlogPath } from '../lib/blog-system';
+import { type PublishedLocale } from '../lib/guide-content';
+import { blogArticleMeta, blogGuides, blogWorkflow } from '../lib/blog-content';
+import { blogLabels, localizedBlogPath } from '../lib/blog-system';
 
 interface Props { locale: PublishedLocale; slug: string; }
 const { locale, slug } = Astro.props;
-const guide = guides[locale].find((item) => item.slug === slug)!;
-const workflow = guideWorkflows[locale][slug];
-const meta = articleMeta(slug);
+const guides = blogGuides(locale);
+const guide = guides.find((item) => item.slug === slug)!;
+const workflow = blogWorkflow(locale, slug);
+const meta = blogArticleMeta(locale, slug);
 const labels = blogLabels[locale];
 const prefix = locale === 'en' ? '' : `/${locale}`;
-const articleIndex = guides[locale].findIndex((item) => item.slug === slug);
-const previous = articleIndex > 0 ? guides[locale][articleIndex - 1] : null;
-const next = articleIndex < guides[locale].length - 1 ? guides[locale][articleIndex + 1] : null;
-const related = guides[locale].filter((item) => item.slug !== slug).slice(0, 2);
+const articleIndex = guides.findIndex((item) => item.slug === slug);
+const previous = articleIndex > 0 ? guides[articleIndex - 1] : null;
+const next = articleIndex < guides.length - 1 ? guides[articleIndex + 1] : null;
+const related = guides.filter((item) => item.slug !== slug).slice(0, 2);
 const articleImage = new URL(`/blog-workflows/${locale}/${workflow.image}.png`, 'https://www.pixeltokb.com').href;
 const articleSchema = JSON.stringify({
   '@context': 'https://schema.org',

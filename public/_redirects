@@ -34,6 +34,7 @@
 /en/blog/compress-image-to-100kb/ /blog/compress-image-to-100kb/ 301
 /en/signature-resizer/ /signature-resizer/ 301
 /en/signature-compressor/ /signature-compressor/ 301
+/en/signature-background-remover/ /signature-background-remover/ 301
 /en/aspect-ratio-calculator/ /aspect-ratio-calculator/ 301
 /en/ppi-calculator/ /ppi-calculator/ 301
 /en/photo-resizer/ /photo-resizer/ 301
@@ -99,6 +100,9 @@
 /en/photo-35x45-mm /photo-resizer/?width=35&height=45&unit=mm&dpi=300 301
 /en/photo-30x40-mm /photo-resizer/?width=30&height=40&unit=mm&dpi=300 301
 /en/photo-50x50-mm /photo-resizer/?width=50&height=50&unit=mm&dpi=300 301
+/en/photo-signature-merger/ /photo-signature-merger/ 301
+/en/print-photo-sheet/ /print-photo-sheet/ 301
+/en/increase-image-size/ /increase-image-size/ 301
 
 # Published Chinese legacy aliases use the equivalent localized canonical page.
 /zh-cn/compress-jpg /zh-cn/compress-image/ 301

@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { guides, type PublishedLocale } from '../lib/guide-content';
-import { guideWorkflows } from '../lib/guide-workflows';
-import { articleMeta, blogLabels, localizedBlogPath } from '../lib/blog-system';
+import type { PublishedLocale } from '../lib/guide-content';
+import { blogArticleMeta, blogGuides, blogWorkflow } from '../lib/blog-content';
+import { blogLabels, localizedBlogPath } from '../lib/blog-system';
 
 interface Props { locale: PublishedLocale; }
 const { locale } = Astro.props;
 const copy = blogLabels[locale];
 const prefix = locale === 'en' ? '' : `/${locale}`;
-const articles = guides[locale];
+const articles = blogGuides(locale);
 const featured = articles[0];
 const topics = [
   ['tutorials', copy.tutorials],
@@ -34,11 +34,11 @@ const topics = [
         <p class="article-kicker">{featured.category}</p>
         <h2 id="featured-article"><a href={`${prefix}/blog/${featured.slug}/`}>{featured.title}</a></h2>
         <p>{featured.intro}</p>
-        <div class="article-card-meta"><span>{copy.read}</span><span>{articleMeta(featured.slug).readMinutes} {copy.readMinutes}</span><span>{articleMeta(featured.slug).dateLabel[locale]}</span></div>
+        <div class="article-card-meta"><span>{copy.read}</span><span>{blogArticleMeta(locale, featured.slug).readMinutes} {copy.readMinutes}</span><span>{blogArticleMeta(locale, featured.slug).dateLabel[locale]}</span></div>
         <a class="text-link" href={`${prefix}/blog/${featured.slug}/`}>{copy.read} <span aria-hidden="true">→</span></a>
       </div>
       <a class="blog-featured-image" href={`${prefix}/blog/${featured.slug}/`} aria-label={featured.title}>
-        <img src={`/blog-workflows/${locale}/${guideWorkflows[locale][featured.slug].image}.png`} alt={guideWorkflows[locale][featured.slug].caption} />
+        <img src={`/blog-workflows/${locale}/${blogWorkflow(locale, featured.slug).image}.png`} alt={blogWorkflow(locale, featured.slug).caption} />
       </a>
     </section>
 
@@ -46,8 +46,8 @@ const topics = [
       <div class="blog-section-heading"><div><p class="eyebrow">{copy.journal}</p><h2 id="latest-articles">{copy.latest}</h2></div><a class="text-link" href={`${prefix}/blog/category/tutorials/`}>{copy.topics} <span aria-hidden="true">→</span></a></div>
       <div class="blog-card-grid">
         {articles.slice(1).map((article) => {
-          const meta = articleMeta(article.slug);
-          const workflow = guideWorkflows[locale][article.slug];
+          const meta = blogArticleMeta(locale, article.slug);
+          const workflow = blogWorkflow(locale, article.slug);
           return <article class="blog-card">
             <a class="blog-card-image" href={`${prefix}/blog/${article.slug}/`} aria-label={article.title}><img src={`/blog-workflows/${locale}/${workflow.image}.png`} alt={workflow.caption} loading="lazy" /></a>
             <div class="blog-card-body">

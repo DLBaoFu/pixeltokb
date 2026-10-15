@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PrintPhotoSheet from '../../components/PrintPhotoSheet';
+---
+<BaseLayout locale="zh-tw" title="建立 A4 或 Letter 相片紙 PDF" description="依毫米設定相片尺寸，在 A4 或 Letter PDF 中排版多份相片，並附帶 20 毫米校準線。" application>
+  <div class="detail-page"><div class="hero"><p class="eyebrow">相片列印</p><h1>建立 A4 或 Letter 相片紙 PDF</h1><p>設定相片的毫米尺寸、紙張格式與份數，建立適合列印的 PDF。檔案附有 20 毫米校準線，方便檢查列印縮放。</p></div><PrintPhotoSheet locale="zh-tw" client:load /><section class="cards"><h2>列印前檢查縮放比例</h2><p>請使用「實際大小」或 100% 縮放列印並測量校準線。印表機邊界、紙張處理和證件相片規則，請以接收平台的最新要求為準。</p></section></div>
+</BaseLayout>

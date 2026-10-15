@@ -1,7 +1,7 @@
 ---
 import GuideArticle from '../../../components/GuideArticle.astro';
-import { guides } from '../../../lib/guide-content';
-export function getStaticPaths() { return guides['zh-tw'].map(({ slug }) => ({ params: { slug }, props: { slug } })); }
+import { blogRouteSlugs } from '../../../lib/blog-content';
+export function getStaticPaths() { return blogRouteSlugs('zh-tw').map((slug) => ({ params: { slug }, props: { slug } })); }
 const { slug } = Astro.props;
 ---
 <GuideArticle locale="zh-tw" slug={slug} />

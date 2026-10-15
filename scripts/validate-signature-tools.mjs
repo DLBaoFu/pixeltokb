@@ -65,7 +65,7 @@ try {
   }
   async function run(pathname, locale, expectTargetKB) {
     await navigate(pathname); await chooseFile();
-    await evaluate(`document.querySelector('.signature-tool > button:not(.cancel-action)')?.click()`);
+    await evaluate(`document.querySelector('.signature-tool .signature-submit')?.click()`);
     for (let attempt = 0; attempt < 800; attempt += 1) {
       const state = await evaluate(`(() => { const result=document.querySelector('.signature-tool .result'); if (!result) return null; const image=result.querySelector('img'); const link=result.querySelector('a[download]'); const text=result.textContent || ''; return image?.complete && image.naturalWidth ? { width:image.naturalWidth, height:image.naturalHeight, download:link?.getAttribute('download'), text, lang:document.documentElement.lang } : null; })()`);
       if (state) {

@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import IncreaseImageSize from '../../components/IncreaseImageSize';
+---
+<BaseLayout locale="zh-cn" title="安全增大 JPEG 文件体积" description="使用更高质量重新编码或标准 JPEG 注释填充，生成有效的大体积 JPEG，不虚构清晰度提升。" application>
+  <div class="detail-page"><div class="hero"><p class="eyebrow">文件大小控制</p><h1>安全增大 JPEG 文件体积</h1><p>当接收平台要求最小字节数时，可使用更高质量重新编码或标准注释填充生成有效 JPEG。图片尺寸和可见细节不会被虚假描述为有所提升。</p></div><IncreaseImageSize locale="zh-cn" client:load /><section class="cards"><h2>只有字节数规则才使用填充</h2><p>注释填充只改变文件字节数，不会增加图片细节。请先确认接收平台允许 JPEG 注释，不要用它绕过分辨率、质量或视觉标准要求。</p></section></div>
+</BaseLayout>

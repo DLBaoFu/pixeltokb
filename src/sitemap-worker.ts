@@ -1,6 +1,7 @@
 import { type Locale } from './lib/locales';
-import { articleToMarkdown, cmsArticlePath, isCmsLocale, isCmsSlug, validateCmsArticle } from './lib/cms-content';
+import { articleToMarkdown, cmsArticlePath, isCmsLocale, isCmsSlug, validateCmsArticle, type CmsArticleDraft } from './lib/cms-content';
 import { localeReleasePlan } from './lib/locale-release';
+import { articleTranslationFields, translateGoogle, translatedArticle } from './lib/translation';
 
 interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -13,9 +14,10 @@ interface Env {
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
   CMS_COOKIE_SECRET?: string;
+  GOOGLE_TRANSLATE_API_KEY?: string;
 }
 
-type CmsConfig = { origin: string; owner: string; repo: string; branch: string; clientId: string; clientSecret: string; cookieSecret: string; allowedUsers: Set<string> };
+type CmsConfig = { origin: string; owner: string; repo: string; branch: string; clientId: string; clientSecret: string; cookieSecret: string; allowedUsers: Set<string>; googleTranslateApiKey?: string };
 type CmsSession = { login: string; token: string; exp: number };
 type OAuthState = { state: string; verifier: string; exp: number };
 
@@ -55,7 +57,7 @@ function cmsConfig(env: Env): CmsConfig | null {
   const allowedUsers = new Set((env.CMS_ALLOWED_GITHUB_USERS ?? '').split(',').map((item) => item.trim().toLowerCase()).filter(Boolean));
   if (!origin || !owner || !repo || !branch || !clientId || clientId.startsWith('REPLACE_') || !clientSecret || !cookieSecret || cookieSecret.length < 32 || allowedUsers.size === 0) return null;
   try { const parsed = new URL(origin); if (parsed.origin !== origin || parsed.protocol !== 'https:') return null; } catch { return null; }
-  return { origin, owner, repo, branch, clientId, clientSecret, cookieSecret, allowedUsers };
+  return { origin, owner, repo, branch, clientId, clientSecret, cookieSecret, allowedUsers, googleTranslateApiKey: env.GOOGLE_TRANSLATE_API_KEY?.trim() || undefined };
 }
 function cookieValue(request: Request, name: string) { const pair = request.headers.get('cookie')?.split(';').map((item) => item.trim()).find((item) => item.startsWith(`${name}=`)); return pair?.slice(name.length + 1); }
 function cookie(name: string, value: string, maxAge: number) { return `${name}=${value}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`; }
@@ -89,7 +91,7 @@ async function unseal<T>(value: string | undefined, secret: string): Promise<T |
 async function oauthCookie(state: OAuthState, config: CmsConfig) { return cookie(OAUTH_COOKIE, await seal(state, config.cookieSecret), tenMinutes); }
 async function sessionCookie(session: CmsSession, config: CmsConfig) { return cookie(SESSION_COOKIE, await seal(session, config.cookieSecret), oneHour); }
 function callbackUrl(config: CmsConfig) { return `${config.origin}/api/cms-auth/callback`; }
-function sha256Base64Url(value: string) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then((hash) => base64UrlEncode(new Uint8Array(hash))); }
+async function sha256Base64Url(value: string) { return base64UrlEncode(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)))); }
 function githubHeaders(token?: string): HeadersInit {
   return {
     accept: 'application/vnd.github+json',
@@ -141,6 +143,25 @@ async function getArticle(config: CmsConfig, session: CmsSession, locale: Locale
 }
 function parseArticleRoute(pathname: string) { const match = pathname.match(/^\/api\/cms\/articles\/([^/]+)\/([^/]+)$/); return match && isCmsLocale(match[1]) && isCmsSlug(match[2]) ? { locale: match[1], slug: match[2] } : null; }
 
+async function writeArticle(config: CmsConfig, session: CmsSession, article: CmsArticleDraft, sha?: string) {
+  const response = await fetch(gitContentUrl(config, cmsArticlePath(article.locale, article.slug)), { method: 'PUT', headers: { ...githubHeaders(session.token), 'content-type': 'application/json' }, body: JSON.stringify({ message: `cms: update ${article.locale}/${article.slug}`, content: base64Encode(new TextEncoder().encode(articleToMarkdown(article))), branch: config.branch, ...(sha ? { sha } : {}) }) });
+  if (response.status === 409 || response.status === 422) throw new Error('The GitHub file changed or already exists. Reload it before saving again.');
+  if (!response.ok) throw new Error('GitHub did not accept this update.');
+  const result = await response.json() as { content?: { sha?: string }; commit?: { sha?: string } };
+  return { sha: result.content?.sha, commit: result.commit?.sha };
+}
+
+async function translationDrafts(config: CmsConfig, source: CmsArticleDraft, targets: Locale[]) {
+  if (!config.googleTranslateApiKey) throw new Error('Google Translation is not configured. Add GOOGLE_TRANSLATE_API_KEY as a Cloudflare Secret.');
+  const fields = articleTranslationFields(source);
+  const drafts = [] as Array<{ article: CmsArticleDraft; warnings: string[] }>;
+  for (const target of targets) {
+    const result = await translateGoogle(config.googleTranslateApiKey, source.locale, target, fields);
+    drafts.push({ article: translatedArticle(source, target, result), warnings: result.warnings });
+  }
+  return drafts;
+}
+
 async function handleCms(request: Request, env: Env, url: URL) {
   const config = cmsConfig(env);
   if (!config) return new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
@@ -168,8 +189,39 @@ async function handleCms(request: Request, env: Env, url: URL) {
   const session = await validSession(request, config);
   if (!session) return responseJson({ error: 'Authentication required.' }, 401, { 'set-cookie': clearCookie(SESSION_COOKIE) });
   if (url.pathname === '/api/cms/session' && request.method === 'GET') return responseJson({ user: session.login, repository: `${config.owner}/${config.repo}`, branch: config.branch, locales: localeReleasePlan });
-  if (request.method === 'PUT' && !protectJsonOrigin(request, config, true)) return responseJson({ error: 'Invalid request origin.' }, 403);
+  if ((request.method === 'PUT' || request.method === 'POST') && !protectJsonOrigin(request, config, true)) return responseJson({ error: 'Invalid request origin.' }, 403);
   if (url.pathname === '/api/cms/articles' && request.method === 'GET') { try { return responseJson({ articles: await listArticles(config, session) }); } catch { return responseJson({ error: 'Unable to load articles from GitHub.' }, 502); } }
+  if (url.pathname === '/api/cms/translation-drafts' && request.method === 'POST') {
+    try {
+      const payload = await request.json() as { source?: unknown; targetLocales?: unknown };
+      const validation = validateCmsArticle(payload.source);
+      const targets = Array.isArray(payload.targetLocales) ? payload.targetLocales.filter((value): value is Locale => typeof value === 'string' && isCmsLocale(value)) : [];
+      const uniqueTargets = [...new Set(targets)].filter((locale) => validation.ok && locale !== validation.article.locale);
+      if (!validation.ok || uniqueTargets.length === 0 || uniqueTargets.length > 12) return responseJson({ error: validation.ok ? 'Choose one to twelve target languages different from the source.' : validation.errors }, 422);
+      return responseJson({ drafts: await translationDrafts(config, validation.article, uniqueTargets) });
+    } catch (error) { return responseJson({ error: error instanceof Error ? error.message : 'Translation draft generation failed.' }, 502); }
+  }
+  if (url.pathname === '/api/cms/articles/batch' && request.method === 'POST') {
+    try {
+      const payload = await request.json() as { entries?: unknown };
+      if (!Array.isArray(payload.entries) || payload.entries.length === 0 || payload.entries.length > 12) return responseJson({ error: 'Send between one and twelve translation drafts.' }, 422);
+      const saved: Array<{ locale: Locale; slug: string; sha?: string; commit?: string }> = [];
+      const failures: Array<{ locale?: string; slug?: string; error: string }> = [];
+      for (const entry of payload.entries) {
+        const value = entry && typeof entry === 'object' ? entry as { article?: unknown; sha?: unknown } : {};
+        const validation = validateCmsArticle(value.article);
+        const article = validation.ok ? validation.article : null;
+        if (!article || article.status === 'published') { failures.push({ error: validation.ok ? 'Batch translation drafts cannot be published directly.' : validation.errors.join(' ') }); continue; }
+        try {
+          const existing = await getArticle(config, session, article.locale, article.slug);
+          if (existing && typeof value.sha !== 'string') throw new Error('A translation with this URL already exists. Load it before replacing it.');
+          const result = await writeArticle(config, session, article, typeof value.sha === 'string' ? value.sha : undefined);
+          saved.push({ locale: article.locale, slug: article.slug, ...result });
+        } catch (error) { failures.push({ locale: article.locale, slug: article.slug, error: error instanceof Error ? error.message : 'The draft could not be saved.' }); }
+      }
+      return responseJson({ ok: failures.length === 0, saved, failures });
+    } catch { return responseJson({ error: 'The translation drafts could not be saved.' }, 400); }
+  }
   const articleRoute = parseArticleRoute(url.pathname);
   if (!articleRoute) return responseJson({ error: 'Not found.' }, 404);
   if (request.method === 'GET') { try { const article = await getArticle(config, session, articleRoute.locale, articleRoute.slug); return article ? responseJson(article) : responseJson({ error: 'Not found.' }, 404); } catch { return responseJson({ error: 'Unable to load this article from GitHub.' }, 502); } }
@@ -177,11 +229,8 @@ async function handleCms(request: Request, env: Env, url: URL) {
   try {
     const payload = await request.json() as { article?: unknown; sha?: unknown }; const validation = validateCmsArticle(payload.article);
     if (!validation.ok || validation.article.locale !== articleRoute.locale || validation.article.slug !== articleRoute.slug) return responseJson({ error: validation.ok ? 'The URL and article identity must match.' : validation.errors }, 422);
-    const response = await fetch(gitContentUrl(config, cmsArticlePath(articleRoute.locale, articleRoute.slug)), { method: 'PUT', headers: { ...githubHeaders(session.token), 'content-type': 'application/json' }, body: JSON.stringify({ message: `cms: update ${articleRoute.locale}/${articleRoute.slug}`, content: base64Encode(new TextEncoder().encode(articleToMarkdown(validation.article))), branch: config.branch, ...(typeof payload.sha === 'string' ? { sha: payload.sha } : {}) }) });
-    if (response.status === 409 || response.status === 422) return responseJson({ error: 'The GitHub file changed. Reload it before saving again.' }, 409);
-    if (!response.ok) return responseJson({ error: 'GitHub did not accept this update.' }, 502);
-    const result = await response.json() as { content?: { sha?: string }; commit?: { sha?: string } };
-    return responseJson({ ok: true, sha: result.content?.sha, commit: result.commit?.sha });
+    const result = await writeArticle(config, session, validation.article, typeof payload.sha === 'string' ? payload.sha : undefined);
+    return responseJson({ ok: true, ...result });
   } catch { return responseJson({ error: 'The article could not be saved.' }, 400); }
 }
 

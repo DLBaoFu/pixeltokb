@@ -32,6 +32,26 @@ const routeTerms: Array<[RegExp, Partial<Record<Locale, string[]>>]> = [
     'zh-cn': ['签名图片压缩', '压缩签名图片', '减小签名图片大小'],
     'zh-tw': ['簽名圖片壓縮', '壓縮簽名圖片', '縮小簽名圖片大小']
   }],
+  [/^\/signature-background-remover\/$/, {
+    en: ['signature background remover', 'remove signature background', 'transparent signature PNG', 'flat background remover'],
+    'zh-cn': ['签名背景去除', '透明签名 PNG', '去除单色背景'],
+    'zh-tw': ['簽名背景移除', '透明簽名 PNG', '移除單色背景']
+  }],
+  [/^\/photo-signature-merger\/$/, {
+    en: ['photo signature merger', 'merge photo and signature', 'combine photo and signature PNG'],
+    'zh-cn': ['照片与签名合并', '合并照片和签名', '照片签名 PNG'],
+    'zh-tw': ['相片與簽名合併', '合併相片和簽名', '相片簽名 PNG']
+  }],
+  [/^\/print-photo-sheet\/$/, {
+    en: ['print photo sheet PDF', 'A4 photo sheet', 'passport photo print layout'],
+    'zh-cn': ['照片纸 PDF', 'A4 照片排版', '照片打印排版'],
+    'zh-tw': ['相片紙 PDF', 'A4 相片排版', '相片列印排版']
+  }],
+  [/^\/increase-image-size\/$/, {
+    en: ['increase JPEG file size', 'increase image KB', 'JPEG comment padding'],
+    'zh-cn': ['增大 JPEG 文件体积', '增加图片 KB', 'JPEG 注释填充'],
+    'zh-tw': ['增加 JPEG 檔案容量', '增加圖片 KB', 'JPEG 註解填充']
+  }],
   [/^\/aspect-ratio-calculator\/$/, {
     en: ['aspect ratio calculator', 'image aspect ratio', 'calculate image dimensions'],
     'zh-cn': ['图片宽高比计算器', '图片比例计算', '计算图片尺寸'],

@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PhotoSignatureMerger from '../components/PhotoSignatureMerger';
+---
+<BaseLayout title="Merge a photo and signature locally" description="Combine a photo and signature into one PNG with a vertical or horizontal layout, without uploading either file." application>
+  <div class="detail-page">
+    <div class="hero"><p class="eyebrow">PHOTO &amp; SIGNATURE</p><h1>Merge a photo and signature locally</h1><p>Combine two static images into one printable PNG. Choose a vertical or horizontal layout and a background colour; both source files stay in your browser.</p></div>
+    <PhotoSignatureMerger client:load />
+    <section class="cards"><h2>Use the merged file for a specific form</h2><p>Place the photo and signature in the order your receiving service requests, then inspect the exported dimensions and format before uploading. PixelTokb does not certify identity-photo, visa, banking, or government-form requirements.</p></section>
+  </div>
+</BaseLayout>

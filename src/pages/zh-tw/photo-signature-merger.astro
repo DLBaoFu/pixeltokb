@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoSignatureMerger from '../../components/PhotoSignatureMerger';
+---
+<BaseLayout locale="zh-tw" title="在本機合併相片與簽名" description="將相片與簽名圖片上下或左右合併為一個 PNG，兩個檔案都不會上傳。" application>
+  <div class="detail-page"><div class="hero"><p class="eyebrow">相片與簽名</p><h1>在本機合併相片與簽名</h1><p>將兩張靜態圖片合併為一個可列印的 PNG，可選擇上下或左右排列及背景色。來源檔案只會在瀏覽器中處理。</p></div><PhotoSignatureMerger locale="zh-tw" client:load /><section class="cards"><h2>依接收平台要求檢查合併檔案</h2><p>依照接收平台要求安排相片和簽名的順序，並在上傳前確認匯出尺寸與格式。本工具不保證符合證件、簽證、銀行或政府表格的具體要求。</p></section></div>
+</BaseLayout>
