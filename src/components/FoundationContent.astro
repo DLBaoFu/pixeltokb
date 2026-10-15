@@ -14,7 +14,6 @@ const sections: Record<Locale, Record<string, Section[]>> = {
     'editorial-policy': [['Publisher and reviewer', 'PixelTokb is the publisher. The PixelTokb editorial team is the named reviewer responsible for the published guides and policy pages.'], ['Evidence standard', 'Technical claims are checked with real image files, saved downloads, exact bytes, decoded dimensions, MIME signatures, transparency, and failure paths. Measured examples state their method and do not imply that every image or browser will produce the same result.'], ['Original and assisted work', 'Articles are written for PixelTokb and may use software or AI assistance for drafting, translation, or checking. PixelTokb reviews the final structure, facts, examples, limitations, links, and language versions; automatically generated text is not published without review.'], ['Corrections and updates', 'Readers may report errors by email. PixelTokb evaluates corrections against reproducible evidence, updates material errors, and records meaningful product or policy changes in the changelog.'], ['Commercial independence', 'Advertising, if enabled later, does not buy favorable coverage, alter tool results, or replace editorial review. Ads must remain visually separate from navigation, upload, processing, and download controls.']],
     'how-it-works': [['Choose a target', 'Select a range or enter a custom KB, KiB, MB, or MiB value. The tool converts that value to an exact byte budget.'], ['Process locally', 'A browser Worker reads and re-encodes the image. The result is only offered when its actual Blob size meets the selected budget.'], ['Know the limits', 'PixelTokb accepts static JPEG, PNG, and WebP files up to 20 MB and checks decoded dimensions against a 40-megapixel limit. Animated files are not supported.']],
     faq: [['What is the difference between KB and KiB?', 'KB is 1,000 bytes; KiB is 1,024 bytes. MB is 1,000,000 bytes; MiB is 1,048,576 bytes. Choose the unit required by your destination.'], ['Why can a target be unreachable?', 'The chosen format, image details, and any requirement to keep the original dimensions can prevent a file from fitting under a small limit.'], ['Are my images uploaded?', 'The current image tools run in the browser and do not send the selected image to a pixeltokb server.']],
-    changelog: [['11 October 2026 · Image tools', 'Compression, resize, crop, file-size and DPI tools now share consistent file limits, format handling, local processing, exact output details and download behavior.'], ['11 October 2026 · Guides and languages', 'Four practical guides include repeatable steps, measured examples, limitations and source notes in English, Simplified Chinese and Traditional Chinese.'], ['11 October 2026 · Site information', 'PixelTokb added complete About, Contact, Privacy, Terms, Cookies, Editorial Policy, Changelog and Author pages with clear responsibility and advertising boundaries.']]
   },
   'zh-cn': {
     about: [['运营者与用途', 'PixelTokb 运营这个独立图片工具网站，与 Google、上传平台、政府机构、打印服务或设备厂商不存在隶属或背书关系。'], ['当前可用工具', '已发布工具可以按字节目标压缩 JPEG、PNG、WebP，调整像素尺寸、裁剪区域，并检查文件大小、像素、透明度和可用 DPI 元数据。'], ['本地处理', '图片在浏览器中解码和处理。PixelTokb 不接收所选图片、不要求账号，也不会在云端保存结果副本。'], ['能力边界', '成功导出不代表第三方平台一定接受，也不代表适合印刷。用户需要核对接收方的格式、像素、字节上限和内容规则。'], ['资金与独立性', '广告目前关闭。以后只有在同意和政策检查通过后才可能启用，广告不会改变工具结果，也不会要求用户点击广告才能下载。']],
@@ -25,7 +24,6 @@ const sections: Record<Locale, Record<string, Section[]>> = {
     'editorial-policy': [['发布方与审核方', 'PixelTokb 是内容发布方，具名审核方为 PixelTokb 编辑团队，对已发布指南和政策页承担编辑责任。'], ['证据标准', '技术说法使用真实图片、落盘下载、精确字节、解码尺寸、MIME 签名、透明度和失败路径核验。实测样例会说明方法，不暗示每张图片或每种浏览器都会得到相同结果。'], ['原创与辅助工具', '文章为 PixelTokb 编写，起草、翻译或检查过程中可能使用软件或 AI 辅助。PixelTokb 会审核最终结构、事实、样例、限制、链接和语言版本，不发布未经审核的自动生成文本。'], ['纠错与更新', '读者可以通过邮件报告错误。PixelTokb 根据可复现证据评估并修正重大错误，并在更新记录中记录有意义的产品或政策变化。'], ['商业独立性', '未来如启用广告，广告不会购买正面评价、改变工具结果或替代编辑审核。广告必须与导航、上传、处理和下载控件保持清晰分隔。']],
     'how-it-works': [['选择目标', '选择一个规格区间，或自定义 KB、KiB、MB、MiB 数值。工具会将其换算为精确的字节预算。'], ['本地处理', '浏览器 Worker 读取并重新编码图片。只有输出 Blob 的真实大小符合目标，才提供下载。'], ['了解限制', 'PixelTokb 接受最大 20 MB、解码后不超过 4000 万像素的静态 JPEG、PNG 和 WebP 图片，不支持动态图片。']],
     faq: [['KB 和 KiB 有什么区别？', 'KB 为 1000 字节，KiB 为 1024 字节；MB 为 100 万字节，MiB 为 1048576 字节。请选择接收平台使用的单位。'], ['为什么可能无法达到目标？', '所选格式、图片细节及保持原始像素尺寸的要求，可能让文件无法降到较小的体积上限。'], ['图片会上传吗？', '当前图片工具在浏览器本地运行，不会将所选图片发送到 pixeltokb 服务器。']],
-    changelog: [['2026年10月11日 · 图片工具', '压缩、缩放、裁剪、文件大小和 DPI 工具统一了文件限制、格式处理、本地处理、输出详情与下载行为。'], ['2026年10月11日 · 指南与语言', '四篇实用指南以英文、简体中文和繁体中文提供可复现步骤、实测样例、限制与来源说明。'], ['2026年10月11日 · 站点信息', 'PixelTokb 补充了关于、联系、隐私、条款、Cookie、编辑政策、更新记录和作者页面，并明确责任与广告边界。']]
   },
   'zh-tw': {
     about: [['營運者與用途', 'PixelTokb 營運這個獨立圖片工具網站，與 Google、上傳平台、政府機構、列印服務或裝置廠商沒有隸屬或背書關係。'], ['目前可用工具', '已發布工具可依位元組目標壓縮 JPEG、PNG、WebP，調整像素尺寸、裁切區域，並檢查檔案大小、像素、透明度及可用 DPI 中繼資料。'], ['本機處理', '圖片在瀏覽器中解碼與處理。PixelTokb 不接收所選圖片、不要求帳號，也不會在雲端保留結果副本。'], ['功能界線', '成功匯出不代表第三方平台一定接受，也不代表適合列印。使用者需要核對接收方的格式、像素、位元組上限與內容規則。'], ['資金與獨立性', '廣告目前停用。日後只有在同意與政策檢查通過後才可能啟用，廣告不會改變工具結果，也不會要求使用者點擊廣告才能下載。']],
@@ -36,11 +34,76 @@ const sections: Record<Locale, Record<string, Section[]>> = {
     'editorial-policy': [['發布方與審核方', 'PixelTokb 是內容發布方，具名審核方為 PixelTokb 編輯團隊，對已發布指南與政策頁承擔編輯責任。'], ['證據標準', '技術說法使用真實圖片、儲存下載、實際位元組、解碼尺寸、MIME 簽章、透明度及失敗流程查核。實測範例會說明方法，不暗示每張圖片或每種瀏覽器都會得到相同結果。'], ['原創與輔助工具', '文章由 PixelTokb 編寫，起草、翻譯或檢查過程可能使用軟體或 AI 輔助。PixelTokb 會審核最終結構、事實、範例、限制、連結與語言版本，不發布未經審核的自動產生文字。'], ['更正與更新', '讀者可以透過郵件回報錯誤。PixelTokb 依可重現證據評估並修正重大錯誤，並在更新記錄中記載有意義的產品或政策變更。'], ['商業獨立性', '日後若啟用廣告，廣告不會購買正面評價、改變工具結果或取代編輯審核。廣告必須與導覽、上傳、處理及下載控制項清楚分隔。']],
     'how-it-works': [['選擇目標', '選擇一個容量區間，或自訂 KB、KiB、MB、MiB 數值。工具會換算成精確的位元組預算。'], ['本機處理', '瀏覽器 Worker 讀取並重新編碼圖片。只有輸出 Blob 的實際大小符合目標，才提供下載。'], ['瞭解限制', 'PixelTokb 接受最大 20 MB、解碼後不超過 4,000 萬像素的靜態 JPEG、PNG 與 WebP 圖片，不支援動態圖片。']],
     faq: [['KB 與 KiB 有什麼不同？', 'KB 為 1,000 位元組，KiB 為 1,024 位元組；MB 為 100 萬位元組，MiB 為 1,048,576 位元組。請選擇接收平台所用的單位。'], ['為什麼可能無法達到目標？', '所選格式、圖片細節以及保留原始像素尺寸的要求，可能使檔案無法降到較小的容量上限。'], ['圖片會上傳嗎？', '目前圖片工具在瀏覽器本機執行，不會將所選圖片傳送到 pixeltokb 伺服器。']],
-    changelog: [['2026年10月11日 · 圖片工具', '壓縮、縮放、裁切、檔案大小與 DPI 工具統一了檔案限制、格式處理、本機處理、輸出詳情及下載行為。'], ['2026年10月11日 · 指南與語言', '四篇實用指南以英文、簡體中文與繁體中文提供可重現步驟、實測範例、限制及來源說明。'], ['2026年10月11日 · 網站資訊', 'PixelTokb 補充了關於、聯絡、隱私、條款、Cookie、編輯政策、更新記錄與作者頁面，並明確責任及廣告界線。']]
   }
 };
-const items = sections[locale][slug] ?? [];
 const prefix = locale === 'en' ? '' : `/${locale}`;
+type ChangelogEntry = { date: string; category: string; feature: string; text: string; href: string };
+const changelogEntries: Record<Locale, ChangelogEntry[]> = {
+  en: [
+    { date: '15 October 2026', category: 'Added', feature: 'Photo + Signature Merger', text: 'Added a tool to combine a photo and signature into one image for form submissions.', href: '/photo-signature-merger/' },
+    { date: '15 October 2026', category: 'Added', feature: 'Print Photo Sheet PDF', text: 'Added printable PDF sheets for arranging multiple photos on a page.', href: '/print-photo-sheet/' },
+    { date: '15 October 2026', category: 'Added', feature: 'Increase JPEG Size', text: 'Added a way to increase JPEG file size for minimum-size upload requirements without improving image quality.', href: '/increase-image-size/' },
+    { date: '15 October 2026', category: 'Added', feature: 'Signature Background Remover', text: 'Added removal of supported flat-color signature backgrounds.', href: '/signature-background-remover/' },
+    { date: '15 October 2026', category: 'Improved', feature: 'Tool-page navigation', text: 'Added breadcrumbs to tool pages, making it easier to return to the tools directory.', href: '/compress-image/' },
+    { date: '15 October 2026', category: 'Improved', feature: 'Footer navigation', text: 'Reorganized footer links, giving image tools more room and moving the Cookies link to the bottom row.', href: '/tools/' },
+    { date: '14 October 2026', category: 'Added', feature: 'Lossless PNG Optimizer', text: 'Introduced lossless PNG file-size optimization.', href: '/compress-png/' },
+    { date: '14 October 2026', category: 'Added', feature: 'Signature Compressor', text: 'Added file-size reduction for signature images.', href: '/signature-compressor/' },
+    { date: '14 October 2026', category: 'Added', feature: 'Signature Resizer', text: 'Added dimension adjustments for signature images.', href: '/signature-resizer/' },
+    { date: '14 October 2026', category: 'Added', feature: 'Photo Resizer', text: 'Introduced photo resizing for specified dimensions.', href: '/photo-resizer/' },
+    { date: '14 October 2026', category: 'Added', feature: 'Image Size Checker', text: 'Added file-size and image-dimension checking.', href: '/image-size-checker/' },
+    { date: '14 October 2026', category: 'Added', feature: 'DPI Checker', text: 'Added a way to inspect available image DPI information.', href: '/image-dpi-checker/' },
+    { date: '14 October 2026', category: 'Added', feature: 'Aspect Ratio Calculator', text: 'Added aspect-ratio calculations for resizing and cropping.', href: '/aspect-ratio-calculator/' },
+    { date: '14 October 2026', category: 'Added', feature: 'PPI Calculator', text: 'Added pixel-density calculations based on image dimensions and physical size.', href: '/ppi-calculator/' },
+    { date: '13 October 2026', category: 'Changed', feature: 'Image compression', text: 'Consolidated image compression into the main Compress Image tool while keeping existing size-specific links available.', href: '/compress-image/' },
+    { date: '13 October 2026', category: 'Improved', feature: 'Blog navigation', text: 'Reorganized the blog directory and article links to make guides easier to browse.', href: '/blog/' }
+  ],
+  'zh-cn': [
+    { date: '2026年10月15日', category: '新增', feature: '照片与签名合并', text: '新增照片与签名合并工具，可将两者组合为一张图片用于表单提交。', href: '/photo-signature-merger/' },
+    { date: '2026年10月15日', category: '新增', feature: '照片纸 PDF', text: '新增可打印照片纸 PDF，可在一个页面排列多张照片。', href: '/print-photo-sheet/' },
+    { date: '2026年10月15日', category: '新增', feature: '增大 JPEG 体积', text: '新增 JPEG 体积调整方式，用于满足最低上传大小要求，不会提升图片画质。', href: '/increase-image-size/' },
+    { date: '2026年10月15日', category: '新增', feature: '签名背景去除', text: '新增支持单色签名背景的去除功能。', href: '/signature-background-remover/' },
+    { date: '2026年10月15日', category: '改进', feature: '工具页导航', text: '为工具页加入面包屑，方便返回图片工具目录。', href: '/compress-image/' },
+    { date: '2026年10月15日', category: '改进', feature: '页脚导航', text: '重新整理页脚链接，扩大图片工具区域，并将 Cookie 链接移到底部栏。', href: '/tools/' },
+    { date: '2026年10月14日', category: '新增', feature: 'PNG 无损优化', text: '新增 PNG 文件无损优化功能。', href: '/compress-png/' },
+    { date: '2026年10月14日', category: '新增', feature: '签名图片压缩', text: '新增签名图片文件体积压缩功能。', href: '/signature-compressor/' },
+    { date: '2026年10月14日', category: '新增', feature: '签名图片缩放', text: '新增签名图片尺寸调整功能。', href: '/signature-resizer/' },
+    { date: '2026年10月14日', category: '新增', feature: '照片缩放', text: '新增按指定尺寸调整照片的功能。', href: '/photo-resizer/' },
+    { date: '2026年10月14日', category: '新增', feature: '图片大小检查', text: '新增文件体积和图片尺寸检查功能。', href: '/image-size-checker/' },
+    { date: '2026年10月14日', category: '新增', feature: 'DPI 检查', text: '新增查看图片中可用 DPI 信息的功能。', href: '/image-dpi-checker/' },
+    { date: '2026年10月14日', category: '新增', feature: '宽高比计算器', text: '新增用于缩放和裁剪的宽高比计算功能。', href: '/aspect-ratio-calculator/' },
+    { date: '2026年10月14日', category: '新增', feature: 'PPI 计算器', text: '新增根据图片像素尺寸和物理尺寸计算像素密度的功能。', href: '/ppi-calculator/' },
+    { date: '2026年10月13日', category: '变更', feature: '图片压缩', text: '将图片压缩功能合并到主压缩工具，同时保留已有的指定大小入口。', href: '/compress-image/' },
+    { date: '2026年10月13日', category: '改进', feature: '博客导航', text: '重新整理博客目录和文章链接，让图片指南更容易浏览。', href: '/blog/' }
+  ],
+  'zh-tw': [
+    { date: '2026年10月15日', category: '新增', feature: '相片與簽名合併', text: '新增相片與簽名合併工具，可將兩者組合為一張圖片用於表單提交。', href: '/photo-signature-merger/' },
+    { date: '2026年10月15日', category: '新增', feature: '相片紙 PDF', text: '新增可列印相片紙 PDF，可在一個頁面排列多張相片。', href: '/print-photo-sheet/' },
+    { date: '2026年10月15日', category: '新增', feature: '增加 JPEG 容量', text: '新增 JPEG 容量調整方式，用於符合最低上傳大小要求，不會提升圖片畫質。', href: '/increase-image-size/' },
+    { date: '2026年10月15日', category: '新增', feature: '簽名背景移除', text: '新增支援單色簽名背景的移除功能。', href: '/signature-background-remover/' },
+    { date: '2026年10月15日', category: '改進', feature: '工具頁導覽', text: '為工具頁加入麵包屑，方便返回圖片工具目錄。', href: '/compress-image/' },
+    { date: '2026年10月15日', category: '改進', feature: '頁尾導覽', text: '重新整理頁尾連結，擴大圖片工具區域，並將 Cookie 連結移到底部列。', href: '/tools/' },
+    { date: '2026年10月14日', category: '新增', feature: 'PNG 無損最佳化', text: '新增 PNG 檔案無損最佳化功能。', href: '/compress-png/' },
+    { date: '2026年10月14日', category: '新增', feature: '簽名圖片壓縮', text: '新增簽名圖片檔案容量壓縮功能。', href: '/signature-compressor/' },
+    { date: '2026年10月14日', category: '新增', feature: '簽名圖片縮放', text: '新增簽名圖片尺寸調整功能。', href: '/signature-resizer/' },
+    { date: '2026年10月14日', category: '新增', feature: '相片縮放', text: '新增依指定尺寸調整相片的功能。', href: '/photo-resizer/' },
+    { date: '2026年10月14日', category: '新增', feature: '圖片大小檢查', text: '新增檔案容量和圖片尺寸檢查功能。', href: '/image-size-checker/' },
+    { date: '2026年10月14日', category: '新增', feature: 'DPI 檢查', text: '新增查看圖片中可用 DPI 資訊的功能。', href: '/image-dpi-checker/' },
+    { date: '2026年10月14日', category: '新增', feature: '長寬比計算器', text: '新增用於縮放和裁切的長寬比計算功能。', href: '/aspect-ratio-calculator/' },
+    { date: '2026年10月14日', category: '新增', feature: 'PPI 計算器', text: '新增依圖片像素尺寸和實體尺寸計算像素密度的功能。', href: '/ppi-calculator/' },
+    { date: '2026年10月13日', category: '變更', feature: '圖片壓縮', text: '將圖片壓縮功能合併到主要壓縮工具，同時保留既有的指定大小入口。', href: '/compress-image/' },
+    { date: '2026年10月13日', category: '改進', feature: '部落格導覽', text: '重新整理部落格目錄和文章連結，讓圖片指南更容易瀏覽。', href: '/blog/' }
+  ]
+};
+const items = slug === 'changelog' ? [] : sections[locale][slug] ?? [];
+const changelogGroups = changelogEntries[locale].reduce<{ date: string; categories: { name: string; entries: ChangelogEntry[] }[] }[]>((groups, entry) => {
+  const group = groups.find((item) => item.date === entry.date);
+  if (!group) groups.push({ date: entry.date, categories: [{ name: entry.category, entries: [entry] }] });
+  else {
+    const category = group.categories.find((item) => item.name === entry.category);
+    if (category) category.entries.push(entry); else group.categories.push({ name: entry.category, entries: [entry] });
+  }
+  return groups;
+}, []);
 const datedSlugs = new Set(['privacy', 'terms', 'cookies', 'editorial-policy']);
 const googlePolicySlugs = new Set(['privacy', 'cookies']);
 const labels = {
@@ -74,13 +137,27 @@ const labels = {
     <p>{labels.contactNote}</p>
     <p class="copy-status" aria-live="polite"></p>
   </section>}
-  <div class="foundation-grid">{items.map(([heading, text]) => <section class="foundation-card"><h2>{heading}</h2><p>{text}</p></section>)}</div>
+  {slug === 'changelog' ? <div class="changelog-groups">
+    {changelogGroups.map((group) => <section class="changelog-group" aria-labelledby={`changelog-${group.date}`}>
+      <h2 class="changelog-date" id={`changelog-${group.date}`}>{group.date}</h2>
+      <div class="changelog-group-content">
+        {group.categories.map((category) => <section class="changelog-category" aria-labelledby={`changelog-${group.date}-${category.name}`}>
+          <h3 id={`changelog-${group.date}-${category.name}`}>{category.name}</h3>
+          <ul class="changelog-entries">
+            {category.entries.map((entry) => <li class="changelog-entry">
+              <p><a href={`${prefix}${entry.href}`}>{entry.feature}</a><span aria-hidden="true"> — </span><span>{entry.text}</span></p>
+            </li>)}
+          </ul>
+        </section>)}
+      </div>
+    </section>)}
+  </div> : <div class="foundation-grid">{items.map(([heading, text]) => <section class="foundation-card"><h2>{heading}</h2><p>{text}</p></section>)}</div>}
   {googlePolicySlugs.has(slug) && <section class="policy-links" aria-labelledby="google-policy-links">
     <h2 id="google-policy-links">{labels.googleHeading}</h2>
     <a href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer">{labels.partner} <span aria-hidden="true">↗</span></a>
     <a href="https://adssettings.google.com/" rel="noopener noreferrer">{labels.ads} <span aria-hidden="true">↗</span></a>
   </section>}
-  <div class="foundation-next"><a href={`${prefix}/tools/`}>{locale === 'en' ? 'Explore image tools' : locale === 'zh-cn' ? '浏览图片工具' : '瀏覽圖片工具'} <span aria-hidden="true">→</span></a><a href={`${prefix}/blog/`}>{locale === 'en' ? 'Read the guides' : locale === 'zh-cn' ? '阅读图片指南' : '閱讀圖片指南'} <span aria-hidden="true">→</span></a></div>
+  {slug !== 'changelog' && <div class="foundation-next"><a href={`${prefix}/tools/`}>{locale === 'en' ? 'Explore image tools' : locale === 'zh-cn' ? '浏览图片工具' : '瀏覽圖片工具'} <span aria-hidden="true">→</span></a><a href={`${prefix}/blog/`}>{locale === 'en' ? 'Read the guides' : locale === 'zh-cn' ? '阅读图片指南' : '閱讀圖片指南'} <span aria-hidden="true">→</span></a></div>}
 </div>
 
 {slug === 'contact' && <script>
