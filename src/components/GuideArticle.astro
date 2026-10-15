@@ -29,10 +29,20 @@ const articleSchema = JSON.stringify({
   publisher: { '@type': 'Organization', name: 'PixelTokb', url: 'https://www.pixeltokb.com/' },
   mainEntityOfPage: `https://www.pixeltokb.com${prefix}/blog/${slug}/`
 }).replace(/</g, '\\u003c');
+const breadcrumbSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: labels.journal, item: `https://www.pixeltokb.com${localizedBlogPath(locale)}` },
+    { '@type': 'ListItem', position: 2, name: guide.category, item: `https://www.pixeltokb.com${prefix}/blog/category/${meta.categorySlug}/` },
+    { '@type': 'ListItem', position: 3, name: guide.title, item: `https://www.pixeltokb.com${prefix}/blog/${slug}/` }
+  ]
+}).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout locale={locale} title={guide.title} description={guide.intro}>
   <script slot="head" type="application/ld+json" set:html={articleSchema}></script>
+  <script slot="head" type="application/ld+json" set:html={breadcrumbSchema}></script>
   <article class="article-page">
     <header class="article-header">
       <div class="article-breadcrumb"><a href={localizedBlogPath(locale)}>{labels.journal}</a><span aria-hidden="true">/</span><a href={`${prefix}/blog/category/${meta.categorySlug}/`}>{guide.category}</a></div>

@@ -8,7 +8,7 @@ const shared: Partial<Record<Locale, string[]>> = {
 
 const routeTerms: Array<[RegExp, Partial<Record<Locale, string[]>>]> = [
   [/^\/$/, {
-    en: ['image compressor', 'compress image online', 'compress image to exact size', 'compress image to KB', 'image size reducer to exact KB', 'image resizer', 'crop image online'],
+    en: ['image size reducer online', 'compress image online', 'compress image to exact size', 'compress image to KB', 'image resizer', 'crop image online'],
     'zh-cn': ['图片压缩工具', '在线压缩图片', '压缩图片到精确大小', '压缩图片到指定 KB', '图片大小压缩', '图片缩放工具', '在线裁剪图片'],
     'zh-tw': ['圖片壓縮工具', '線上壓縮圖片', '壓縮圖片到精確大小', '壓縮圖片到指定 KB', '圖片大小壓縮', '圖片縮放工具', '線上裁切圖片']
   }],

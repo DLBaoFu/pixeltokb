@@ -13,7 +13,7 @@ export const compressionPageContent: Record<PublishedLocale, Record<CompressionG
   en: {
     small: {
       title: 'When the upload limit is strict',
-      intro: 'Use the 10–100 KB range for forms, listings, and document uploads where a few extra bytes can reject an otherwise correct image.',
+      intro: 'Use the 10–100 KB range for forms, listings, and document uploads. Choose 20 KB for a strict ceiling, 50 KB when you need a little more room, or 100 KB when the destination allows a larger file; each target is checked by actual bytes.',
       points: [['Protect text edges', 'Keep the original dimensions when the image contains small labels or signatures, then inspect the saved file at its real size.'], ['Allow a reachable target', 'A detailed or transparent image may not fit while pixels are locked. If the tool reports an unreachable target, change the pixels or use the receiving service’s larger limit.']],
       checkTitle: 'Independent check before upload',
       check: 'Read the downloaded bytes and dimensions in the image checker. Do not treat a rounded “10 KB” or “50 KB” label as proof that the file is below the service’s exact byte ceiling.'
@@ -43,7 +43,7 @@ export const compressionPageContent: Record<PublishedLocale, Record<CompressionG
   'zh-cn': {
     small: {
       title: '上传上限很严格时',
-      intro: '10–100 KB 区间适合表单、列表和文件上传；多出的几个字节都可能让本来正确的图片被拒绝。',
+      intro: '10–100 KB 区间适合表单、列表和文件上传。目标较严格时选 20 KB，需要多一点空间时选 50 KB，平台允许更大文件时选 100 KB；每个目标都会按实际字节数检查。',
       points: [['保护文字边缘', '图片里有小字或签名时先保持原始尺寸，再按保存后的实际大小检查文件。'], ['先确认目标可达', '锁定像素时，细节多或带透明度的图片可能无法达到目标。工具提示无法达标时，应调整像素或改用接收平台允许的更大上限。']],
       checkTitle: '上传前的独立核对',
       check: '用图片检查工具读取下载文件的实际字节数和尺寸。不要把四舍五入后的“10 KB”或“50 KB”标签当作低于平台精确字节上限的证明。'
@@ -73,7 +73,7 @@ export const compressionPageContent: Record<PublishedLocale, Record<CompressionG
   'zh-tw': {
     small: {
       title: '上傳上限很嚴格時',
-      intro: '10–100 KB 區間適合表單、清單和檔案上傳；多出的幾個位元組都可能讓原本正確的圖片被拒絕。',
+      intro: '10–100 KB 區間適合表單、清單和檔案上傳。上限嚴格時選 20 KB，需要多一點空間時選 50 KB，平台允許較大檔案時選 100 KB；每個目標都會依實際位元組數檢查。',
       points: [['保護文字邊緣', '圖片裡有小字或簽名時先維持原始尺寸，再按儲存後的實際大小檢查檔案。'], ['先確認目標可達', '鎖定像素時，細節多或帶透明度的圖片可能無法達到目標。工具提示無法達標時，應調整像素或改用接收平台允許的較大上限。']],
       checkTitle: '上傳前的獨立核對',
       check: '用圖片檢查工具讀取下載檔案的實際位元組數和尺寸。不要把四捨五入後的「10 KB」或「50 KB」標籤當作低於平台精確位元組上限的證明。'

@@ -36,8 +36,8 @@ const isCropTool = slug === 'crop-image';
 const isSizeTool = slug === 'image-size-checker';
 const isDpiTool = slug === 'image-dpi-checker';
 const supportTool = isTool ? 'compress' : isResizeTool ? 'resize' : isCropTool ? 'crop' : isSizeTool ? 'size' : isDpiTool ? 'dpi' : null;
-const toolTitle = group ? 'Compress images to a target size' : 'Compress images to a target size';
-const toolDescription = 'Choose a target from 1 KB to 5 MB, add your image, and download a result that has been checked against the requested byte budget.';
+const toolTitle = group ? 'Compress an image to an exact KB target online' : 'Compress images to a target size';
+const toolDescription = 'Set a byte-size target for a JPEG, PNG, or WebP image, then download a result checked against the exact KB limit. If a form asks you to resize an image to an exact KB limit, this controls file size; use the resize tool when you need exact pixel dimensions.';
 const text: Record<string, { title: string; body: string }> = {
   tools: { title: 'Image tools', body: 'Use pixeltokb tools to reduce image bytes, resize pixels, crop, and inspect image metadata.' },
   blog: { title: 'pixeltokb blog', body: 'Practical guides about image bytes, pixels, DPI, and upload limits.' },
