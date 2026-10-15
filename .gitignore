@@ -23,10 +23,14 @@ delivery/evidence/performance/*.json
 PROGRESS.md
 AGENTS.md
 
-# Internal documentation and local audit material; keep the public README only.
+# Markdown policy: keep the public README, release evidence, and fixture notes;
+# keep planning, audit, setup, and other working documents out of commits.
+*.md
+!README.md
+!delivery/acceptance-report.md
+!delivery/evidence/*.md
+!tests/fixtures/images/README.md
 /docs/
-/*.md
-!/README.md
 
 kbresize-dev-package/*
 !kbresize-dev-package/routes.json

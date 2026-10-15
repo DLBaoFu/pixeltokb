@@ -36,15 +36,16 @@ PixelToKB is designed for people who need a dependable image file before an uplo
 - Pixel dimensions, format, aspect ratio, transparency, and available DPI metadata
 - DPI metadata checking when a file contains print-resolution information
 
-## Planned image workflows
+## Additional published image workflows
 
-The next product expansion remains focused on local image preparation:
+These workflows are already available on the published site and keep processing in the browser:
 
-- Background removal with transparent-background controls
-- Photo and signature composition
-- A4 and Letter print sheets with a calibration ruler
-- Controlled image enlargement with output validation
-- Additional interface languages after complete translation and review
+- Uniform-colour signature background removal with an adjustable transparency threshold
+- Photo and signature composition with an exported PNG
+- A4 and Letter photo-sheet PDF creation with millimetre sizing and a calibration ruler
+- Controlled JPEG file-size increase with saved-file byte validation
+
+The public language selector currently exposes English, Simplified Chinese, and Traditional Chinese. Other translations remain unpublished until their content and interface review is complete.
 
 ## Privacy by design
 
