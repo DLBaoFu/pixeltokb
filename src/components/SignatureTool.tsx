@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImageValidationError, validateImageFile } from '../lib/image/file-validation';
 import { safeDownloadName } from '../lib/image/download-name';
+import MetadataPrivacyToggle, { privacyMetadataResultText } from './MetadataPrivacyToggle';
 
 type Locale = 'en' | 'zh-cn' | 'zh-tw';
 type Variant = 'resize' | 'compress';
@@ -33,6 +34,7 @@ export default function SignatureTool({ locale = 'en', variant }: { locale?: Loc
   const [ratio, setRatio] = useState(3);
   const [lockRatio, setLockRatio] = useState(true);
   const [targetKB, setTargetKB] = useState(variant === 'compress' ? 50 : 100);
+  const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(true);
   const [status, setStatus] = useState<string>(text.start);
   const [result, setResult] = useState<Result | null>(null);
   const worker = useRef<Worker | null>(null);
@@ -78,17 +80,17 @@ export default function SignatureTool({ locale = 'en', variant }: { locale?: Loc
     const nextWorker = new Worker(new URL('../workers/image-worker.ts', import.meta.url), { type: 'module' });
     worker.current = nextWorker; setStatus(text.working);
     const finish = () => { nextWorker.terminate(); if (worker.current === nextWorker) worker.current = null; if (timeout.current) clearTimeout(timeout.current); timeout.current = null; };
-    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; error?: string }>) => {
+    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; privacyMetadataStatus?: 'removed' | 'none-present' | 'unchecked'; error?: string }>) => {
       if (worker.current !== nextWorker) return;
       const message = event.data;
       if (message.type === 'success' && message.blob?.type === 'image/jpeg') {
-        setResult({ url: URL.createObjectURL(message.blob), bytes: message.bytes ?? message.blob.size, width: message.width ?? width, height: message.height ?? height }); setStatus(text.ready); finish(); return;
+        setResult({ url: URL.createObjectURL(message.blob), bytes: message.bytes ?? message.blob.size, width: message.width ?? width, height: message.height ?? height }); setStatus(`${text.ready} ${privacyMetadataResultText(locale, message.privacyMetadataStatus)}`); finish(); return;
       }
       if (message.type === 'error') { setResult(null); setStatus(message.error === 'TARGET_UNREACHABLE' ? text.unreachable : message.error === 'PIXEL_LIMIT' ? text.pixelLimit : message.error === 'FILE_TOO_LARGE' ? text.fileTooLarge : text.failed); finish(); }
     };
     nextWorker.onerror = () => { if (worker.current === nextWorker) { setResult(null); setStatus(text.failed); finish(); } };
     timeout.current = setTimeout(() => { if (worker.current === nextWorker) { finish(); setResult(null); setStatus(text.failed); } }, 30_000);
-    nextWorker.postMessage({ type: 'signature', file, crop, width, height, targetBytes: Math.min(20_000_000, Math.max(1_000, Math.round(targetKB * 1000))) });
+    nextWorker.postMessage({ type: 'signature', file, crop, width, height, targetBytes: Math.min(20_000_000, Math.max(1_000, Math.round(targetKB * 1000))), erasePrivacyMetadata });
   };
 
   const working = status === text.working;
@@ -110,6 +112,7 @@ export default function SignatureTool({ locale = 'en', variant }: { locale?: Loc
       <label>{text.target}<input type="number" min="1" max="20000" value={targetKB} onChange={(event) => { clearResult(); setTargetKB(numberInRange(event.target.value, 20_000)); }} /></label>
     </div>
     <p className="signature-note" role="note">{text.exact} {text.noStandard}</p>
+    <MetadataPrivacyToggle locale={locale} checked={erasePrivacyMetadata} onChange={(value) => { clearResult(); setErasePrivacyMetadata(value); }} />
     <div className="signature-actions">
       <button type="button" className="primary-action signature-submit" onClick={prepare} disabled={working}>{working ? text.working : text.action}</button>
       {working && <button type="button" className="cancel-action" onClick={() => { clearResult(); setStatus(text.canceled); }}>{text.cancel}</button>}

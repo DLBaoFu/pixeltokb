@@ -125,6 +125,7 @@ try {
   async function waitFor(expression, label) { for (let attempt = 0; attempt < 1800; attempt += 1) { const value = await evaluate(expression); if (value) return value; await delay(20); } throw new Error(`Timed out waiting for ${label}`); }
 
   await navigate('/compress-image/', 'section.workspace');
+  assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]')?.checked`), true, 'privacy metadata cleanup should be enabled by default');
   await setFile('section.workspace input[type="file"]', orientedPath);
   await waitFor(`Boolean(document.querySelector('[data-image-selected="true"]'))`, 'oriented JPEG selection');
   await evaluate(`document.querySelector('.primary-action').click()`);
@@ -133,10 +134,44 @@ try {
   const orientedBytes = Buffer.from(orientedOutput.base64, 'base64'); const orientedExif = jpegExifInfo(orientedBytes);
   assert.deepEqual([orientedOutput.width, orientedOutput.height], [240, 320]);
   assert.equal(orientedOutput.mime, 'image/jpeg'); assert.equal(orientedExif.hasExif, false); assert.equal(orientedExif.hasGps, false); assert.equal(orientedExif.orientation, null);
+  assert.match(await evaluate(`document.querySelector('[role="status"]')?.textContent ?? ''`), /removed and checked|no supported privacy metadata was found/i);
   await evaluate(`document.querySelector('.result a[download]').click()`);
   for (let attempt = 0; attempt < 150; attempt += 1) { if ((await readdir(downloads)).some((name) => !name.endsWith('.crdownload'))) break; await delay(25); }
   const orientedDownloadedName = (await readdir(downloads)).find((name) => !name.endsWith('.crdownload')); assert.ok(orientedDownloadedName, 'oriented JPEG must save to disk');
   const orientedDownloaded = await readFile(join(downloads, orientedDownloadedName)); const orientedDownloadedExif = jpegExifInfo(orientedDownloaded); assert.equal(orientedDownloadedExif.hasExif, false); assert.equal(orientedDownloadedExif.hasGps, false); assert.equal(orientedDownloadedExif.orientation, null);
+
+  await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]').click()`);
+  assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]')?.checked`), false);
+  await evaluate(`document.querySelector('.primary-action').click()`);
+  await waitFor(`Boolean(document.querySelector('.result a[download]'))`, 'unchecked JPEG result');
+  assert.match(await evaluate(`document.querySelector('[role="status"]')?.textContent ?? ''`), /cleanup was skipped/i);
+
+  const privacyExports = [];
+  for (const format of ['png', 'webp']) {
+    await navigate('/crop-image/', '.crop-tool');
+    await setFile('.crop-tool input[type="file"]', orientedPath);
+    await waitFor(`Boolean(document.querySelector('.crop-preview img'))`, `${format} crop input`);
+    if (format === 'webp') await evaluate(`(()=>{const select=document.querySelector('.crop-controls select');select.value='webp';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]')?.checked`), true, `${format} privacy switch should default on`);
+    await evaluate(`document.querySelector('.crop-tool .primary-action').click()`);
+    await waitFor(`Boolean(document.querySelector('.crop-tool .result a[download]'))`, `${format} crop result`);
+    const browserOutput = await evaluate(`(async()=>{const img=document.querySelector('.crop-tool .result img');const link=document.querySelector('.crop-tool .result a[download]');const response=await fetch(img.src);const bytes=new Uint8Array(await response.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,mime:response.headers.get('content-type'),download:link.getAttribute('download'),base64:btoa(binary)}})()`);
+    assert.equal(browserOutput.mime, format === 'png' ? 'image/png' : 'image/webp');
+    const expectedPath = join(downloads, browserOutput.download);
+    await evaluate(`document.querySelector('.crop-tool .result a[download]').click()`);
+    for (let attempt = 0; attempt < 150; attempt += 1) { try { await readFile(expectedPath); break; } catch { await delay(25); } }
+    const saved = await readFile(expectedPath);
+    const previewBytes = Buffer.from(browserOutput.base64, 'base64');
+    assert.deepEqual(saved, previewBytes, `${format} downloaded bytes must match the preview Blob`);
+    const { hasPrivacyMetadata } = await import('../src/lib/image/privacy-metadata.ts');
+    assert.equal(hasPrivacyMetadata(new Uint8Array(saved), browserOutput.mime), false, `${format} saved file must contain no supported privacy metadata`);
+    if (format === 'png') {
+      const png = inspectPng(new Uint8Array(saved));
+      assert.deepEqual([png.width, png.height], [browserOutput.width, browserOutput.height]);
+      assert.deepEqual(png.metadataChunks, []);
+    }
+    privacyExports.push({ format, bytes: saved.length, dimensions: [browserOutput.width, browserOutput.height], mime: browserOutput.mime, savedMatchesPreview: true, supportedPrivacyMetadata: false });
+  }
 
   await navigate('/compress-png/', '[data-png-optimizer="true"]');
   await setFile('[data-png-optimizer="true"] input[type="file"]', iccPath);
@@ -149,6 +184,7 @@ try {
   assert.equal(pngInspection.hasAlpha, true); assert.equal(pngInspection.width, 320); assert.equal(pngInspection.height, 240); assert.equal(pngInspection.chunkTypes.includes('iCCP'), false); assert.equal(pngInspection.chunkTypes.includes('sRGB'), true); assert.deepEqual(pngInspection.metadataChunks, []);
   const report = {
     browser: await evaluate('navigator.userAgent'),
+    privacyExports,
     orientationCase: { input: { file: 'generated oriented-gps.jpg', bytes: (await readFile(orientedPath)).length, ...inputExif, sourceDimensions: [320, 240] }, output: { bytes: orientedBytes.length, dimensions: [orientedOutput.width, orientedOutput.height], mime: orientedOutput.mime, ...orientedExif, savedFile: orientedDownloadedName, savedFileExif: orientedDownloadedExif } },
     colorProfileCase: { input: { file: 'generated display-p3.png', bytes: (await readFile(iccPath)).length, profile: 'Display P3 ICC', chunk: 'iCCP' }, output: { bytes: pngBytes.length, dimensions: [pngInspection.width, pngInspection.height], alpha: pngInspection.hasAlpha, chunks: pngInspection.chunkTypes, metadataChunks: pngInspection.metadataChunks, sRgb: pngInspection.chunkTypes.includes('sRGB'), iccProfileRemoved: !pngInspection.chunkTypes.includes('iCCP') } }
   };

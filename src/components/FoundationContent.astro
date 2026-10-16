@@ -40,6 +40,7 @@ const prefix = locale === 'en' ? '' : `/${locale}`;
 type ChangelogEntry = { date: string; category: string; feature: string; text: string; href: string };
 const changelogEntries: Record<Locale, ChangelogEntry[]> = {
   en: [
+    { date: '16 October 2026', category: 'Added', feature: 'EXIF privacy control', text: 'Image exports now include an enabled-by-default option to remove supported privacy metadata, including EXIF and GPS data. You can turn it off to skip explicit cleanup; the browser may still remove metadata during export.', href: '/compress-image/' },
     { date: '15 October 2026', category: 'Added', feature: 'Photo + Signature Merger', text: 'Added a tool to combine a photo and signature into one image for form submissions.', href: '/photo-signature-merger/' },
     { date: '15 October 2026', category: 'Added', feature: 'Print Photo Sheet PDF', text: 'Added printable PDF sheets for arranging multiple photos on a page.', href: '/print-photo-sheet/' },
     { date: '15 October 2026', category: 'Added', feature: 'Increase JPEG Size', text: 'Added a way to increase JPEG file size for minimum-size upload requirements without improving image quality.', href: '/increase-image-size/' },
@@ -59,6 +60,7 @@ const changelogEntries: Record<Locale, ChangelogEntry[]> = {
     { date: '12 October 2026', category: 'Added', feature: 'PixelToKB launch', text: 'Launched PixelToKB with browser-based tools for image compression, resizing, cropping, file-size checking, and DPI inspection.', href: '/' }
   ],
   'zh-cn': [
+    { date: '2026年10月16日', category: '新增', feature: 'EXIF 隐私处理选项', text: '图片导出现在提供默认开启的选项，用于清除工具能够识别的隐私元数据，包括 EXIF 和 GPS 信息。关闭后会跳过显式清理，但浏览器导出时仍可能移除元数据。', href: '/compress-image/' },
     { date: '2026年10月15日', category: '新增', feature: '照片与签名合并', text: '新增照片与签名合并工具，可将两者组合为一张图片用于表单提交。', href: '/photo-signature-merger/' },
     { date: '2026年10月15日', category: '新增', feature: '照片纸 PDF', text: '新增可打印照片纸 PDF，可在一个页面排列多张照片。', href: '/print-photo-sheet/' },
     { date: '2026年10月15日', category: '新增', feature: '增大 JPEG 体积', text: '新增 JPEG 体积调整方式，用于满足最低上传大小要求，不会提升图片画质。', href: '/increase-image-size/' },
@@ -78,6 +80,7 @@ const changelogEntries: Record<Locale, ChangelogEntry[]> = {
     { date: '2026年10月12日', category: '新增', feature: 'PixelToKB 上线', text: 'PixelToKB 正式上线，首批提供在浏览器本地运行的图片压缩、缩放、裁剪、文件大小检查和 DPI 检查工具。', href: '/' }
   ],
   'zh-tw': [
+    { date: '2026年10月16日', category: '新增', feature: 'EXIF 隱私處理選項', text: '圖片匯出現在提供預設開啟的選項，用於清除工具可辨識的隱私中繼資料，包括 EXIF 和 GPS 資訊。關閉後會略過明確清理，但瀏覽器匯出時仍可能移除中繼資料。', href: '/compress-image/' },
     { date: '2026年10月15日', category: '新增', feature: '相片與簽名合併', text: '新增相片與簽名合併工具，可將兩者組合為一張圖片用於表單提交。', href: '/photo-signature-merger/' },
     { date: '2026年10月15日', category: '新增', feature: '相片紙 PDF', text: '新增可列印相片紙 PDF，可在一個頁面排列多張相片。', href: '/print-photo-sheet/' },
     { date: '2026年10月15日', category: '新增', feature: '增加 JPEG 容量', text: '新增 JPEG 容量調整方式，用於符合最低上傳大小要求，不會提升圖片畫質。', href: '/increase-image-size/' },

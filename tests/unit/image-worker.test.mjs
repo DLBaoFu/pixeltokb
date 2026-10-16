@@ -7,6 +7,7 @@ import { File } from 'node:buffer';
 const messages = [];
 let encodes = 0;
 let wrongMime = false;
+let encodedJpegOverride = null;
 let canvasOperations = [];
 
 globalThis.self = { postMessage(message) { messages.push(message); } };
@@ -18,6 +19,7 @@ globalThis.OffscreenCanvas = class {
   getContext() { return { fillRect(...args) { canvasOperations.push(['fillRect', ...args]); }, drawImage(...args) { canvasOperations.push(['drawImage', ...args]); }, set fillStyle(value) { canvasOperations.push(['fillStyle', value]); } }; }
   async convertToBlob({ type, quality }) {
     encodes += 1;
+    if (type === 'image/jpeg' && encodedJpegOverride) return new Blob([encodedJpegOverride], { type });
     const bytes = Math.ceil(this.width * this.height * (quality ?? 1) * .2 + 1000);
     return new Blob([new Uint8Array(bytes)], { type: wrongMime ? 'image/png' : type });
   }
@@ -26,7 +28,17 @@ globalThis.OffscreenCanvas = class {
 await import('../../src/workers/image-worker.ts');
 const jpegBytes = new Uint8Array(100); jpegBytes.set([0xff, 0xd8, 0xff, 0xe0]);
 const file = new File([jpegBytes], 'sample.jpg', { type: 'image/jpeg' });
+const cleanJpegFixture = await readFile(new URL('../fixtures/images/opaque-gradient.jpg', import.meta.url));
 const transparentPng = new File([await readFile(new URL('../fixtures/images/alpha-shapes.png', import.meta.url))], 'alpha-shapes.png', { type: 'image/png' });
+
+function withExif(bytes) {
+  const payload = Buffer.from('Exif\0\0GPSLatitude GPSLongitude CameraModel');
+  const segment = Buffer.alloc(payload.length + 4);
+  segment.set([0xff, 0xe1]);
+  segment.writeUInt16BE(payload.length + 2, 2);
+  payload.copy(segment, 4);
+  return Buffer.concat([bytes.subarray(0, 2), segment, bytes.subarray(2)]);
+}
 
 async function compress(targetBytes, preserveDimensions, output = 'jpeg', input = file, jpegBackground = '#ffffff') {
   messages.length = 0; encodes = 0; wrongMime = false; canvasOperations = [];
@@ -140,4 +152,29 @@ test('corrupt image reports a specific decode failure and never offers a result'
     assert.equal(messages.some((message) => message.type === 'success'), false);
     assert.equal(messages.at(-1).error, 'DECODE_FAILED');
   } finally { globalThis.createImageBitmap = decode; }
+});
+
+test('checked privacy switch sanitizes the actual worker export before reporting success', async () => {
+  const inputBytes = withExif(cleanJpegFixture);
+  const input = new File([inputBytes], 'gps.jpg', { type: 'image/jpeg' });
+  encodedJpegOverride = withExif(cleanJpegFixture);
+  messages.length = 0;
+  try {
+    await self.onmessage({ data: { type: 'crop', file: input, x: 0, y: 0, width: 3200, height: 2400, output: 'jpeg', jpegBackground: '#ffffff', erasePrivacyMetadata: true } });
+    await new Promise(setImmediate);
+    const result = messages.find((message) => message.type === 'success');
+    assert.ok(result);
+    assert.equal(result.privacyMetadataStatus, 'removed');
+    assert.equal(result.bytes, result.blob.size);
+    const { hasPrivacyMetadata } = await import('../../src/lib/image/privacy-metadata.ts');
+    assert.equal(hasPrivacyMetadata(new Uint8Array(await result.blob.arrayBuffer()), 'image/jpeg'), false);
+  } finally { encodedJpegOverride = null; }
+});
+
+test('unchecked privacy switch reports that cleanup was skipped', async () => {
+  messages.length = 0;
+  await self.onmessage({ data: { type: 'crop', file, x: 0, y: 0, width: 3200, height: 2400, output: 'jpeg', jpegBackground: '#ffffff', erasePrivacyMetadata: false } });
+  const result = messages.find((message) => message.type === 'success');
+  assert.ok(result);
+  assert.equal(result.privacyMetadataStatus, 'unchecked');
 });

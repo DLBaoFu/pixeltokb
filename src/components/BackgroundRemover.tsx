@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImageValidationError, validateImageFile } from '../lib/image/file-validation';
 import { safeDownloadName } from '../lib/image/download-name';
+import MetadataPrivacyToggle, { privacyMetadataResultText } from './MetadataPrivacyToggle';
 
 type Locale = 'en' | 'zh-cn' | 'zh-tw';
 type Result = { url: string; bytes: number; width: number; height: number };
@@ -16,6 +17,7 @@ export default function BackgroundRemover({ locale = 'en' }: { locale?: Locale }
   const [file, setFile] = useState<File | null>(null);
   const [source, setSource] = useState<{ width: number; height: number } | null>(null);
   const [tolerance, setTolerance] = useState(24);
+  const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(true);
   const [status, setStatus] = useState<string>(text.start);
   const [result, setResult] = useState<Result | null>(null);
   const worker = useRef<Worker | null>(null);
@@ -41,14 +43,14 @@ export default function BackgroundRemover({ locale = 'en' }: { locale?: Locale }
     if (!file) { setStatus(text.start); return; }
     clearResult(); const nextWorker = new Worker(new URL('../workers/image-worker.ts', import.meta.url), { type: 'module' }); worker.current = nextWorker; setStatus(text.working);
     const finish = () => { nextWorker.terminate(); if (worker.current === nextWorker) worker.current = null; if (timeout.current) clearTimeout(timeout.current); timeout.current = null; };
-    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; error?: string }>) => {
+    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; privacyMetadataStatus?: 'removed' | 'none-present' | 'unchecked'; error?: string }>) => {
       if (worker.current !== nextWorker) return;
-      if (event.data.type === 'success' && event.data.blob?.type === 'image/png') { setResult({ url: URL.createObjectURL(event.data.blob), bytes: event.data.bytes ?? event.data.blob.size, width: event.data.width ?? source?.width ?? 0, height: event.data.height ?? source?.height ?? 0 }); setStatus(text.ready); finish(); return; }
+      if (event.data.type === 'success' && event.data.blob?.type === 'image/png') { setResult({ url: URL.createObjectURL(event.data.blob), bytes: event.data.bytes ?? event.data.blob.size, width: event.data.width ?? source?.width ?? 0, height: event.data.height ?? source?.height ?? 0 }); setStatus(`${text.ready} ${privacyMetadataResultText(locale, event.data.privacyMetadataStatus)}`); finish(); return; }
       if (event.data.type === 'error') { setResult(null); setStatus(event.data.error === 'FILE_TOO_LARGE' ? text.fileTooLarge : event.data.error === 'PIXEL_LIMIT' ? text.pixelLimit : text.failed); finish(); }
     };
     nextWorker.onerror = () => { setResult(null); setStatus(text.failed); finish(); };
     timeout.current = setTimeout(() => { if (worker.current === nextWorker) { finish(); setResult(null); setStatus(text.failed); } }, 30_000);
-    nextWorker.postMessage({ type: 'remove-background', file, tolerance });
+    nextWorker.postMessage({ type: 'remove-background', file, tolerance, erasePrivacyMetadata });
   };
   const working = status === text.working;
   const statusError = new Set<string>([text.fileTooLarge, text.unsupported, text.pixelLimit, text.decode, text.failed]).has(status);
@@ -62,6 +64,7 @@ export default function BackgroundRemover({ locale = 'en' }: { locale?: Locale }
       <label>{text.tolerance}<input type="range" min="0" max="120" step="1" value={tolerance} onChange={(event) => { clearResult(); setTolerance(Number(event.target.value)); }} /><output>{tolerance}</output></label>
     </div>
     <p className="signature-note" role="note">{text.note}</p>
+    <MetadataPrivacyToggle locale={locale} checked={erasePrivacyMetadata} onChange={(value) => { clearResult(); setErasePrivacyMetadata(value); }} />
     <div className="signature-actions"><button type="button" className="primary-action signature-submit" onClick={process} disabled={working}>{working ? text.working : text.action}</button>{working && <button type="button" className="cancel-action" onClick={() => { clearResult(); setStatus(text.canceled); }}>{text.cancel}</button>}</div>
     <div className={`status signature-status ${result ? 'success' : statusError ? 'error' : ''}`} role="status" aria-live="polite">{status}</div>
     {result && <div className="result"><img src={result.url} alt="Transparent signature preview" /><div><strong>{text.ready}</strong><p>{result.width} × {result.height}px · PNG · {(result.bytes / 1000).toFixed(1)} KB · {result.bytes.toLocaleString()} bytes</p><a href={result.url} download={safeDownloadName(file?.name ?? 'signature-transparent.png', 'png')}>{text.download}</a></div></div>}
