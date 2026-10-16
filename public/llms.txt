@@ -8,6 +8,10 @@
 - [Lossless PNG optimizer](https://www.pixeltokb.com/compress-png/): Re-encode one static PNG or a local batch of up to 20 files and offer individual or ZIP downloads only for smaller results whose decoded RGBA pixels, dimensions, and transparency pass exact browser verification.
 - [Signature resizer](https://www.pixeltokb.com/signature-resizer/): Crop a signature area, set exact output pixels, and export a locally verified white-background JPEG.
 - [Signature compressor](https://www.pixeltokb.com/signature-compressor/): Prepare a signature JPEG for a chosen file-size limit without uploading the image.
+- [Signature background remover](https://www.pixeltokb.com/signature-background-remover/): Remove a supported flat-colour signature background with a local corner-colour threshold and download a transparent PNG. Check the result before use on textured paper, shadows, or uneven lighting.
+- [Photo and signature merger](https://www.pixeltokb.com/photo-signature-merger/): Combine two static images into one PNG with a vertical or horizontal layout without uploading either source file.
+- [Print photo sheet PDF](https://www.pixeltokb.com/print-photo-sheet/): Arrange repeated photos at a physical millimetre size on an A4 or Letter PDF with a 20 mm calibration line for checking print scaling.
+- [Increase JPEG file size](https://www.pixeltokb.com/increase-image-size/): Create a valid larger JPEG for an allowed minimum-byte requirement with a quality re-encode or standard comment padding; this does not add visual detail.
 - [Aspect ratio calculator](https://www.pixeltokb.com/aspect-ratio-calculator/): Reduce integer pixel dimensions to a simple ratio and calculate a matching side locally.
 - [PPI calculator](https://www.pixeltokb.com/ppi-calculator/): Calculate horizontal, vertical, and diagonal pixels per inch from planned print dimensions without changing an image file.
 - [Photo resizer](https://www.pixeltokb.com/photo-resizer/): Resize a photo from millimetres or inches at a chosen DPI and verify the written JPEG or PNG density metadata.

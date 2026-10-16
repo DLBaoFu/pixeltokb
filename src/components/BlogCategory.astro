@@ -8,7 +8,11 @@ interface Props { locale: PublishedLocale; category: 'tutorials' | 'troubleshoot
 const { locale, category } = Astro.props;
 const copy = blogLabels[locale];
 const prefix = locale === 'en' ? '' : `/${locale}`;
-const categoryTitle = category === 'tutorials' ? copy.tutorials : copy.troubleshooting;
+const categoryTitle = locale === 'en'
+  ? category === 'tutorials' ? 'Image tutorials' : 'Image compression troubleshooting'
+  : locale === 'zh-cn'
+    ? category === 'tutorials' ? '图片教程' : '图片压缩与上传问题排查'
+    : category === 'tutorials' ? '圖片教學' : '圖片壓縮與上傳問題排解';
 const categoryIntro = locale === 'en'
   ? category === 'tutorials' ? 'Step-by-step browser workflows for changing an image and checking the file you keep.' : 'Practical checks for the cases where a file still misses a size, format, or transparency requirement.'
   : locale === 'zh-cn'

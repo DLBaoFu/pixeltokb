@@ -169,7 +169,24 @@ const socialImage = await readFile(join(dist, 'og-image.png'));
 const pngSignature = '89504e470d0a1a0a';
 if (socialImage.subarray(0, 8).toString('hex') !== pngSignature || socialImage.readUInt32BE(16) !== 1200 || socialImage.readUInt32BE(20) !== 630) failures.push('og-image.png: expected a valid 1200×630 PNG');
 const llms = await readFile(join(dist, 'llms.txt'), 'utf8');
-for (const route of ['/compress-image/', '/compress-png/', '/signature-resizer/', '/signature-compressor/', '/aspect-ratio-calculator/', '/ppi-calculator/', '/photo-resizer/', '/resize-image/', '/crop-image/', '/image-size-checker/', '/image-dpi-checker/']) if (!llms.includes(`${origin}${route}`)) failures.push(`llms.txt: missing current tool ${route}`);
+const llmsRequiredTools = [
+  '/compress-image/',
+  '/compress-png/',
+  '/signature-resizer/',
+  '/signature-compressor/',
+  '/signature-background-remover/',
+  '/photo-signature-merger/',
+  '/print-photo-sheet/',
+  '/increase-image-size/',
+  '/aspect-ratio-calculator/',
+  '/ppi-calculator/',
+  '/photo-resizer/',
+  '/resize-image/',
+  '/crop-image/',
+  '/image-size-checker/',
+  '/image-dpi-checker/'
+];
+for (const route of llmsRequiredTools) if (!llms.includes(`${origin}${route}`)) failures.push(`llms.txt: missing current tool ${route}`);
 if (/\b(?:AVIF|GIF|HEIC|TIFF|OCR|AI image generator)\b/i.test(llms)) failures.push('llms.txt: contains an unsupported current feature');
 
 if (failures.length) {

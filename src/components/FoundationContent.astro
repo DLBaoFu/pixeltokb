@@ -55,7 +55,8 @@ const changelogEntries: Record<Locale, ChangelogEntry[]> = {
     { date: '14 October 2026', category: 'Added', feature: 'Aspect Ratio Calculator', text: 'Added aspect-ratio calculations for resizing and cropping.', href: '/aspect-ratio-calculator/' },
     { date: '14 October 2026', category: 'Added', feature: 'PPI Calculator', text: 'Added pixel-density calculations based on image dimensions and physical size.', href: '/ppi-calculator/' },
     { date: '13 October 2026', category: 'Changed', feature: 'Image compression', text: 'Consolidated image compression into the main Compress Image tool while keeping existing size-specific links available.', href: '/compress-image/' },
-    { date: '13 October 2026', category: 'Improved', feature: 'Blog navigation', text: 'Reorganized the blog directory and article links to make guides easier to browse.', href: '/blog/' }
+    { date: '13 October 2026', category: 'Improved', feature: 'Blog navigation', text: 'Reorganized the blog directory and article links to make guides easier to browse.', href: '/blog/' },
+    { date: '12 October 2026', category: 'Added', feature: 'PixelToKB launch', text: 'Launched PixelToKB with browser-based tools for image compression, resizing, cropping, file-size checking, and DPI inspection.', href: '/' }
   ],
   'zh-cn': [
     { date: '2026年10月15日', category: '新增', feature: '照片与签名合并', text: '新增照片与签名合并工具，可将两者组合为一张图片用于表单提交。', href: '/photo-signature-merger/' },
@@ -73,7 +74,8 @@ const changelogEntries: Record<Locale, ChangelogEntry[]> = {
     { date: '2026年10月14日', category: '新增', feature: '宽高比计算器', text: '新增用于缩放和裁剪的宽高比计算功能。', href: '/aspect-ratio-calculator/' },
     { date: '2026年10月14日', category: '新增', feature: 'PPI 计算器', text: '新增根据图片像素尺寸和物理尺寸计算像素密度的功能。', href: '/ppi-calculator/' },
     { date: '2026年10月13日', category: '变更', feature: '图片压缩', text: '将图片压缩功能合并到主压缩工具，同时保留已有的指定大小入口。', href: '/compress-image/' },
-    { date: '2026年10月13日', category: '改进', feature: '博客导航', text: '重新整理博客目录和文章链接，让图片指南更容易浏览。', href: '/blog/' }
+    { date: '2026年10月13日', category: '改进', feature: '博客导航', text: '重新整理博客目录和文章链接，让图片指南更容易浏览。', href: '/blog/' },
+    { date: '2026年10月12日', category: '新增', feature: 'PixelToKB 上线', text: 'PixelToKB 正式上线，首批提供在浏览器本地运行的图片压缩、缩放、裁剪、文件大小检查和 DPI 检查工具。', href: '/' }
   ],
   'zh-tw': [
     { date: '2026年10月15日', category: '新增', feature: '相片與簽名合併', text: '新增相片與簽名合併工具，可將兩者組合為一張圖片用於表單提交。', href: '/photo-signature-merger/' },
@@ -91,7 +93,8 @@ const changelogEntries: Record<Locale, ChangelogEntry[]> = {
     { date: '2026年10月14日', category: '新增', feature: '長寬比計算器', text: '新增用於縮放和裁切的長寬比計算功能。', href: '/aspect-ratio-calculator/' },
     { date: '2026年10月14日', category: '新增', feature: 'PPI 計算器', text: '新增依圖片像素尺寸和實體尺寸計算像素密度的功能。', href: '/ppi-calculator/' },
     { date: '2026年10月13日', category: '變更', feature: '圖片壓縮', text: '將圖片壓縮功能合併到主要壓縮工具，同時保留既有的指定大小入口。', href: '/compress-image/' },
-    { date: '2026年10月13日', category: '改進', feature: '部落格導覽', text: '重新整理部落格目錄和文章連結，讓圖片指南更容易瀏覽。', href: '/blog/' }
+    { date: '2026年10月13日', category: '改進', feature: '部落格導覽', text: '重新整理部落格目錄和文章連結，讓圖片指南更容易瀏覽。', href: '/blog/' },
+    { date: '2026年10月12日', category: '新增', feature: 'PixelToKB 上線', text: 'PixelToKB 正式上線，首批提供在瀏覽器本機執行的圖片壓縮、縮放、裁切、檔案大小檢查和 DPI 檢查工具。', href: '/' }
   ]
 };
 const items = slug === 'changelog' ? [] : sections[locale][slug] ?? [];

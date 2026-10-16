@@ -280,9 +280,8 @@ const breadcrumbSchema = isToolDetail && !noindex ? JSON.stringify({
   .foundation-card { min-height:154px; padding:1.35rem 1.45rem; border:1px solid var(--line); border-radius:13px; background:var(--surface); box-shadow:var(--shadow); }
   .foundation-card h2 { margin-bottom:.45rem; font-size:1.08rem; }
   .foundation-card p { margin-bottom:0; color:var(--muted); font-size:.91rem; line-height:1.7; }
-  .changelog-groups { display:grid; gap:1.7rem; margin-top:1.35rem; }
-  .changelog-group { display:grid; grid-template-columns:10.5rem minmax(0,1fr); gap:1.25rem; align-items:start; padding-top:1.3rem; border-top:1px solid var(--line); }
-  .changelog-group:first-child { padding-top:0; border-top:0; }
+  .changelog-groups { display:grid; gap:1rem; margin-top:1.35rem; }
+  .changelog-group { display:grid; grid-template-columns:10.5rem minmax(0,1fr); gap:1.25rem; align-items:start; padding:1.45rem 1.55rem; border:1px solid color-mix(in srgb,var(--cyan) 18%,var(--line)); border-radius:16px; background:var(--surface); box-shadow:var(--shadow); }
   .changelog-date { margin:.1rem 0 0; color:var(--cyan-deep); font-size:1rem; font-weight:800; letter-spacing:-.01em; line-height:1.4; }
   .changelog-group-content { display:grid; gap:.8rem; min-width:0; }
   .changelog-category { margin:0 0 .55rem; }
@@ -310,7 +309,7 @@ const breadcrumbSchema = isToolDetail && !noindex ? JSON.stringify({
   .preset-links { grid-template-columns:repeat(4,minmax(0,1fr)); }
   .settings-row { grid-template-columns:20px minmax(0,1fr) minmax(4.5rem,6.5rem) minmax(4.25rem,5rem); }
   @media (max-width:900px) { .preset-links { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-  @media (max-width:620px) { .tool-breadcrumb-shell { padding-top:.75rem; } .has-tool-breadcrumb > .detail-page { padding-top:.75rem; } .detail-page { padding-block:1.4rem 2.5rem; } .foundation-grid { grid-template-columns:1fr; } .changelog-group { grid-template-columns:1fr; gap:.5rem; } .changelog-date { margin:0; } .changelog-category h3 { font-size:.78rem; } .changelog-entry { padding:.45rem 0 .5rem; } .copy-email { display:block; margin:.8rem 0 0; } }
+  @media (max-width:620px) { .tool-breadcrumb-shell { padding-top:.75rem; } .has-tool-breadcrumb > .detail-page { padding-top:.75rem; } .detail-page { padding-block:1.4rem 2.5rem; } .foundation-grid { grid-template-columns:1fr; } .changelog-group { grid-template-columns:1fr; gap:.5rem; padding:1rem .95rem; border-radius:14px; } .changelog-date { margin:0; } .changelog-category h3 { font-size:.78rem; } .changelog-entry { padding:.45rem 0 .5rem; } .copy-email { display:block; margin:.8rem 0 0; } }
   /* Directory, article, and information pages share an uninterrupted page canvas. */
   body { min-height:100vh; display:flex; flex-direction:column; }
   main { flex:1; min-height:0; }
