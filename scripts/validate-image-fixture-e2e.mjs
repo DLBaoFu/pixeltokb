@@ -123,15 +123,17 @@ try {
     await send('DOM.setFileInputFiles', { nodeId: input.nodeId, files: [path] }); await evaluate(`document.querySelector(${JSON.stringify(selector)}).dispatchEvent(new Event('change',{bubbles:true}))`);
   }
   async function waitFor(expression, label) { for (let attempt = 0; attempt < 1800; attempt += 1) { const value = await evaluate(expression); if (value) return value; await delay(20); } throw new Error(`Timed out waiting for ${label}`); }
+  async function captureCreatedBlobs() { await evaluate(`(()=>{const create=URL.createObjectURL.bind(URL);window.__fixtureBlobs=new Map();URL.createObjectURL=(blob)=>{const url=create(blob);window.__fixtureBlobs.set(url,blob);return url;};})()`); }
 
   await navigate('/compress-image/', 'section.workspace');
+  await captureCreatedBlobs();
   assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]')?.getAttribute('aria-checked')`), 'false', 'privacy metadata cleanup should be disabled by default');
   await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]').click()`);
   await setFile('section.workspace input[type="file"]', orientedPath);
   await waitFor(`Boolean(document.querySelector('[data-image-selected="true"]'))`, 'oriented JPEG selection');
   await evaluate(`document.querySelector('.primary-action').click()`);
   await waitFor(`Boolean(document.querySelector('.result a[download]'))`, 'oriented JPEG result');
-  const orientedOutput = await evaluate(`(async()=>{const img=document.querySelector('.result img');const link=document.querySelector('.result a[download]');const response=await fetch(img.src);const bytes=new Uint8Array(await response.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,download:link.getAttribute('download'),mime:response.headers.get('content-type'),base64:btoa(binary)}})()`);
+  const orientedOutput = await evaluate(`(async()=>{const img=document.querySelector('.result img');const link=document.querySelector('.result a[download]');const blob=window.__fixtureBlobs.get(img.src);if(!blob)throw new Error('Captured output Blob not found');const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,download:link.getAttribute('download'),mime:blob.type,base64:btoa(binary)}})()`);
   const orientedBytes = Buffer.from(orientedOutput.base64, 'base64'); const orientedExif = jpegExifInfo(orientedBytes);
   assert.deepEqual([orientedOutput.width, orientedOutput.height], [240, 320]);
   assert.equal(orientedOutput.mime, 'image/jpeg'); assert.equal(orientedExif.hasExif, false); assert.equal(orientedExif.hasGps, false); assert.equal(orientedExif.orientation, null);
@@ -146,7 +148,7 @@ try {
   await evaluate(`document.querySelector('.primary-action').click()`);
   await waitFor(`Boolean(document.querySelector('.result a[download]'))`, 'metadata-preserving JPEG result');
   assert.match(await evaluate(`document.querySelector('[role="status"]')?.textContent ?? ''`), /preserved and checked/i);
-  const preservedOutput = await evaluate(`(async()=>{const img=document.querySelector('.result img');const link=document.querySelector('.result a[download]');const response=await fetch(img.src);const bytes=new Uint8Array(await response.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,download:link.getAttribute('download'),mime:response.headers.get('content-type'),base64:btoa(binary)}})()`);
+  const preservedOutput = await evaluate(`(async()=>{const img=document.querySelector('.result img');const link=document.querySelector('.result a[download]');const blob=window.__fixtureBlobs.get(img.src);if(!blob)throw new Error('Captured output Blob not found');const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,download:link.getAttribute('download'),mime:blob.type,base64:btoa(binary)}})()`);
   const preservedBytes = Buffer.from(preservedOutput.base64, 'base64'); const preservedExif = jpegExifInfo(preservedBytes);
   assert.deepEqual([preservedOutput.width, preservedOutput.height], [240, 320]);
   assert.equal(preservedExif.hasExif, true); assert.equal(preservedExif.hasGps, true); assert.equal(preservedExif.orientation, 1);
@@ -162,6 +164,7 @@ try {
   const privacyExports = [];
   for (const format of ['png', 'webp']) {
     await navigate('/crop-image/', '.crop-tool');
+    await captureCreatedBlobs();
     await setFile('.crop-tool input[type="file"]', orientedPath);
     await waitFor(`Boolean(document.querySelector('.crop-preview img'))`, `${format} crop input`);
     if (format === 'webp') await evaluate(`(()=>{const select=document.querySelector('.crop-controls select');select.value='webp';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
@@ -169,7 +172,7 @@ try {
     await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]').click()`);
     await evaluate(`document.querySelector('.crop-tool .primary-action').click()`);
     await waitFor(`Boolean(document.querySelector('.crop-tool .result a[download]'))`, `${format} crop result`);
-    const browserOutput = await evaluate(`(async()=>{const img=document.querySelector('.crop-tool .result img');const link=document.querySelector('.crop-tool .result a[download]');const response=await fetch(img.src);const bytes=new Uint8Array(await response.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,mime:response.headers.get('content-type'),download:link.getAttribute('download'),base64:btoa(binary)}})()`);
+    const browserOutput = await evaluate(`(async()=>{const img=document.querySelector('.crop-tool .result img');const link=document.querySelector('.crop-tool .result a[download]');const blob=window.__fixtureBlobs.get(img.src);if(!blob)throw new Error('Captured output Blob not found');const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,mime:blob.type,download:link.getAttribute('download'),base64:btoa(binary)}})()`);
     assert.equal(browserOutput.mime, format === 'png' ? 'image/png' : 'image/webp');
     const expectedPath = join(downloads, browserOutput.download);
     await evaluate(`document.querySelector('.crop-tool .result a[download]').click()`);
@@ -188,11 +191,12 @@ try {
   }
 
   await navigate('/compress-png/', '[data-png-optimizer="true"]');
+  await captureCreatedBlobs();
   await setFile('[data-png-optimizer="true"] input[type="file"]', iccPath);
   await waitFor(`document.querySelector('[data-png-status]')?.dataset.pngStatus === 'ready'`, 'ICC PNG selection');
   await evaluate(`document.querySelector('[data-png-optimizer="true"] .primary-action').click()`);
   await waitFor(`['optimized','unchanged'].includes(document.querySelector('[data-png-status]')?.dataset.pngStatus)`, 'ICC PNG result');
-  const pngOutput = await evaluate(`(async()=>{const link=document.querySelector('[data-png-download="true"]');if(!link)return null;const bytes=new Uint8Array(await (await fetch(link.href)).arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return btoa(binary)})()`);
+  const pngOutput = await evaluate(`(async()=>{const link=document.querySelector('[data-png-download="true"]');if(!link)return null;const blob=window.__fixtureBlobs.get(link.href);if(!blob)throw new Error('Captured PNG Blob not found');const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return btoa(binary)})()`);
   assert.ok(pngOutput, 'ICC PNG should produce an optimized download');
   const pngBytes = new Uint8Array(Buffer.from(pngOutput, 'base64')); const pngInspection = inspectPng(pngBytes);
   assert.equal(pngInspection.hasAlpha, true); assert.equal(pngInspection.width, 320); assert.equal(pngInspection.height, 240); assert.equal(pngInspection.chunkTypes.includes('iCCP'), false); assert.equal(pngInspection.chunkTypes.includes('sRGB'), true); assert.deepEqual(pngInspection.metadataChunks, []);
