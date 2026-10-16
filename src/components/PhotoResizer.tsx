@@ -3,7 +3,7 @@ import { validateImageFile, ImageValidationError } from '../lib/image/file-valid
 import { pixelsFromPhysical, type PhysicalOutput, type PhysicalUnit } from '../lib/physical-resize';
 import { physicalPresetFromSearch } from '../lib/resize-presets';
 import { traditionalize } from '../lib/traditionalize';
-import MetadataPrivacyToggle, { privacyMetadataResultText } from './MetadataPrivacyToggle';
+import MetadataPrivacyToggle, { privacyMetadataErrorText, privacyMetadataResultText } from './MetadataPrivacyToggle';
 
 type Locale = 'en' | 'zh-cn' | 'zh-tw';
 const presets = [
@@ -19,7 +19,7 @@ const copy = {
 } as const;
 
 export default function PhotoResizer({ locale = 'en' }: { locale?: Locale }) {
-  const t = copy[locale]; const [file, setFile] = useState<File | null>(null); const [width, setWidth] = useState(35); const [height, setHeight] = useState(45); const [unit, setUnit] = useState<PhysicalUnit>('mm'); const [dpi, setDpi] = useState(300); const [output, setOutput] = useState<PhysicalOutput>('jpeg'); const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(true); const [status, setStatus] = useState<string>(t.select); const [result, setResult] = useState<{url:string;bytes:number;width:number;height:number;dpi:number;extension:string} | null>(null);
+  const t = copy[locale]; const [file, setFile] = useState<File | null>(null); const [width, setWidth] = useState(35); const [height, setHeight] = useState(45); const [unit, setUnit] = useState<PhysicalUnit>('mm'); const [dpi, setDpi] = useState(300); const [output, setOutput] = useState<PhysicalOutput>('jpeg'); const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(false); const [status, setStatus] = useState<string>(t.select); const [result, setResult] = useState<{url:string;bytes:number;width:number;height:number;dpi:number;extension:string} | null>(null);
   const worker = useRef<Worker | null>(null); const input = useRef<HTMLInputElement>(null);
   const targetWidth = pixelsFromPhysical(width, unit, dpi); const targetHeight = pixelsFromPhysical(height, unit, dpi); const working = status === t.working;
   const clear = () => { worker.current?.terminate(); worker.current = null; setResult((current) => { if (current) URL.revokeObjectURL(current.url); return null; }); };
@@ -30,7 +30,7 @@ export default function PhotoResizer({ locale = 'en' }: { locale?: Locale }) {
   const resize = () => {
     if (!file) { setStatus(t.select); return; } if (!targetWidth || !targetHeight) { setStatus(t.failed); return; }
     clear(); const next = new Worker(new URL('../workers/image-worker.ts', import.meta.url), { type: 'module' }); worker.current = next; setStatus(t.working);
-    next.onmessage = (event: MessageEvent<{type:string;blob?:Blob;width?:number;height?:number;bytes?:number;dpi?:number;privacyMetadataStatus?:'removed'|'none-present'|'unchecked'}>) => { if (worker.current !== next) return; const data = event.data; if (data.type === 'success' && data.blob && data.dpi === dpi) { const url = URL.createObjectURL(data.blob); setResult({ url, bytes: data.bytes ?? data.blob.size, width: data.width ?? targetWidth, height: data.height ?? targetHeight, dpi: data.dpi, extension: output === 'jpeg' ? 'jpg' : 'png' }); setStatus(`${t.ready} ${privacyMetadataResultText(locale, data.privacyMetadataStatus)}`); } else setStatus(t.failed); next.terminate(); if (worker.current === next) worker.current = null; };
+    next.onmessage = (event: MessageEvent<{type:string;blob?:Blob;width?:number;height?:number;bytes?:number;dpi?:number;privacyMetadataStatus?:'removed'|'none-present'|'preserved';error?:string}>) => { if (worker.current !== next) return; const data = event.data; if (data.type === 'success' && data.blob && data.dpi === dpi) { const url = URL.createObjectURL(data.blob); setResult({ url, bytes: data.bytes ?? data.blob.size, width: data.width ?? targetWidth, height: data.height ?? targetHeight, dpi: data.dpi, extension: output === 'jpeg' ? 'jpg' : 'png' }); setStatus(`${t.ready} ${privacyMetadataResultText(locale, data.privacyMetadataStatus)}`); } else setStatus(privacyMetadataErrorText(locale, data.error) ?? t.failed); next.terminate(); if (worker.current === next) worker.current = null; };
     next.onerror = () => { setStatus(t.failed); next.terminate(); if (worker.current === next) worker.current = null; };
     next.postMessage({ type: 'physical-resize', file, width: targetWidth, height: targetHeight, dpi, output, erasePrivacyMetadata });
   };

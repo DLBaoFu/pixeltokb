@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { hasPrivacyMetadata, stripPrivacyMetadata } from '../../src/lib/image/privacy-metadata.ts';
+import { hasPrivacyMetadata, preservePrivacyMetadata, stripPrivacyMetadata } from '../../src/lib/image/privacy-metadata.ts';
 import { inspectPng } from '../../src/lib/png/lossless.ts';
 
 const crcTable = new Uint32Array(256);
@@ -32,6 +32,24 @@ function withJpegSegment(source, marker, payload) {
   segment.writeUInt16BE(payload.length + 2, 2);
   Buffer.from(payload).copy(segment, 4);
   return Buffer.concat([source.subarray(0, 2), segment, source.subarray(2)]);
+}
+
+function withWebpPrivacy(source, includeXmp = true) {
+  const extendedHeader = Buffer.alloc(18);
+  extendedHeader.write('VP8X', 0, 'ascii');
+  extendedHeader.writeUInt32LE(10, 4);
+  extendedHeader[8] = includeXmp ? 0x0c : 0x08;
+  extendedHeader[12] = 319 & 0xff; extendedHeader[13] = (319 >> 8) & 0xff; extendedHeader[14] = (319 >> 16) & 0xff;
+  extendedHeader[15] = 239 & 0xff; extendedHeader[16] = (239 >> 8) & 0xff; extendedHeader[17] = (239 >> 16) & 0xff;
+  const metadata = Buffer.from('EXIF-camera-and-GPS');
+  const exifChunk = Buffer.alloc(8 + metadata.length + (metadata.length % 2));
+  exifChunk.write('EXIF', 0, 'ascii'); exifChunk.writeUInt32LE(metadata.length, 4); metadata.copy(exifChunk, 8);
+  const xmp = Buffer.from('XMP-private-caption');
+  const xmpChunk = Buffer.alloc(8 + xmp.length + (xmp.length % 2));
+  xmpChunk.write('XMP ', 0, 'ascii'); xmpChunk.writeUInt32LE(xmp.length, 4); xmp.copy(xmpChunk, 8);
+  const output = Buffer.concat([source.subarray(0, 12), extendedHeader, source.subarray(12), exifChunk, ...(includeXmp ? [xmpChunk] : [])]);
+  output.writeUInt32LE(output.length - 8, 4);
+  return output;
 }
 
 const jpegFixture = await readFile(new URL('../fixtures/images/opaque-gradient.jpg', import.meta.url));
@@ -124,4 +142,30 @@ test('JPEG privacy cleanup retains verified zero-filled size padding but removes
   const clean = await stripPrivacyMetadata(new Blob([withText], { type: 'image/jpeg' }));
   assert.equal(clean.status, 'removed');
   assert.equal(hasPrivacyMetadata(new Uint8Array(await clean.blob.arrayBuffer()), 'image/jpeg'), false);
+});
+
+test('switch-off preservation restores and verifies JPEG, PNG, and WebP privacy metadata', async () => {
+  const jpegSource = withJpegSegment(jpegFixture, 0xe1, Buffer.from('Exif\0\0GPSLatitude GPSLongitude CameraModel'));
+  const jpegResult = await preservePrivacyMetadata([new Blob([jpegSource], { type: 'image/jpeg' })], new Blob([jpegFixture], { type: 'image/jpeg' }));
+  const jpegOutput = Buffer.from(await jpegResult.blob.arrayBuffer());
+  assert.equal(jpegResult.status, 'preserved'); assert.equal(hasPrivacyMetadata(jpegOutput, 'image/jpeg'), true);
+  assert.equal(jpegOutput.includes(Buffer.from('GPSLatitude GPSLongitude CameraModel')), true);
+
+  const pngSource = Buffer.concat([pngFixture.subarray(0, 33), pngChunk('eXIf', Buffer.from('GPS=51.5,-0.1;Camera=fixture')), pngChunk('tEXt', Buffer.from('Comment\0private note')), pngFixture.subarray(33)]);
+  const pngResult = await preservePrivacyMetadata([new Blob([pngSource], { type: 'image/png' })], new Blob([pngFixture], { type: 'image/png' }));
+  const pngOutput = Buffer.from(await pngResult.blob.arrayBuffer());
+  assert.equal(pngResult.status, 'preserved'); assert.equal(hasPrivacyMetadata(pngOutput, 'image/png'), true);
+  assert.equal(pngOutput.includes(Buffer.from('Comment\0private note')), true);
+
+  const webpSource = withWebpPrivacy(webpFixture);
+  const webpResult = await preservePrivacyMetadata([new Blob([webpSource], { type: 'image/webp' })], new Blob([webpFixture], { type: 'image/webp' }));
+  const webpOutput = Buffer.from(await webpResult.blob.arrayBuffer());
+  assert.equal(webpResult.status, 'preserved'); assert.equal(hasPrivacyMetadata(webpOutput, 'image/webp'), true);
+  assert.equal(webpOutput.includes(Buffer.from('EXIF-camera-and-GPS')), true);
+  assert.equal(webpOutput.readUInt32LE(4), webpOutput.length - 8);
+
+  const exifOnlySource = withWebpPrivacy(webpFixture, false);
+  const exifOnlyResult = await preservePrivacyMetadata([new Blob([exifOnlySource], { type: 'image/webp' })], new Blob([webpFixture], { type: 'image/webp' }));
+  const exifOnlyOutput = Buffer.from(await exifOnlyResult.blob.arrayBuffer());
+  assert.equal(exifOnlyOutput[20] & 0x0c, 0x08, 'VP8X must advertise only metadata chunks that were restored');
 });

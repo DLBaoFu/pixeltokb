@@ -125,7 +125,8 @@ try {
   async function waitFor(expression, label) { for (let attempt = 0; attempt < 1800; attempt += 1) { const value = await evaluate(expression); if (value) return value; await delay(20); } throw new Error(`Timed out waiting for ${label}`); }
 
   await navigate('/compress-image/', 'section.workspace');
-  assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]')?.checked`), true, 'privacy metadata cleanup should be enabled by default');
+  assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]')?.getAttribute('aria-checked')`), 'false', 'privacy metadata cleanup should be disabled by default');
+  await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]').click()`);
   await setFile('section.workspace input[type="file"]', orientedPath);
   await waitFor(`Boolean(document.querySelector('[data-image-selected="true"]'))`, 'oriented JPEG selection');
   await evaluate(`document.querySelector('.primary-action').click()`);
@@ -140,11 +141,23 @@ try {
   const orientedDownloadedName = (await readdir(downloads)).find((name) => !name.endsWith('.crdownload')); assert.ok(orientedDownloadedName, 'oriented JPEG must save to disk');
   const orientedDownloaded = await readFile(join(downloads, orientedDownloadedName)); const orientedDownloadedExif = jpegExifInfo(orientedDownloaded); assert.equal(orientedDownloadedExif.hasExif, false); assert.equal(orientedDownloadedExif.hasGps, false); assert.equal(orientedDownloadedExif.orientation, null);
 
-  await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]').click()`);
-  assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]')?.checked`), false);
+  await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]').click()`);
+  assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]')?.getAttribute('aria-checked')`), 'false');
   await evaluate(`document.querySelector('.primary-action').click()`);
-  await waitFor(`Boolean(document.querySelector('.result a[download]'))`, 'unchecked JPEG result');
-  assert.match(await evaluate(`document.querySelector('[role="status"]')?.textContent ?? ''`), /cleanup was skipped/i);
+  await waitFor(`Boolean(document.querySelector('.result a[download]'))`, 'metadata-preserving JPEG result');
+  assert.match(await evaluate(`document.querySelector('[role="status"]')?.textContent ?? ''`), /preserved and checked/i);
+  const preservedOutput = await evaluate(`(async()=>{const img=document.querySelector('.result img');const link=document.querySelector('.result a[download]');const response=await fetch(img.src);const bytes=new Uint8Array(await response.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,download:link.getAttribute('download'),mime:response.headers.get('content-type'),base64:btoa(binary)}})()`);
+  const preservedBytes = Buffer.from(preservedOutput.base64, 'base64'); const preservedExif = jpegExifInfo(preservedBytes);
+  assert.deepEqual([preservedOutput.width, preservedOutput.height], [240, 320]);
+  assert.equal(preservedExif.hasExif, true); assert.equal(preservedExif.hasGps, true); assert.equal(preservedExif.orientation, 1);
+  await evaluate(`document.querySelector('.result a[download]').click()`);
+  const preservedDownloadedName = preservedOutput.download;
+  let preservedDownloaded;
+  for (let attempt = 0; attempt < 150; attempt += 1) { try { const candidate = await readFile(join(downloads, preservedDownloadedName)); if (candidate.equals(preservedBytes)) { preservedDownloaded = candidate; break; } } catch {} await delay(25); }
+  assert.ok(preservedDownloaded, 'metadata-preserving JPEG must save to disk');
+  assert.deepEqual(preservedDownloaded, preservedBytes, 'metadata-preserving JPEG download must match the preview Blob');
+  const preservedDownloadedExif = jpegExifInfo(preservedDownloaded);
+  assert.equal(preservedDownloadedExif.hasExif, true); assert.equal(preservedDownloadedExif.hasGps, true); assert.equal(preservedDownloadedExif.orientation, 1);
 
   const privacyExports = [];
   for (const format of ['png', 'webp']) {
@@ -152,7 +165,8 @@ try {
     await setFile('.crop-tool input[type="file"]', orientedPath);
     await waitFor(`Boolean(document.querySelector('.crop-preview img'))`, `${format} crop input`);
     if (format === 'webp') await evaluate(`(()=>{const select=document.querySelector('.crop-controls select');select.value='webp';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-    assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option input[role="switch"]')?.checked`), true, `${format} privacy switch should default on`);
+    assert.equal(await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]')?.getAttribute('aria-checked')`), 'false', `${format} privacy switch should default off`);
+    await evaluate(`document.querySelector('.metadata-privacy-option button[role="switch"]').click()`);
     await evaluate(`document.querySelector('.crop-tool .primary-action').click()`);
     await waitFor(`Boolean(document.querySelector('.crop-tool .result a[download]'))`, `${format} crop result`);
     const browserOutput = await evaluate(`(async()=>{const img=document.querySelector('.crop-tool .result img');const link=document.querySelector('.crop-tool .result a[download]');const response=await fetch(img.src);const bytes=new Uint8Array(await response.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return {width:img.naturalWidth,height:img.naturalHeight,mime:response.headers.get('content-type'),download:link.getAttribute('download'),base64:btoa(binary)}})()`);
@@ -186,6 +200,7 @@ try {
     browser: await evaluate('navigator.userAgent'),
     privacyExports,
     orientationCase: { input: { file: 'generated oriented-gps.jpg', bytes: (await readFile(orientedPath)).length, ...inputExif, sourceDimensions: [320, 240] }, output: { bytes: orientedBytes.length, dimensions: [orientedOutput.width, orientedOutput.height], mime: orientedOutput.mime, ...orientedExif, savedFile: orientedDownloadedName, savedFileExif: orientedDownloadedExif } },
+    preservationCase: { switchDefault: 'off', input: { bytes: (await readFile(orientedPath)).length, ...inputExif }, output: { bytes: preservedBytes.length, dimensions: [preservedOutput.width, preservedOutput.height], mime: preservedOutput.mime, ...preservedExif, savedFile: preservedDownloadedName, savedMatchesPreview: true, savedFileExif: preservedDownloadedExif } },
     colorProfileCase: { input: { file: 'generated display-p3.png', bytes: (await readFile(iccPath)).length, profile: 'Display P3 ICC', chunk: 'iCCP' }, output: { bytes: pngBytes.length, dimensions: [pngInspection.width, pngInspection.height], alpha: pngInspection.hasAlpha, chunks: pngInspection.chunkTypes, metadataChunks: pngInspection.metadataChunks, sRgb: pngInspection.chunkTypes.includes('sRGB'), iccProfileRemoved: !pngInspection.chunkTypes.includes('iCCP') } }
   };
   if (outputPath) await writeFile(outputPath, `${JSON.stringify(report, null, 2)}\n`);

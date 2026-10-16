@@ -5,7 +5,7 @@ import { removeSampledBackground } from '../lib/background-removal.ts';
 import { mergedCanvasSize, type MergeLayout } from '../lib/photo-signature-merge.ts';
 import { addJpegCommentPadding } from '../lib/jpeg-padding.ts';
 import { buildPhotoSheetPdf, type Paper } from '../lib/pdf-sheet.ts';
-import { stripPrivacyMetadata, type PrivacyMetadataStatus } from '../lib/image/privacy-metadata.ts';
+import { hasPrivacyMetadata, preservePrivacyMetadata, stripPrivacyMetadata, type PrivacyMetadataStatus } from '../lib/image/privacy-metadata.ts';
 
 type WorkRequest = (
   | { type: 'compress'; file: File; targetBytes: number; output: 'auto' | 'jpeg' | 'webp' | 'png'; preserveDimensions: boolean; jpegBackground: string }
@@ -21,16 +21,25 @@ type WorkRequest = (
 ) & { erasePrivacyMetadata?: boolean };
 type WorkResponse = { type: 'progress' | 'success' | 'error'; value?: number; blob?: Blob; width?: number; height?: number; bytes?: number; dpi?: number; originalBytes?: number; hasAlpha?: boolean; outcome?: 'optimized' | 'unchanged'; reason?: 'not-smaller' | 'pixel-mismatch' | 'metadata-retained'; metadataStatus?: PngMetadataStatus; privacyMetadataStatus?: PrivacyMetadataStatus; error?: string };
 
-const post = (message: WorkResponse, erasePrivacyMetadata = false) => {
+const post = async (message: WorkResponse, erasePrivacyMetadata = false, sourceFiles: Blob[] = [], maxBytes?: number) => {
   if (message.type !== 'success' || !message.blob || !message.blob.type.startsWith('image/')) { self.postMessage(message); return; }
   const sourceBlob = message.blob;
-  void (async () => {
-    if (!erasePrivacyMetadata) { self.postMessage({ ...message, privacyMetadataStatus: 'unchecked' }); return; }
-    const result = await stripPrivacyMetadata(sourceBlob);
-    self.postMessage({ ...message, blob: result.blob, bytes: result.blob.size, privacyMetadataStatus: result.status });
-  })().catch((error: unknown) => self.postMessage({ type: 'error', error: error instanceof Error && error.message === 'METADATA_RETAINED' ? 'METADATA_RETAINED' : 'METADATA_CLEANUP_FAILED' }));
+  try {
+    const result = erasePrivacyMetadata ? await stripPrivacyMetadata(sourceBlob) : await preservePrivacyMetadata(sourceFiles, sourceBlob);
+    if (maxBytes !== undefined && result.blob.size > maxBytes) throw new Error('TARGET_UNREACHABLE');
+    let status: PrivacyMetadataStatus = result.status;
+    if (erasePrivacyMetadata && status === 'none-present') {
+      for (const source of sourceFiles) {
+        if (hasPrivacyMetadata(new Uint8Array(await source.arrayBuffer()), source.type)) { status = 'removed'; break; }
+      }
+    }
+    self.postMessage({ ...message, blob: result.blob, bytes: result.blob.size, privacyMetadataStatus: status });
+  } catch (error: unknown) {
+    const code = error instanceof Error ? error.message : '';
+    self.postMessage({ type: 'error', error: code === 'TARGET_UNREACHABLE' || code === 'METADATA_RETAINED' || code === 'METADATA_PRESERVATION_FAILED' ? code : 'METADATA_CLEANUP_FAILED' });
+  }
 };
-const knownErrors = new Set(['FILE_TOO_LARGE', 'BATCH_TOO_LARGE', 'PIXEL_LIMIT', 'FORMAT_UNSUPPORTED', 'ANIMATION_UNSUPPORTED', 'DECODE_FAILED', 'ENCODER_UNAVAILABLE', 'DPI_WRITE_FAILED', 'TARGET_UNREACHABLE', 'PROCESSING_TIMEOUT', 'OUT_OF_MEMORY', 'CANCELLED', 'METADATA_RETAINED', 'METADATA_CLEANUP_FAILED']);
+const knownErrors = new Set(['FILE_TOO_LARGE', 'BATCH_TOO_LARGE', 'PIXEL_LIMIT', 'FORMAT_UNSUPPORTED', 'ANIMATION_UNSUPPORTED', 'DECODE_FAILED', 'ENCODER_UNAVAILABLE', 'DPI_WRITE_FAILED', 'TARGET_UNREACHABLE', 'PROCESSING_TIMEOUT', 'OUT_OF_MEMORY', 'CANCELLED', 'METADATA_RETAINED', 'METADATA_CLEANUP_FAILED', 'METADATA_PRESERVATION_FAILED']);
 
 async function encode(canvas: OffscreenCanvas, format: string, quality?: number): Promise<Blob> {
   const blob = await canvas.convertToBlob({ type: format, ...(quality === undefined ? {} : { quality }) });
@@ -48,9 +57,9 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
       const result = await optimizePngLosslessly(file);
       post({ type: 'progress', value: 100 });
       if (result.status === 'optimized') {
-        post({ type: 'success', outcome: 'optimized', blob: result.blob, width: result.width, height: result.height, bytes: result.outputBytes, originalBytes: result.originalBytes, hasAlpha: result.hasAlpha, metadataStatus: result.metadataStatus });
+        await post({ type: 'success', outcome: 'optimized', blob: result.blob, width: result.width, height: result.height, bytes: result.outputBytes, originalBytes: result.originalBytes, hasAlpha: result.hasAlpha, metadataStatus: result.metadataStatus });
       } else {
-        post({ type: 'success', outcome: 'unchanged', reason: result.reason, width: result.width, height: result.height, bytes: result.originalBytes, originalBytes: result.originalBytes, hasAlpha: result.hasAlpha });
+        await post({ type: 'success', outcome: 'unchanged', reason: result.reason, width: result.width, height: result.height, bytes: result.originalBytes, originalBytes: result.originalBytes, hasAlpha: result.hasAlpha });
       }
       return;
     }
@@ -70,7 +79,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
       removeSampledBackground(pixels.data, background, tolerance);
       context.putImageData(pixels, 0, 0);
       const blob = await encode(canvas, 'image/png');
-      post({ type: 'success', blob, width: bitmap.width, height: bitmap.height, bytes: blob.size, hasAlpha: true }, event.data.erasePrivacyMetadata === true);
+      await post({ type: 'success', blob, width: bitmap.width, height: bitmap.height, bytes: blob.size, hasAlpha: true }, event.data.erasePrivacyMetadata === true, [file]);
       return;
     }
     if (event.data.type === 'merge') {
@@ -81,7 +90,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
       context.fillStyle = event.data.background; context.fillRect(0, 0, size.width, size.height);
       if (event.data.layout === 'vertical') { context.drawImage(bitmap, 0, 0); context.drawImage(signatureBitmap, 0, bitmap.height); }
       else { context.drawImage(bitmap, 0, 0); context.drawImage(signatureBitmap, bitmap.width, 0); }
-      const blob = await encode(canvas, 'image/png'); signatureBitmap.close(); post({ type: 'success', blob, width: size.width, height: size.height, bytes: blob.size, hasAlpha: false }, event.data.erasePrivacyMetadata === true); return;
+      const blob = await encode(canvas, 'image/png'); signatureBitmap.close(); await post({ type: 'success', blob, width: size.width, height: size.height, bytes: blob.size, hasAlpha: false }, event.data.erasePrivacyMetadata === true, [event.data.photo, event.data.signature]); return;
     }
     if (event.data.type === 'print-sheet') {
       const { paper, photoWidthMm, photoHeightMm, copies } = event.data;
@@ -94,9 +103,9 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
       const { targetBytes, mode } = event.data; if (!Number.isInteger(targetBytes) || targetBytes < file.size || targetBytes > 20_000_000 || !['quality', 'padding'].includes(mode)) throw new Error('TARGET_UNREACHABLE');
       const canvas = new OffscreenCanvas(bitmap.width, bitmap.height); const context = canvas.getContext('2d'); if (!context) throw new Error('ENCODER_UNAVAILABLE'); context.drawImage(bitmap, 0, 0);
       const encoded = await encode(canvas, 'image/jpeg', .98); const source = new Uint8Array(await encoded.arrayBuffer());
-      if (mode === 'padding') { const padded = addJpegCommentPadding(source, targetBytes); post({ type: 'success', blob: new Blob([padded.buffer as ArrayBuffer], { type: 'image/jpeg' }), width: bitmap.width, height: bitmap.height, bytes: padded.byteLength }, event.data.erasePrivacyMetadata === true); return; }
+      if (mode === 'padding') { const padded = addJpegCommentPadding(source, targetBytes); await post({ type: 'success', blob: new Blob([padded.buffer as ArrayBuffer], { type: 'image/jpeg' }), width: bitmap.width, height: bitmap.height, bytes: padded.byteLength }, event.data.erasePrivacyMetadata === true, [file], targetBytes); return; }
       let best: Uint8Array<ArrayBufferLike> | null = null; for (const quality of [.98, .99, 1]) { const candidate = await encode(canvas, 'image/jpeg', quality); if (candidate.size >= file.size && candidate.size <= targetBytes && (!best || candidate.size > best.length)) best = new Uint8Array(await candidate.arrayBuffer()); }
-      if (!best) throw new Error('TARGET_UNREACHABLE'); post({ type: 'success', blob: new Blob([best.buffer as ArrayBuffer], { type: 'image/jpeg' }), width: bitmap.width, height: bitmap.height, bytes: best.length }, event.data.erasePrivacyMetadata === true); return;
+      if (!best) throw new Error('TARGET_UNREACHABLE'); await post({ type: 'success', blob: new Blob([best.buffer as ArrayBuffer], { type: 'image/jpeg' }), width: bitmap.width, height: bitmap.height, bytes: best.length }, event.data.erasePrivacyMetadata === true, [file], targetBytes); return;
     }
     if (event.data.type === 'signature') {
       const { crop, width: targetWidth, height: targetHeight, targetBytes } = event.data;
@@ -120,7 +129,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
         else high = quality - .002;
       }
       if (!best) throw new Error('TARGET_UNREACHABLE');
-      post({ type: 'success', blob: best, width: Math.round(targetWidth), height: Math.round(targetHeight), bytes: best.size }, event.data.erasePrivacyMetadata === true);
+      await post({ type: 'success', blob: best, width: Math.round(targetWidth), height: Math.round(targetHeight), bytes: best.size }, event.data.erasePrivacyMetadata === true, [file], targetBytes);
       return;
     }
     if (event.data.type === 'physical-resize') {
@@ -133,7 +142,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
       const encoded = await encode(canvas, output === 'jpeg' ? 'image/jpeg' : 'image/png', .92);
       const bytes = new Uint8Array(await encoded.arrayBuffer()); const tagged = output === 'jpeg' ? withJpegDpi(bytes, dpi) : withPngDpi(bytes, dpi);
       const verifiedDpi = verifyWrittenDpi(tagged, output, dpi); if (verifiedDpi !== dpi) throw new Error('DPI_WRITE_FAILED');
-      post({ type: 'success', blob: new Blob([tagged], { type: output === 'jpeg' ? 'image/jpeg' : 'image/png' }), width: Math.round(width), height: Math.round(height), bytes: tagged.byteLength, dpi: verifiedDpi }, event.data.erasePrivacyMetadata === true);
+      await post({ type: 'success', blob: new Blob([tagged], { type: output === 'jpeg' ? 'image/jpeg' : 'image/png' }), width: Math.round(width), height: Math.round(height), bytes: tagged.byteLength, dpi: verifiedDpi }, event.data.erasePrivacyMetadata === true, [file]);
       return;
     }
     if (event.data.type === 'crop') {
@@ -151,7 +160,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
       context.drawImage(bitmap, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
       const format = safeOutput === 'png' ? 'image/png' : safeOutput === 'jpeg' ? 'image/jpeg' : 'image/webp';
       const blob = await encode(canvas, format, .92);
-      post({ type: 'success', blob, width: cropWidth, height: cropHeight, bytes: blob.size }, event.data.erasePrivacyMetadata === true);
+      await post({ type: 'success', blob, width: cropWidth, height: cropHeight, bytes: blob.size }, event.data.erasePrivacyMetadata === true, [file]);
       return;
     }
     if (event.data.type === 'resize') {
@@ -174,7 +183,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
       }
       const format = safeOutput === 'png' ? 'image/png' : safeOutput === 'jpeg' ? 'image/jpeg' : 'image/webp';
       const blob = await encode(canvas, format, .92);
-      post({ type: 'success', blob, width: Math.round(targetWidth), height: Math.round(targetHeight), bytes: blob.size }, event.data.erasePrivacyMetadata === true);
+      await post({ type: 'success', blob, width: Math.round(targetWidth), height: Math.round(targetHeight), bytes: blob.size }, event.data.erasePrivacyMetadata === true, [file]);
       return;
     }
     const { targetBytes, output, preserveDimensions, jpegBackground } = event.data;
@@ -201,7 +210,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
     while (attempts < 20) {
       const first = await tryEncode(format === 'image/png' ? undefined : .98);
       if (first.size <= targetBytes) {
-        post({ type: 'success', blob: first, width, height, bytes: first.size }, event.data.erasePrivacyMetadata === true);
+        await post({ type: 'success', blob: first, width, height, bytes: first.size }, event.data.erasePrivacyMetadata === true, [file], targetBytes);
         return;
       }
       let smallest = first;
@@ -217,7 +226,7 @@ self.onmessage = async (event: MessageEvent<WorkRequest>) => {
             if (candidate.size <= targetBytes) { best = candidate; low = middle; }
             else high = middle;
           }
-          post({ type: 'success', blob: best, width, height, bytes: best.size }, event.data.erasePrivacyMetadata === true);
+          await post({ type: 'success', blob: best, width, height, bytes: best.size }, event.data.erasePrivacyMetadata === true, [file], targetBytes);
           return;
         }
       }

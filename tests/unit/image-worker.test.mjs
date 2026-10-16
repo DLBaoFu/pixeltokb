@@ -26,9 +26,8 @@ globalThis.OffscreenCanvas = class {
 };
 
 await import('../../src/workers/image-worker.ts');
-const jpegBytes = new Uint8Array(100); jpegBytes.set([0xff, 0xd8, 0xff, 0xe0]);
-const file = new File([jpegBytes], 'sample.jpg', { type: 'image/jpeg' });
 const cleanJpegFixture = await readFile(new URL('../fixtures/images/opaque-gradient.jpg', import.meta.url));
+const file = new File([cleanJpegFixture], 'sample.jpg', { type: 'image/jpeg' });
 const transparentPng = new File([await readFile(new URL('../fixtures/images/alpha-shapes.png', import.meta.url))], 'alpha-shapes.png', { type: 'image/png' });
 
 function withExif(bytes) {
@@ -40,9 +39,9 @@ function withExif(bytes) {
   return Buffer.concat([bytes.subarray(0, 2), segment, bytes.subarray(2)]);
 }
 
-async function compress(targetBytes, preserveDimensions, output = 'jpeg', input = file, jpegBackground = '#ffffff') {
+async function compress(targetBytes, preserveDimensions, output = 'jpeg', input = file, jpegBackground = '#ffffff', erasePrivacyMetadata = false) {
   messages.length = 0; encodes = 0; wrongMime = false; canvasOperations = [];
-  await self.onmessage({ data: { type: 'compress', file: input, targetBytes, preserveDimensions, output, jpegBackground } });
+  await self.onmessage({ data: { type: 'compress', file: input, targetBytes, preserveDimensions, output, jpegBackground, erasePrivacyMetadata } });
   return { messages: [...messages], encodes };
 }
 
@@ -82,12 +81,15 @@ test('unsupported encoder MIME fallback is rejected', async () => {
 });
 
 test('transparent PNG can be explicitly flattened to JPEG with the selected background', async () => {
-  const run = await compress(2_000_000, true, 'jpeg', transparentPng, '#123456');
-  const result = run.messages.find((message) => message.type === 'success');
-  assert.ok(result);
-  assert.equal(result.blob.type, 'image/jpeg');
-  assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'fillStyle'), ['fillStyle', '#123456']);
-  assert.ok(canvasOperations.findIndex((operation) => operation[0] === 'fillRect') < canvasOperations.findIndex((operation) => operation[0] === 'drawImage'));
+  encodedJpegOverride = cleanJpegFixture;
+  try {
+    const run = await compress(2_000_000, true, 'jpeg', transparentPng, '#123456', true);
+    const result = run.messages.find((message) => message.type === 'success');
+    assert.ok(result);
+    assert.equal(result.blob.type, 'image/jpeg');
+    assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'fillStyle'), ['fillStyle', '#123456']);
+    assert.ok(canvasOperations.findIndex((operation) => operation[0] === 'fillRect') < canvasOperations.findIndex((operation) => operation[0] === 'drawImage'));
+  } finally { encodedJpegOverride = null; }
 });
 
 test('resize fill uses one centered source crop and fills the exact destination canvas', async () => {
@@ -122,17 +124,20 @@ test('crop clamps the requested box and reports the real output dimensions', asy
 
 test('signature preparation crops the requested area, flattens to white JPEG, and checks actual bytes', async () => {
   messages.length = 0; encodes = 0; wrongMime = false; canvasOperations = [];
-  await self.onmessage({ data: { type: 'signature', file: transparentPng, crop: { left: 100, top: 200, width: 800, height: 300 }, width: 300, height: 100, targetBytes: 10_000 } });
-  const result = messages.find((message) => message.type === 'success');
-  assert.ok(result);
-  assert.equal(result.width, 300);
-  assert.equal(result.height, 100);
-  assert.equal(result.blob.type, 'image/jpeg');
-  assert.ok(result.blob.size <= 10_000);
-  assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'fillStyle'), ['fillStyle', '#ffffff']);
-  assert.ok(canvasOperations.findIndex((operation) => operation[0] === 'fillRect') < canvasOperations.findIndex((operation) => operation[0] === 'drawImage'));
-  assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'drawImage').slice(2), [100, 200, 800, 300, 0, 0, 300, 100]);
-  assert.ok(encodes <= 12);
+  encodedJpegOverride = cleanJpegFixture;
+  try {
+    await self.onmessage({ data: { type: 'signature', file: transparentPng, crop: { left: 100, top: 200, width: 800, height: 300 }, width: 300, height: 100, targetBytes: 10_000, erasePrivacyMetadata: true } });
+    const result = messages.find((message) => message.type === 'success');
+    assert.ok(result);
+    assert.equal(result.width, 300);
+    assert.equal(result.height, 100);
+    assert.equal(result.blob.type, 'image/jpeg');
+    assert.ok(result.blob.size <= 10_000);
+    assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'fillStyle'), ['fillStyle', '#ffffff']);
+    assert.ok(canvasOperations.findIndex((operation) => operation[0] === 'fillRect') < canvasOperations.findIndex((operation) => operation[0] === 'drawImage'));
+    assert.deepEqual(canvasOperations.find((operation) => operation[0] === 'drawImage').slice(2), [100, 200, 800, 300, 0, 0, 300, 100]);
+    assert.ok(encodes <= 12);
+  } finally { encodedJpegOverride = null; }
 });
 
 test('signature preparation refuses a byte limit that no JPEG candidate can meet', async () => {
@@ -171,10 +176,27 @@ test('checked privacy switch sanitizes the actual worker export before reporting
   } finally { encodedJpegOverride = null; }
 });
 
-test('unchecked privacy switch reports that cleanup was skipped', async () => {
+test('privacy switch off preserves and verifies source EXIF metadata', async () => {
+  const inputBytes = withExif(cleanJpegFixture);
+  const input = new File([inputBytes], 'gps.jpg', { type: 'image/jpeg' });
+  encodedJpegOverride = cleanJpegFixture;
   messages.length = 0;
-  await self.onmessage({ data: { type: 'crop', file, x: 0, y: 0, width: 3200, height: 2400, output: 'jpeg', jpegBackground: '#ffffff', erasePrivacyMetadata: false } });
-  const result = messages.find((message) => message.type === 'success');
-  assert.ok(result);
-  assert.equal(result.privacyMetadataStatus, 'unchecked');
+  try {
+    await self.onmessage({ data: { type: 'crop', file: input, x: 0, y: 0, width: 3200, height: 2400, output: 'jpeg', jpegBackground: '#ffffff', erasePrivacyMetadata: false } });
+    const result = messages.find((message) => message.type === 'success');
+    assert.ok(result);
+    assert.equal(result.privacyMetadataStatus, 'preserved');
+    const output = new Uint8Array(await result.blob.arrayBuffer());
+    assert.equal(Buffer.from(output).includes(Buffer.from('GPSLatitude GPSLongitude CameraModel')), true);
+    const { hasPrivacyMetadata } = await import('../../src/lib/image/privacy-metadata.ts');
+    assert.equal(hasPrivacyMetadata(output, 'image/jpeg'), true);
+  } finally { encodedJpegOverride = null; }
+});
+
+test('privacy switch off refuses a format conversion that would drop detected metadata', async () => {
+  const input = new File([withExif(cleanJpegFixture)], 'gps.jpg', { type: 'image/jpeg' });
+  messages.length = 0;
+  await self.onmessage({ data: { type: 'crop', file: input, x: 0, y: 0, width: 3200, height: 2400, output: 'png', jpegBackground: '#ffffff', erasePrivacyMetadata: false } });
+  assert.equal(messages.some((message) => message.type === 'success'), false);
+  assert.equal(messages.at(-1).error, 'METADATA_PRESERVATION_FAILED');
 });

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImageValidationError, validateImageFile } from '../lib/image/file-validation';
 import { safeDownloadName } from '../lib/image/download-name';
-import MetadataPrivacyToggle, { privacyMetadataResultText } from './MetadataPrivacyToggle';
+import MetadataPrivacyToggle, { privacyMetadataErrorText, privacyMetadataResultText } from './MetadataPrivacyToggle';
 
 type Locale = 'en' | 'zh-cn' | 'zh-tw';
 type Variant = 'resize' | 'compress';
@@ -34,7 +34,7 @@ export default function SignatureTool({ locale = 'en', variant }: { locale?: Loc
   const [ratio, setRatio] = useState(3);
   const [lockRatio, setLockRatio] = useState(true);
   const [targetKB, setTargetKB] = useState(variant === 'compress' ? 50 : 100);
-  const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(true);
+  const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(false);
   const [status, setStatus] = useState<string>(text.start);
   const [result, setResult] = useState<Result | null>(null);
   const worker = useRef<Worker | null>(null);
@@ -80,13 +80,13 @@ export default function SignatureTool({ locale = 'en', variant }: { locale?: Loc
     const nextWorker = new Worker(new URL('../workers/image-worker.ts', import.meta.url), { type: 'module' });
     worker.current = nextWorker; setStatus(text.working);
     const finish = () => { nextWorker.terminate(); if (worker.current === nextWorker) worker.current = null; if (timeout.current) clearTimeout(timeout.current); timeout.current = null; };
-    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; privacyMetadataStatus?: 'removed' | 'none-present' | 'unchecked'; error?: string }>) => {
+    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; privacyMetadataStatus?: 'removed' | 'none-present' | 'preserved'; error?: string }>) => {
       if (worker.current !== nextWorker) return;
       const message = event.data;
       if (message.type === 'success' && message.blob?.type === 'image/jpeg') {
         setResult({ url: URL.createObjectURL(message.blob), bytes: message.bytes ?? message.blob.size, width: message.width ?? width, height: message.height ?? height }); setStatus(`${text.ready} ${privacyMetadataResultText(locale, message.privacyMetadataStatus)}`); finish(); return;
       }
-      if (message.type === 'error') { setResult(null); setStatus(message.error === 'TARGET_UNREACHABLE' ? text.unreachable : message.error === 'PIXEL_LIMIT' ? text.pixelLimit : message.error === 'FILE_TOO_LARGE' ? text.fileTooLarge : text.failed); finish(); }
+      if (message.type === 'error') { setResult(null); setStatus(privacyMetadataErrorText(locale, message.error) ?? (message.error === 'TARGET_UNREACHABLE' ? text.unreachable : message.error === 'PIXEL_LIMIT' ? text.pixelLimit : message.error === 'FILE_TOO_LARGE' ? text.fileTooLarge : text.failed)); finish(); }
     };
     nextWorker.onerror = () => { if (worker.current === nextWorker) { setResult(null); setStatus(text.failed); finish(); } };
     timeout.current = setTimeout(() => { if (worker.current === nextWorker) { finish(); setResult(null); setStatus(text.failed); } }, 30_000);

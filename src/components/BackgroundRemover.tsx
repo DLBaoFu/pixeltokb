@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ImageValidationError, validateImageFile } from '../lib/image/file-validation';
 import { safeDownloadName } from '../lib/image/download-name';
-import MetadataPrivacyToggle, { privacyMetadataResultText } from './MetadataPrivacyToggle';
+import MetadataPrivacyToggle, { privacyMetadataErrorText, privacyMetadataResultText } from './MetadataPrivacyToggle';
 
 type Locale = 'en' | 'zh-cn' | 'zh-tw';
 type Result = { url: string; bytes: number; width: number; height: number };
@@ -17,7 +17,7 @@ export default function BackgroundRemover({ locale = 'en' }: { locale?: Locale }
   const [file, setFile] = useState<File | null>(null);
   const [source, setSource] = useState<{ width: number; height: number } | null>(null);
   const [tolerance, setTolerance] = useState(24);
-  const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(true);
+  const [erasePrivacyMetadata, setErasePrivacyMetadata] = useState(false);
   const [status, setStatus] = useState<string>(text.start);
   const [result, setResult] = useState<Result | null>(null);
   const worker = useRef<Worker | null>(null);
@@ -43,10 +43,10 @@ export default function BackgroundRemover({ locale = 'en' }: { locale?: Locale }
     if (!file) { setStatus(text.start); return; }
     clearResult(); const nextWorker = new Worker(new URL('../workers/image-worker.ts', import.meta.url), { type: 'module' }); worker.current = nextWorker; setStatus(text.working);
     const finish = () => { nextWorker.terminate(); if (worker.current === nextWorker) worker.current = null; if (timeout.current) clearTimeout(timeout.current); timeout.current = null; };
-    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; privacyMetadataStatus?: 'removed' | 'none-present' | 'unchecked'; error?: string }>) => {
+    nextWorker.onmessage = (event: MessageEvent<{ type: string; blob?: Blob; bytes?: number; width?: number; height?: number; privacyMetadataStatus?: 'removed' | 'none-present' | 'preserved'; error?: string }>) => {
       if (worker.current !== nextWorker) return;
       if (event.data.type === 'success' && event.data.blob?.type === 'image/png') { setResult({ url: URL.createObjectURL(event.data.blob), bytes: event.data.bytes ?? event.data.blob.size, width: event.data.width ?? source?.width ?? 0, height: event.data.height ?? source?.height ?? 0 }); setStatus(`${text.ready} ${privacyMetadataResultText(locale, event.data.privacyMetadataStatus)}`); finish(); return; }
-      if (event.data.type === 'error') { setResult(null); setStatus(event.data.error === 'FILE_TOO_LARGE' ? text.fileTooLarge : event.data.error === 'PIXEL_LIMIT' ? text.pixelLimit : text.failed); finish(); }
+      if (event.data.type === 'error') { setResult(null); setStatus(privacyMetadataErrorText(locale, event.data.error) ?? (event.data.error === 'FILE_TOO_LARGE' ? text.fileTooLarge : event.data.error === 'PIXEL_LIMIT' ? text.pixelLimit : text.failed)); finish(); }
     };
     nextWorker.onerror = () => { setResult(null); setStatus(text.failed); finish(); };
     timeout.current = setTimeout(() => { if (worker.current === nextWorker) { finish(); setResult(null); setStatus(text.failed); } }, 30_000);
