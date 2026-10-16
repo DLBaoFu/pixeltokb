@@ -40,7 +40,7 @@ const prefix = locale === 'en' ? '' : `/${locale}`;
 type ChangelogEntry = { date: string; category: string; feature: string; text: string; href: string };
 const changelogEntries: Record<Locale, ChangelogEntry[]> = {
   en: [
-    { date: '16 October 2026', category: 'Changed', feature: 'EXIF privacy control', text: 'The metadata-erasure switch now defaults to off. When it is off, supported source EXIF, GPS and related privacy metadata are restored to the export and checked; if the selected format cannot preserve detected metadata, the export stops instead of silently removing it. Turn the switch on to remove supported privacy metadata.', href: '/compress-image/' },
+    { date: '16 October 2026', category: 'Added', feature: 'EXIF privacy control', text: 'Added a control to remove supported EXIF, GPS, and common privacy metadata from exported images.', href: '/compress-image/' },
     { date: '15 October 2026', category: 'Added', feature: 'Photo + Signature Merger', text: 'Added a tool to combine a photo and signature into one image for form submissions.', href: '/photo-signature-merger/' },
     { date: '15 October 2026', category: 'Added', feature: 'Print Photo Sheet PDF', text: 'Added printable PDF sheets for arranging multiple photos on a page.', href: '/print-photo-sheet/' },
     { date: '15 October 2026', category: 'Added', feature: 'Increase JPEG Size', text: 'Added a way to increase JPEG file size for minimum-size upload requirements without improving image quality.', href: '/increase-image-size/' },
@@ -60,7 +60,7 @@ const changelogEntries: Record<Locale, ChangelogEntry[]> = {
     { date: '12 October 2026', category: 'Added', feature: 'PixelToKB launch', text: 'Launched PixelToKB with browser-based tools for image compression, resizing, cropping, file-size checking, and DPI inspection.', href: '/' }
   ],
   'zh-cn': [
-    { date: '2026年10月16日', category: '变更', feature: 'EXIF 隐私处理选项', text: '元数据擦除开关现改为默认关闭。关闭时，工具会把支持范围内的源 EXIF、GPS 及相关隐私元数据写回导出文件并校验；若所选格式无法保留检测到的元数据，工具会停止导出，不会静默删除。开启开关才会移除支持范围内的隐私元数据。', href: '/compress-image/' },
+    { date: '2026年10月16日', category: '新增', feature: 'EXIF 隐私控制', text: '新增 EXIF 隐私控制，可从导出图片中移除支持范围内的 EXIF、GPS 和常见隐私元数据。', href: '/compress-image/' },
     { date: '2026年10月15日', category: '新增', feature: '照片与签名合并', text: '新增照片与签名合并工具，可将两者组合为一张图片用于表单提交。', href: '/photo-signature-merger/' },
     { date: '2026年10月15日', category: '新增', feature: '照片纸 PDF', text: '新增可打印照片纸 PDF，可在一个页面排列多张照片。', href: '/print-photo-sheet/' },
     { date: '2026年10月15日', category: '新增', feature: '增大 JPEG 体积', text: '新增 JPEG 体积调整方式，用于满足最低上传大小要求，不会提升图片画质。', href: '/increase-image-size/' },
@@ -80,7 +80,7 @@ const changelogEntries: Record<Locale, ChangelogEntry[]> = {
     { date: '2026年10月12日', category: '新增', feature: 'PixelToKB 上线', text: 'PixelToKB 正式上线，首批提供在浏览器本地运行的图片压缩、缩放、裁剪、文件大小检查和 DPI 检查工具。', href: '/' }
   ],
   'zh-tw': [
-    { date: '2026年10月16日', category: '變更', feature: 'EXIF 隱私處理選項', text: '中繼資料移除開關現改為預設關閉。關閉時，工具會把支援範圍內的來源 EXIF、GPS 及相關隱私中繼資料寫回匯出檔案並驗證；若所選格式無法保留偵測到的中繼資料，工具會停止匯出，不會靜默刪除。開啟開關才會移除支援範圍內的隱私中繼資料。', href: '/compress-image/' },
+    { date: '2026年10月16日', category: '新增', feature: 'EXIF 隱私控制', text: '新增 EXIF 隱私控制，可從匯出圖片中移除支援範圍內的 EXIF、GPS 與常見隱私中繼資料。', href: '/compress-image/' },
     { date: '2026年10月15日', category: '新增', feature: '相片與簽名合併', text: '新增相片與簽名合併工具，可將兩者組合為一張圖片用於表單提交。', href: '/photo-signature-merger/' },
     { date: '2026年10月15日', category: '新增', feature: '相片紙 PDF', text: '新增可列印相片紙 PDF，可在一個頁面排列多張相片。', href: '/print-photo-sheet/' },
     { date: '2026年10月15日', category: '新增', feature: '增加 JPEG 容量', text: '新增 JPEG 容量調整方式，用於符合最低上傳大小要求，不會提升圖片畫質。', href: '/increase-image-size/' },
